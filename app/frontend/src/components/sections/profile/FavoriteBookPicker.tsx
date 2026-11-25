@@ -11,8 +11,12 @@ import {
     GET_USER_FAVORITE_BOOKS,
 } from "@/graphql/user/profile";
 import { GET_USER_BOOKS } from "@/graphql/user/userBook";
+import { useDebounce } from "@/hooks/search/useDebounce";
 import { cn } from "@/lib/utils";
 import { FavoriteBookPickerProps, UserBook } from "@/types/types";
+
+/** Plafond serveur des listes (MAX_PAGE_SIZE côté backend). */
+const FAVORITE_PICKER_LIMIT = 100;
 
 /** Modale de choix d'un livre de la bibliothèque pour une place du podium. */
 export default function FavoriteBookPicker({
@@ -23,8 +27,20 @@ export default function FavoriteBookPicker({
     const [query, setQuery] = useState("");
     const { closing, requestClose } = useModalTransition({ onClose });
 
-    const { data, loading: loadingBooks } = useQuery(GET_USER_BOOKS, {
-        variables: { filters: { limit: 200 } },
+    // Recherche côté serveur : la liste est plafonnée, un filtre local ne
+    // verrait pas les livres au-delà de la première page.
+    const search = useDebounce(query.trim(), 300);
+    const {
+        data,
+        previousData,
+        loading: loadingBooks,
+    } = useQuery(GET_USER_BOOKS, {
+        variables: {
+            filters: {
+                limit: FAVORITE_PICKER_LIMIT,
+                search: search || undefined,
+            },
+        },
     });
 
     const [setFavoriteBook, { loading }] = useMutation(SET_FAVORITE_BOOK, {
@@ -46,12 +62,8 @@ export default function FavoriteBookPicker({
         };
     }, [requestClose]);
 
-    const userBooks: UserBook[] = data?.userBooks?.userBooks ?? [];
-    const filtered = query
-        ? userBooks.filter((ub) =>
-              ub.book.title.toLowerCase().includes(query.toLowerCase()),
-          )
-        : userBooks;
+    const userBooks: UserBook[] =
+        (data ?? previousData)?.userBooks?.userBooks ?? [];
 
     return (
         <div
@@ -113,7 +125,7 @@ export default function FavoriteBookPicker({
 
                 {/* liste défilable */}
                 <ul className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto border-t border-dashed border-[hsl(0_0%_100%/0.08)] px-5 py-4 sm:px-8">
-                    {filtered.map((ub) => {
+                    {userBooks.map((ub) => {
                         const author = `${ub.book.author.firstname} ${ub.book.author.lastname}`;
                         const current = ub.favoriteRank === rank;
                         return (
@@ -175,9 +187,9 @@ export default function FavoriteBookPicker({
                             </li>
                         );
                     })}
-                    {!loadingBooks && filtered.length === 0 && (
+                    {!loadingBooks && userBooks.length === 0 && (
                         <li className="text-muted-foreground font-quote py-8 text-center text-base italic">
-                            {userBooks.length === 0
+                            {!search
                                 ? "Aucun livre dans votre bibliothèque."
                                 : "Aucun titre ne correspond."}
                         </li>
