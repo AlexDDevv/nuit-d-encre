@@ -24,7 +24,6 @@ export const GET_BOOKS = gql`
                 }
             }
             totalCount
-            totalCountAll
             page
             limit
         }

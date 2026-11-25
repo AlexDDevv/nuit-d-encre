@@ -18,9 +18,7 @@ export const GET_USER_PROFILE = gql`
             title {
                 id
                 label
-                minLevel
                 iconKey
-                ornamentKey
             }
         }
     }

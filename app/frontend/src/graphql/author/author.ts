@@ -16,7 +16,6 @@ export const GET_AUTHORS = gql`
                 officialWebsite
             }
             totalCount
-            totalCountAll
             page
             limit
         }

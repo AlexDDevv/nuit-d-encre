@@ -7,9 +7,7 @@ export type UserRole = "user" | "moderator" | "admin";
 export interface Title {
     id: string;
     label: string;
-    minLevel: number;
     iconKey: string;
-    ornamentKey: string | null;
 }
 
 export interface User {

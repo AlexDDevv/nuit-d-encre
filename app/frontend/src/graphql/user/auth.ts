@@ -44,9 +44,7 @@ export const WHOAMI = gql`
             title {
                 id
                 label
-                minLevel
                 iconKey
-                ornamentKey
             }
         }
     }
