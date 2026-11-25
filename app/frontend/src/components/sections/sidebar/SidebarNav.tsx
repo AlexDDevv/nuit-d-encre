@@ -18,7 +18,9 @@ import { useAuthContext } from "@/hooks/auth/useAuthContext";
 import { useToast } from "@/hooks/toast/useToast";
 import { SidebarLink, SidebarNavProps } from "@/types/types";
 
-const MAIN_LINKS: SidebarLink[] = [
+// Ordre de la barre : découverte, espace membre (si connecté), informations,
+// puis connexion / déconnexion.
+const DISCOVER_LINKS: SidebarLink[] = [
     {
         href: "/books",
         label: "Livres",
@@ -37,6 +39,9 @@ const MAIN_LINKS: SidebarLink[] = [
         icon: LuLibraryBig,
         ariaLabel: "Accéder à sa bibliothèque",
     },
+];
+
+const INFO_LINKS: SidebarLink[] = [
     {
         href: "/about",
         label: "À propos",
@@ -77,7 +82,7 @@ export default function SidebarNav({ collapsed }: SidebarNavProps) {
         ariaLabel: "Voir le fil d'activité",
     };
 
-    const authLinks: SidebarLink[] = user
+    const memberLinks: SidebarLink[] = user
         ? [
               feedLink,
               ...(user.role === "admin"
@@ -98,6 +103,10 @@ export default function SidebarNav({ collapsed }: SidebarNavProps) {
                         },
                     ]),
           ]
+        : [];
+
+    const guestLinks: SidebarLink[] = user
+        ? []
         : [
               {
                   href: `/register?redirect=${encodeURIComponent(pathname)}`,
@@ -152,10 +161,12 @@ export default function SidebarNav({ collapsed }: SidebarNavProps) {
             className="flex flex-1 flex-col gap-1 p-4"
         >
             <ul className="flex flex-col gap-1">
-                {MAIN_LINKS.map(renderLink)}
+                {DISCOVER_LINKS.map(renderLink)}
+                {memberLinks.map(renderLink)}
+                {INFO_LINKS.map(renderLink)}
             </ul>
             <ul className="flex flex-col gap-1">
-                {authLinks.map(renderLink)}
+                {guestLinks.map(renderLink)}
                 {user && (
                     <li>
                         <Button
