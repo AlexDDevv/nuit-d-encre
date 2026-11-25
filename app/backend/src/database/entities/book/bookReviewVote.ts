@@ -90,8 +90,8 @@ export class BookReviewVote extends BaseEntity {
      * Each vote belongs to exactly one user.
      * Users cannot vote on their own reviews (enforced in business logic).
      */
+    // Non exposé : le votant reste anonyme pour les autres utilisateurs.
     @ManyToOne(() => User, (user) => user.bookReviewVotes)
-    @Field(() => User)
     user!: User;
 
     /**

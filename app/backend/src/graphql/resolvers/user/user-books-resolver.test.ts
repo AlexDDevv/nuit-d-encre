@@ -1,8 +1,9 @@
 import { Book } from "../../../database/entities/book/book";
+import { User } from "../../../database/entities/user/user";
 import { UserBook } from "../../../database/entities/user/user-book";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
-import { ReadingStatus, UserActionType } from "../../../types/types";
+import { ReadingStatus, Roles, UserActionType } from "../../../types/types";
 import { UserBooksResolver } from "./user-books-resolver";
 
 jest.mock("../../../services/grind/grant-xp-service");
@@ -125,6 +126,52 @@ describe("UserBooksResolver", () => {
                     where: { id: "ub-other", user: { id: "user-1" } },
                 })
             );
+        });
+    });
+
+    describe("bibliothèque d'un autre utilisateur", () => {
+        const owner = (isLibraryPublic: boolean) =>
+            Object.assign(new User(), { id: "owner", isLibraryPublic });
+
+        it("refuse une bibliothèque privée avant toute lecture", async () => {
+            jest.spyOn(User, "findOne").mockResolvedValue(owner(false));
+            const query = jest.spyOn(UserBook, "createQueryBuilder");
+
+            await expect(
+                resolver.userBooks({}, makeContext(user), "owner")
+            ).rejects.toMatchObject({ statusCode: 403 });
+            await expect(
+                resolver.userBookStatusCounts(makeContext(user), "owner")
+            ).rejects.toMatchObject({ statusCode: 403 });
+            expect(query).not.toHaveBeenCalled();
+        });
+
+        it("renvoie NOT_FOUND pour un utilisateur inconnu", async () => {
+            jest.spyOn(User, "findOne").mockResolvedValue(null);
+
+            await expect(
+                resolver.userBookStatusCounts(makeContext(user), "ghost")
+            ).rejects.toMatchObject({ statusCode: 404 });
+        });
+
+        it("ouvre une bibliothèque privée à l'admin", async () => {
+            jest.spyOn(User, "findOne").mockResolvedValue(owner(false));
+            const getRawMany = jest.fn().mockResolvedValue([]);
+            const qb: Record<string, jest.Mock> = { getRawMany };
+            for (const method of ["select", "addSelect", "where", "groupBy"]) {
+                qb[method] = jest.fn(() => qb);
+            }
+            jest.spyOn(UserBook, "createQueryBuilder").mockReturnValue(
+                qb as never
+            );
+
+            await resolver.userBookStatusCounts(
+                makeContext(makeUser("admin", Roles.Admin)),
+                "owner"
+            );
+            expect(qb.where).toHaveBeenCalledWith("ub.userId = :userId", {
+                userId: "owner",
+            });
         });
     });
 });

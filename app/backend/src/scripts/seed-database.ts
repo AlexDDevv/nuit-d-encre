@@ -98,6 +98,8 @@ type UserSeed = {
     bio?: string;
     // Compte Google pur : pas de mot de passe, connexion impossible en local.
     googleId?: string;
+    // Bibliothèque partagée sur le profil (privée par défaut).
+    isLibraryPublic?: boolean;
 };
 
 const usersData: UserSeed[] = [
@@ -115,6 +117,7 @@ const usersData: UserSeed[] = [
         email: "elise@nuitdencre.test",
         userName: "EliseLit",
         role: Roles.User,
+        isLibraryPublic: true,
         avatar: "https://i.pravatar.cc/300?img=45",
         banner: "https://picsum.photos/seed/elise-banner/1200/320",
         bio: "Dévoreuse de science-fiction et de classiques. Toujours un marque-page à portée.",
@@ -669,20 +672,18 @@ type LibrarySeed = {
     status: ReadingStatus;
     startedAt?: string;
     finishedAt?: string;
-    isPublic: boolean;
     isFavorite?: boolean;
     favoriteRank?: number;
 };
 
 const libraryData: LibrarySeed[] = [
-    // Elise : bibliothèque riche, tous les statuts, favoris ordonnés, public + privé
+    // Elise : bibliothèque riche et partagée, tous les statuts, favoris ordonnés
     {
         user: "elise",
         book: "1984",
         status: ReadingStatus.READ,
         startedAt: "2026-03-01",
         finishedAt: "2026-03-20",
-        isPublic: true,
         isFavorite: true,
         favoriteRank: 1,
     },
@@ -691,7 +692,6 @@ const libraryData: LibrarySeed[] = [
         book: "dune",
         status: ReadingStatus.READING,
         startedAt: "2026-06-01",
-        isPublic: true,
     },
     {
         user: "elise",
@@ -699,7 +699,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-01-05",
         finishedAt: "2026-01-08",
-        isPublic: false, // entrée privée
         isFavorite: true,
         favoriteRank: 2,
     },
@@ -708,13 +707,11 @@ const libraryData: LibrarySeed[] = [
         book: "kafka",
         status: ReadingStatus.PAUSED,
         startedAt: "2026-05-10",
-        isPublic: true,
     },
     {
         user: "elise",
         book: "lotr",
         status: ReadingStatus.TO_READ,
-        isPublic: true,
     },
     // Marc : quelques lectures, un favori
     {
@@ -723,7 +720,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-02-01",
         finishedAt: "2026-02-15",
-        isPublic: true,
         isFavorite: true,
         favoriteRank: 1,
     },
@@ -733,14 +729,12 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-04-01",
         finishedAt: "2026-04-10",
-        isPublic: true,
     },
     {
         user: "marc",
         book: "1984",
         status: ReadingStatus.READING,
         startedAt: "2026-06-05",
-        isPublic: false, // entrée privée
     },
     // Admin : bibliothèque modeste
     {
@@ -749,7 +743,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2025-12-01",
         finishedAt: "2025-12-03",
-        isPublic: true,
         isFavorite: true,
         favoriteRank: 1,
     },
@@ -759,13 +752,11 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-01-10",
         finishedAt: "2026-02-20",
-        isPublic: true,
     },
     {
         user: "admin",
         book: "miserables",
         status: ReadingStatus.TO_READ,
-        isPublic: true,
     },
     // Nora : aucune entrée (état vide volontaire)
     // Insomniaque : contenus longs, trois favoris ordonnés
@@ -775,7 +766,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-04-01",
         finishedAt: "2026-07-30",
-        isPublic: true,
         isFavorite: true,
         favoriteRank: 1,
     },
@@ -785,7 +775,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-02-01",
         finishedAt: "2026-03-28",
-        isPublic: true,
         isFavorite: true,
         favoriteRank: 2,
     },
@@ -795,7 +784,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-08-01",
         finishedAt: "2026-08-09",
-        isPublic: true,
         isFavorite: true,
         favoriteRank: 3,
     },
@@ -804,14 +792,12 @@ const libraryData: LibrarySeed[] = [
         book: "deuxiemesexe",
         status: ReadingStatus.READING,
         startedAt: "2026-09-01",
-        isPublic: true,
     },
     {
         user: "insomniaque",
         book: "sisyphe",
         status: ReadingStatus.PAUSED,
         startedAt: "2026-06-15",
-        isPublic: true,
     },
     {
         user: "insomniaque",
@@ -819,7 +805,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-05-02",
         finishedAt: "2026-05-04",
-        isPublic: true,
     },
     // Gaspard (Google) : bibliothèque entièrement privée
     {
@@ -827,7 +812,6 @@ const libraryData: LibrarySeed[] = [
         book: "fondation",
         status: ReadingStatus.READING,
         startedAt: "2026-08-20",
-        isPublic: false,
     },
     {
         user: "gaspard",
@@ -835,7 +819,6 @@ const libraryData: LibrarySeed[] = [
         status: ReadingStatus.READ,
         startedAt: "2026-07-01",
         finishedAt: "2026-07-12",
-        isPublic: false,
         isFavorite: true,
         favoriteRank: 1,
     },
@@ -1251,6 +1234,7 @@ async function seed() {
         user.avatar = u.avatar ?? null;
         user.banner = u.banner ?? null;
         user.bio = u.bio ?? null;
+        user.isLibraryPublic = u.isLibraryPublic ?? false;
         await user.save();
         usersByKey.set(u.key, user);
     }
@@ -1347,7 +1331,6 @@ async function seed() {
             status: l.status,
             startedAt: l.startedAt ? new Date(l.startedAt) : null,
             finishedAt: l.finishedAt ? new Date(l.finishedAt) : null,
-            isPublic: l.isPublic,
             isFavorite: l.isFavorite ?? false,
             favoriteRank: l.favoriteRank ?? null,
         });
@@ -1470,7 +1453,6 @@ async function seed() {
             status: ReadingStatus.READ,
             startedAt: new Date(now - (i + 30) * 24 * 60 * 60 * 1000),
             finishedAt: new Date(now - i * 24 * 60 * 60 * 1000),
-            isPublic: true,
             isFavorite: false,
             favoriteRank: null,
         });
@@ -1545,7 +1527,6 @@ async function seed() {
             status: ReadingStatus.READ,
             startedAt: new Date(now - 200 * 24 * 60 * 60 * 1000),
             finishedAt: new Date(now - 120 * 24 * 60 * 60 * 1000),
-            isPublic: true,
             isFavorite: false,
             favoriteRank: null,
         });
@@ -1753,7 +1734,6 @@ async function seed() {
         user: departed,
         book: voyageur,
         status: ReadingStatus.READ,
-        isPublic: true,
     }).save();
     const departedReview = await BookReview.create({
         rating: 4,

@@ -30,6 +30,11 @@ import { UserFollow } from "./user-follow";
  * - `level`: level reached by the user.
  * - `xp`: user experience earned by actions.
  * - `actions`: actions that allow the user to gain experience.
+ * - `isLibraryPublic`: whether the library is shared (private by default).
+ *
+ * Relations are NOT exposed in GraphQL by default: they would leak private
+ * data (votes, XP log…) as soon as a resolver loads them. Expose what is
+ * public through an explicit FieldResolver that applies visibility rules.
  * - `createdAt`: timestamp of when the user was created.
  * - `updatedAt`: timestamp of when the user was last updated.
  *
@@ -68,11 +73,9 @@ export class User extends BaseEntity {
     })
     role!: UserRole;
 
-    @Field(() => [Book])
     @OneToMany(() => Book, (book) => book.user)
     books!: Book[];
 
-    @Field(() => [Author])
     @OneToMany(() => Author, (author) => author.user)
     authors!: Author[];
 
@@ -96,11 +99,16 @@ export class User extends BaseEntity {
     @Column({ type: "varchar", length: 300, nullable: true })
     bio?: string | null;
 
+    // Partage de la bibliothèque sur le profil et dans les fils d'activité.
+    // Privé par défaut ; règles dans utils/visibility.ts.
+    @Field(() => Boolean)
+    @Column({ type: "boolean", default: false })
+    isLibraryPublic!: boolean;
+
     // Computed via FieldResolver in ProfileResolver - not stored in DB
     @Field(() => Title, { nullable: true })
     title?: Title | null;
 
-    @Field(() => [UserActions])
     @OneToMany(() => UserActions, (action) => action.user)
     actions!: UserActions[];
 
@@ -114,15 +122,12 @@ export class User extends BaseEntity {
     userBooks!: UserBook[];
 
     @OneToMany(() => BookReview, (review) => review.user)
-    @Field(() => [BookReview])
     bookReviews!: BookReview[];
 
     @OneToMany(() => BookRecommendation, (recommendation) => recommendation.user)
-    @Field(() => [BookRecommendation])
     bookRecommendations!: BookRecommendation[];
 
     @OneToMany(() => BookReviewVote, (vote) => vote.user)
-    @Field(() => [BookReviewVote])
     bookReviewVotes!: BookReviewVote[];
 
     @Field()

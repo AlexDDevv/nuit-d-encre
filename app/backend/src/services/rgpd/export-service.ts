@@ -33,6 +33,7 @@ export const exportUserData = async (userId: string): Promise<string> => {
             email: user.email,
             userName: user.userName,
             bio: user.bio ?? null,
+            bibliothequePartagee: user.isLibraryPublic,
             avatar: user.avatar ?? null,
             banner: user.banner ?? null,
             level: user.level,

@@ -1,4 +1,4 @@
-import { IsOptional, Length } from "class-validator";
+import { IsBoolean, IsOptional, Length } from "class-validator";
 import { Field, InputType } from "type-graphql";
 
 @InputType()
@@ -16,4 +16,9 @@ export class UpdateProfileInput {
         message: "La bio ne peut pas dépasser 300 caractères.",
     })
     bio?: string;
+
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsBoolean()
+    isLibraryPublic?: boolean;
 }

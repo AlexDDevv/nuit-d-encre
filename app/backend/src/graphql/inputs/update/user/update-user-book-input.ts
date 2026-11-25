@@ -10,7 +10,6 @@
 
 import { Field, ID, InputType } from "type-graphql";
 import {
-  IsBoolean,
   IsEnum,
   IsOptional,
   Validate,
@@ -31,7 +30,6 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  * - `status`: reading status.
  * - `startedAt`: reading start date.
  * - `finishedAt`: reading finish date (must be >= startedAt if both provided).
- * - `isPublic`: visibility flag.
  *
  * Notes:
  * - The user is inferred from the authenticated context on the server.
@@ -48,7 +46,6 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  *     recommended
  *     startedAt
  *     finishedAt
- *     isPublic
  *   }
  * }
  *
@@ -57,7 +54,6 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  *   "input": {
  *     "bookId": 42,
  *     "status": "PAUSED",
- *     "isPublic": false
  *   }
  * }
  * ```
@@ -75,10 +71,6 @@ export class UpdateUserBookInput {
   status?: ReadingStatus;
 
   /** Visibility flag (public/private) */
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isPublic?: boolean;
 
   /** Reading start date */
   @Field({ nullable: true })

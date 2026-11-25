@@ -303,7 +303,7 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
 
 export const updateProfile = async (
     userId: string,
-    data: { userName?: string; bio?: string }
+    data: { userName?: string; bio?: string; isLibraryPublic?: boolean }
 ): Promise<User> => {
     const userRepository = dataSource.getRepository(User);
 

@@ -37,6 +37,31 @@ import { UserBook } from "../../../database/entities/user/user-book"
 import { CreateUserBookInput } from "../../inputs/create/user/create-user-book-input"
 import { UpdateUserBookInput } from "../../inputs/update/user/update-user-book-input"
 import { requireUser } from "../../../utils/current-user"
+import { canViewLibrary } from "../../../utils/visibility"
+import { User } from "../../../database/entities/user/user"
+
+/**
+ * Bibliothèque consultée : celle de l'utilisateur connecté par défaut, ou
+ * celle de `userId` si son propriétaire la partage (ou pour l'admin).
+ * Une bibliothèque privée renvoie FORBIDDEN, un utilisateur inconnu NOT_FOUND.
+ */
+async function resolveLibraryOwnerId(
+    context: Context,
+    userId?: string | null,
+): Promise<string> {
+    const viewer = await requireUser(context)
+    if (!userId || userId === viewer.id) return viewer.id
+
+    const owner = await User.findOne({
+        where: { id: userId },
+        select: { id: true, isLibraryPublic: true },
+    })
+    if (!owner) throw new AppError("User not found", 404, "NotFoundError")
+    if (!canViewLibrary(viewer, owner)) {
+        throw new AppError("Cette bibliothèque est privée", 403, "ForbiddenError")
+    }
+    return owner.id
+}
 
 /**
  * UserBook Resolver
@@ -57,6 +82,7 @@ export class UserBooksResolver {
     * - as well as counting total user books before and after filters are applied.
     *
     * @param filters - Search filters and options for sorting/pagination.
+    * @param userId - Bibliothèque d'un autre utilisateur (si partagée) ; défaut : la sienne.
     *
     * @returns An object containing:
     * - `books`: Paginated list of user books after applying filters.
@@ -71,13 +97,13 @@ export class UserBooksResolver {
     async userBooks(
         @Arg("filters", () => UserBooksQueryInput, { nullable: true })
         filters: UserBooksQueryInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
+        @Arg("userId", () => ID, { nullable: true }) userId?: string,
     ): Promise<UserBooksResult> {
-        const user = await requireUser(context);
+        const ownerId = await resolveLibraryOwnerId(context, userId);
 
         const {
             status,
-            isPublic,
             search,
             categoryIds,
             format,
@@ -92,7 +118,7 @@ export class UserBooksResolver {
             .leftJoinAndSelect("userBook.book", "book")
             .leftJoinAndSelect("book.category", "category")
             .leftJoinAndSelect("book.author", "author")
-            .where("user.id = :userId", { userId: user.id })
+            .where("user.id = :userId", { userId: ownerId })
 
         // Get the total number of unfiltered books and clone the query to apply filters
         const [totalCountAll, filteredQuery] = await Promise.all([
@@ -103,11 +129,6 @@ export class UserBooksResolver {
         // Filter by status
         if (status && status.length > 0) {
             filteredQuery.andWhere("userBook.status IN (:...status)", { status });
-        }
-
-        // Filter by public or private book
-        if (typeof isPublic === "boolean") {
-            filteredQuery.andWhere("userBook.isPublic = :isPublic", { isPublic });
         }
 
         // Filter by title, isnb13, authors and publisher (search)
@@ -176,14 +197,15 @@ export class UserBooksResolver {
     @Authorized(Roles.User, Roles.Admin)
     @Query(() => UserBookStatusCounts)
     async userBookStatusCounts(
-        @Ctx() context: Context
+        @Ctx() context: Context,
+        @Arg("userId", () => ID, { nullable: true }) userId?: string,
     ): Promise<UserBookStatusCounts> {
-        const user = await requireUser(context);
+        const ownerId = await resolveLibraryOwnerId(context, userId);
 
         const rows = await UserBook.createQueryBuilder("ub")
             .select("ub.status", "status")
             .addSelect("COUNT(*)", "count")
-            .where("ub.userId = :userId", { userId: user.id })
+            .where("ub.userId = :userId", { userId: ownerId })
             .groupBy("ub.status")
             .getRawMany()
 

@@ -48,7 +48,6 @@ registerEnumType(ReadingStatus, { name: "ReadingStatus" });
  * - `status`: reading status (e.g., TO_READ, READING, READ, PAUSED...).
  * - `startedAt`: optional date when the user started reading the book.
  * - `finishedAt`: optional date when the user finished reading the book.
- * - `isPublic`: visibility of this entry (public by default).
  * - `createdAt`: timestamp when the entry was created.
  * - `updatedAt`: timestamp when the entry was last updated.
  *
@@ -65,7 +64,6 @@ registerEnumType(ReadingStatus, { name: "ReadingStatus" });
  * userBook.user = userInstance;      // existing User
  * userBook.book = bookInstance;      // existing Book
  * userBook.status = ReadingStatus.READING;
- * userBook.isPublic = true;          // optional (defaults to true)
  * await userBook.save();
  * ```
  *
@@ -146,15 +144,6 @@ export class UserBook extends BaseEntity {
   @Column({ type: "date", nullable: true })
   finishedAt?: Date | null;
 
-  /**
-   * Visibility of this library entry
-   * @description
-   * Indicates whether this entry is public (default) or private.
-   * Useful for social features and public profiles.
-   */
-  @Field({ nullable: true })
-  @Column({ type: "boolean", default: true })
-  isPublic!: boolean;
 
   /**
    * Indicates whether this book is marked as a favorite

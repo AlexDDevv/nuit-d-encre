@@ -124,7 +124,7 @@ export class BookReview extends BaseEntity {
      * Represents all the helpful/not helpful votes this review has received.
      */
     @OneToMany(() => BookReviewVote, (vote) => vote.review)
-    @Field(() => [BookReviewVote])
+    // Non exposé : révélerait qui a voté. Compteurs via helpfulCount / notHelpfulCount.
     votes!: BookReviewVote[];
 
     /**

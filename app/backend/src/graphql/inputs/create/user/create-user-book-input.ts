@@ -9,7 +9,7 @@
  */
 
 import { Field, ID, InputType } from "type-graphql";
-import { IsBoolean, IsDate, IsEnum, IsOptional, Validate } from "class-validator";
+import { IsDate, IsEnum, IsOptional, Validate } from "class-validator";
 import { ReadingStatus } from "../../../../types/types";
 import { EndAfterStart } from "../../../helpers/endAfterStart";
 
@@ -23,13 +23,11 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  * - `status`: optional reading status (defaults to TO_READ at persistence level).
  * - `startedAt`: optional date when the user started reading.
  * - `finishedAt`: optional date when the user finished reading.
- * - `isPublic`: optional visibility flag (defaults to true).
  *
  * Notes:
  * - The `user` is usually taken from the authenticated context on the server;
  *   it is not part of this input.
  * - If `status` is omitted, the database default (TO_READ) will apply.
- * - If `isPublic` is omitted, the database default (true) will apply.
  *
  * @example
  * ```graphql
@@ -42,7 +40,6 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  *     recommended
  *     startedAt
  *     finishedAt
- *     isPublic
  *     book { id title }
  *   }
  * }
@@ -52,7 +49,6 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  *   "input": {
  *     "bookId": 42,
  *     "status": "READING",
- *     "isPublic": true
  *   }
  * }
  * ```
@@ -86,10 +82,6 @@ export class CreateUserBookInput {
    * @description
    * If omitted, defaults to true (public).
    */
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isPublic?: boolean;
 
   /**
    * Reading start date

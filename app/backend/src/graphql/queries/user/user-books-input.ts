@@ -7,7 +7,7 @@
  */
 
 import { Field, InputType } from "type-graphql";
-import { IsOptional, IsBoolean, IsEnum } from "class-validator";
+import { IsOptional, IsEnum } from "class-validator";
 import { BooksQueryInput } from "../books/books-query-input";
 import { ReadingStatus } from "../../../types/types";
 
@@ -16,7 +16,6 @@ import { ReadingStatus } from "../../../types/types";
  * @description
  * Extends base book filters with user-specific flags:
  * - `status`: filter by reading status (UserBook).
- * - `isPublic`: filter by visibility (UserBook).
  */
 @InputType()
 export class UserBooksQueryInput extends BooksQueryInput {
@@ -24,9 +23,4 @@ export class UserBooksQueryInput extends BooksQueryInput {
     @IsOptional()
     @IsEnum(ReadingStatus, { each: true })
     status?: ReadingStatus[];
-
-    @Field(() => Boolean, { nullable: true })
-    @IsOptional()
-    @IsBoolean()
-    isPublic?: boolean;
 }
