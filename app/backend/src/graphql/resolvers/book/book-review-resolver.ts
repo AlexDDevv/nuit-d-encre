@@ -28,6 +28,7 @@ import {
 import { Book } from "../../../database/entities/book/book";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
+import { clampPagination } from "../../../utils/pagination";
 import { isOwnerOrAdmin } from "../../../utils/authorizations";
 import { BookReview } from "../../../database/entities/book/bookReview";
 import { BookReviewsResult } from "../../../database/filteredResults/books/book-reviews-result";
@@ -146,6 +147,7 @@ export class BookReviewsResolver {
         })
         sortBy: BookReviewSortBy,
     ): Promise<BookReviewsResult> {
+        ({ page, limit } = clampPagination(page, limit));
         try {
             // Verify book exists
             const book = await Book.findOne({ where: { id: bookId } });

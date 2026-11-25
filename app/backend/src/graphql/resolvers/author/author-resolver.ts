@@ -26,6 +26,7 @@ import { Brackets } from "typeorm"
 import { Author } from "../../../database/entities/author/author"
 import { CreateAuthorInput } from "../../inputs/create/author/create-author-input"
 import { UpdateAuthorInput } from "../../inputs/update/author/update-author-input"
+import { clampPagination } from "../../../utils/pagination"
 import { isOwnerOrAdmin } from "../../../utils/authorizations"
 import { AuthorsResult } from "../../../database/filteredResults/authors/authors-result"
 import { AuthorsQueryInput } from "../../queries/authors/authors-query-input"
@@ -120,7 +121,7 @@ export class AuthorsResolver {
             .leftJoinAndSelect("book.category", "category")
             .where("book.authorId = :authorId", { authorId: author.id })
             .orderBy("book.createdAt", "DESC")
-            .take(limit)
+            .take(clampPagination(1, limit).limit)
             .getMany();
     }
 

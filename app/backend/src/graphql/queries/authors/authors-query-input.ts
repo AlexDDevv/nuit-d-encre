@@ -1,5 +1,6 @@
-import { IsOptional, IsInt, Min, IsString } from "class-validator"
-import { Field, InputType, Int } from "type-graphql"
+import { IsOptional, IsString } from "class-validator"
+import { Field, InputType } from "type-graphql"
+import { PaginationInput } from "../shared/pagination-input"
 
 /**
  * Represents the input parameters for querying all authors.
@@ -10,8 +11,7 @@ import { Field, InputType, Int } from "type-graphql"
  * for retrieving a paginated list of authors.
  *
  * - `search`: filter authors by firstname and lastname.
- * - `page`: page number for paginated results (default is typically 1).
- * - `limit`: maximum number of results per page (default can be 10-20).
+ * - `page` / `limit`: hérités de `PaginationInput` (limit plafonné).
  *
  * All fields are optional, allowing flexible and partial filtering.
  * 
@@ -20,21 +20,9 @@ import { Field, InputType, Int } from "type-graphql"
  * - `@IsOptional()`: marks each field as optional during validation (class-validator).
  */
 @InputType()
-export class AuthorsQueryInput {
+export class AuthorsQueryInput extends PaginationInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@IsString()
 	search?: string
-
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	@Min(1)
-	page?: number
-
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	@Min(1)
-	limit?: number
 }

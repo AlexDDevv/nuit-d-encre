@@ -1,6 +1,7 @@
-import { IsOptional, IsInt, Min, IsArray, IsString } from "class-validator"
-import { Field, ID, InputType, Int } from "type-graphql"
+import { IsOptional, IsArray, IsString } from "class-validator"
+import { Field, ID, InputType } from "type-graphql"
 import { BookFormat } from "../../../types/types"
+import { PaginationInput } from "../shared/pagination-input"
 
 /**
  * Represents the input parameters for querying all books.
@@ -14,15 +15,14 @@ import { BookFormat } from "../../../types/types"
  * - `categoryIds`: filter books by one or more category IDs.
  * - `format`: filter books by their format
  * - `language`: filter books by their language
- * - `page`: page number for paginated results (default is typically 1).
- * - `limit`: maximum number of results per page (default can be 10-20).
+ * - `page` / `limit`: hérités de `PaginationInput` (limit plafonné).
  *
  * The decorators used are:
  * - `@Field({ nullable: true })`: exposes each property to the GraphQL schema as optional.
  * - `@IsOptional()`: marks each field as optional during validation (class-validator).
  */
 @InputType()
-export class BooksQueryInput {
+export class BooksQueryInput extends PaginationInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@IsString()
@@ -42,16 +42,4 @@ export class BooksQueryInput {
 	@IsOptional()
 	@IsString()
 	language?: string
-
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	@Min(1)
-	page?: number
-
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	@Min(1)
-	limit?: number
 }
