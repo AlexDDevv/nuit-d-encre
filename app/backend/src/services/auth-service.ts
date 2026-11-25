@@ -387,11 +387,19 @@ const isValidHttpsUrl = (url: string): boolean => {
     }
 };
 
-export const updateAvatar = async (
+/** Image de profil stockée sur `User` (URL Cloudinary). */
+export type ProfileImage = "avatar" | "banner";
+
+/**
+ * Enregistre (URL https) ou retire (`null`) l'avatar ou la bannière.
+ * L'upload et la suppression côté Cloudinary sont faits par l'appelant.
+ */
+export const setProfileImage = async (
     userId: string,
-    url: string
+    kind: ProfileImage,
+    url: string | null
 ): Promise<User> => {
-    if (!isValidHttpsUrl(url)) {
+    if (url !== null && !isValidHttpsUrl(url)) {
         throw new AppError("Invalid URL", 400, "ValidationError");
     }
 
@@ -400,47 +408,7 @@ export const updateAvatar = async (
 
     if (!user) throw new AppError("User not found", 404, "NotFoundError");
 
-    user.avatar = url;
-    await user.save();
-    return user;
-};
-
-export const updateBanner = async (
-    userId: string,
-    url: string
-): Promise<User> => {
-    if (!isValidHttpsUrl(url)) {
-        throw new AppError("Invalid URL", 400, "ValidationError");
-    }
-
-    const userRepository = dataSource.getRepository(User);
-    const user = await userRepository.findOne({ where: { id: userId } });
-
-    if (!user) throw new AppError("User not found", 404, "NotFoundError");
-
-    user.banner = url;
-    await user.save();
-    return user;
-};
-
-export const removeAvatar = async (userId: string): Promise<User> => {
-    const userRepository = dataSource.getRepository(User);
-    const user = await userRepository.findOne({ where: { id: userId } });
-
-    if (!user) throw new AppError("User not found", 404, "NotFoundError");
-
-    user.avatar = null;
-    await user.save();
-    return user;
-};
-
-export const removeBanner = async (userId: string): Promise<User> => {
-    const userRepository = dataSource.getRepository(User);
-    const user = await userRepository.findOne({ where: { id: userId } });
-
-    if (!user) throw new AppError("User not found", 404, "NotFoundError");
-    
-    user.banner = null;
+    user[kind] = url;
     await user.save();
     return user;
 };

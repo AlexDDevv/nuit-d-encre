@@ -9,7 +9,7 @@ import {
     changePassword,
     login,
     resolveOrCreateGoogleUser,
-    updateAvatar,
+    setProfileImage,
     whoami,
 } from "./auth-service";
 
@@ -194,13 +194,15 @@ describe("changePassword", () => {
     });
 });
 
-describe("updateAvatar", () => {
+describe("setProfileImage", () => {
     it.each([
         ["http", "http://res.cloudinary.com/avatar.png"],
         ["javascript", "javascript:alert(1)"],
         ["invalide", "pas une url"],
     ])("refuse une URL %s", async (_label, url) => {
-        await expect(updateAvatar("user-1", url)).rejects.toMatchObject({
+        await expect(
+            setProfileImage("user-1", "avatar", url)
+        ).rejects.toMatchObject({
             statusCode: 400,
         });
         expect(repository.findOne).not.toHaveBeenCalled();
@@ -210,12 +212,23 @@ describe("updateAvatar", () => {
         const user = makeUser("user-1");
         repository.findOne.mockResolvedValue(user);
 
-        const updated = await updateAvatar(
+        const updated = await setProfileImage(
             "user-1",
+            "avatar",
             "https://res.cloudinary.com/avatar.png"
         );
 
         expect(updated.avatar).toBe("https://res.cloudinary.com/avatar.png");
+    });
+
+    it("retire la bannière avec null", async () => {
+        const user = makeUser("user-1");
+        user.banner = "https://res.cloudinary.com/banner.png";
+        repository.findOne.mockResolvedValue(user);
+
+        const updated = await setProfileImage("user-1", "banner", null);
+
+        expect(updated.banner).toBeNull();
     });
 });
 

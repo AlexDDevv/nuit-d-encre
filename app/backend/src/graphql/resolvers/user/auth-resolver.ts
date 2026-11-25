@@ -8,10 +8,8 @@ import {
     googleAuth,
     updateProfile,
     changePassword,
-    updateAvatar,
-    updateBanner,
-    removeAvatar,
-    removeBanner,
+    setProfileImage,
+    ProfileImage,
 } from "../../../services/auth-service";
 import { Context, Roles } from "../../../types/types";
 import { enforceRateLimit } from "../../../middlewares/rate-limiter";
@@ -19,6 +17,11 @@ import { LogUserInput } from "../../inputs/create/user/create-auth-input";
 import { UpdateProfileInput } from "../../inputs/update/user/update-profile-input";
 import { CloudinaryService } from "../../../services/cloudinary.service";
 import { requireUser } from "../../../utils/current-user";
+
+// Même plafond que le front (lib/image.ts : 8 Mo), exprimé en longueur de
+// data URI : le base64 grossit de 4/3, plus l'en-tête "data:image/...".
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const MAX_IMAGE_DATA_URI_LENGTH = Math.ceil((MAX_IMAGE_BYTES * 4) / 3) + 100;
 
 // Accepte une data URI d'image base64 (ex. "data:image/png;base64,...").
 const isImageDataUri = (value: string): boolean =>
@@ -207,24 +210,7 @@ export class AuthResolver {
         @Arg("data") data: string,
         @Ctx() context: Context,
     ): Promise<User> {
-        const user = await requireUser(context);
-
-        if (!isImageDataUri(data))
-            throw new AppError("Invalid image", 400, "ValidationError");
-
-        const url = await this.cloudinaryService.uploadImage(
-            data,
-            `users/${user.id}/avatar`,
-        );
-
-        if (!url)
-            throw new AppError(
-                "Failed to upload avatar",
-                502,
-                "InternalServerError",
-            );
-
-        return await updateAvatar(user.id, url);
+        return this.replaceProfileImage(context, "avatar", data);
     }
 
     @Authorized()
@@ -233,41 +219,61 @@ export class AuthResolver {
         @Arg("data") data: string,
         @Ctx() context: Context,
     ): Promise<User> {
-        const user = await requireUser(context);
-
-        if (!isImageDataUri(data))
-            throw new AppError("Invalid image", 400, "ValidationError");
-
-        const url = await this.cloudinaryService.uploadImage(
-            data,
-            `users/${user.id}/banner`,
-        );
-        
-        if (!url)
-            throw new AppError(
-                "Failed to upload banner",
-                502,
-                "InternalServerError",
-            );
-
-        return await updateBanner(user.id, url);
+        return this.replaceProfileImage(context, "banner", data);
     }
 
     @Authorized()
     @Mutation(() => User)
     async removeAvatar(@Ctx() context: Context): Promise<User> {
-        const user = await requireUser(context);
-
-        await this.cloudinaryService.deleteImage(`users/${user.id}/avatar`);
-        return await removeAvatar(user.id);
+        return this.clearProfileImage(context, "avatar");
     }
 
     @Authorized()
     @Mutation(() => User)
     async removeBanner(@Ctx() context: Context): Promise<User> {
+        return this.clearProfileImage(context, "banner");
+    }
+
+    /**
+     * Téléverse une image (data URI) sur Cloudinary sous un public_id
+     * déterministe (`users/<id>/<kind>`, écrasé à chaque envoi) puis enregistre
+     * son URL.
+     */
+    private async replaceProfileImage(
+        context: Context,
+        kind: ProfileImage,
+        data: string,
+    ): Promise<User> {
         const user = await requireUser(context);
 
-        await this.cloudinaryService.deleteImage(`users/${user.id}/banner`);
-        return await removeBanner(user.id);
+        if (!isImageDataUri(data))
+            throw new AppError("Invalid image", 400, "ValidationError");
+
+        if (data.length > MAX_IMAGE_DATA_URI_LENGTH)
+            throw new AppError("Image trop volumineuse", 400, "ValidationError");
+
+        const url = await this.cloudinaryService.uploadImage(
+            data,
+            `users/${user.id}/${kind}`,
+        );
+
+        if (!url)
+            throw new AppError(
+                `Failed to upload ${kind}`,
+                502,
+                "InternalServerError",
+            );
+
+        return setProfileImage(user.id, kind, url);
+    }
+
+    private async clearProfileImage(
+        context: Context,
+        kind: ProfileImage,
+    ): Promise<User> {
+        const user = await requireUser(context);
+
+        await this.cloudinaryService.deleteImage(`users/${user.id}/${kind}`);
+        return setProfileImage(user.id, kind, null);
     }
 }
