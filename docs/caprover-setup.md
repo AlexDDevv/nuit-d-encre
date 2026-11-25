@@ -351,7 +351,7 @@ Dans l'ordre, du plus bas niveau au plus visible :
 C'est la même commande, à relancer après chaque merge sur `test` :
 
 ```bash
-pnpm deploy          # ou deploy:back / deploy:front pour une seule app
+pnpm deploy:all      # ou deploy:back / deploy:front pour une seule app
 ```
 
 Quelques réflexes :

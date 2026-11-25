@@ -29,7 +29,10 @@ repo**, branche `test` :
 
     pnpm deploy:back     # scripts/caprover-archive.sh backend test + caprover deploy
     pnpm deploy:front    # idem pour le front
-    pnpm deploy          # les deux, back puis front
+    pnpm deploy:all      # les deux, back puis front
+
+> Ne pas taper `pnpm deploy` : c'est une commande intégrée de pnpm (copie
+> d'un paquet du workspace), qui masque tout script du même nom.
 
 > **Pourquoi une archive construite par script ?** Le déploiement par branche
 > (`caprover deploy -b`) archive **toute la racine du repo** : CapRover n'y
