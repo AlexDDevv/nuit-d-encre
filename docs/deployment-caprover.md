@@ -25,7 +25,7 @@ saisies dans le dashboard CapRover (App Configs → Environmental Variables).
    Port** sur `8080` (App Configs).
 
 Déploiement d'une app depuis le monorepo (CLI CapRover), **depuis la racine du
-repo**, branche `test` :
+repo**, depuis `origin/test` (ce que la CI a vérifié) :
 
     pnpm deploy:back     # scripts/caprover-archive.sh backend test + caprover deploy
     pnpm deploy:front    # idem pour le front
@@ -38,11 +38,11 @@ repo**, branche `test` :
 > (`caprover deploy -b`) archive **toute la racine du repo** : CapRover n'y
 > trouve pas de `captain-definition`, et le contexte de build ne serait pas le
 > dossier de l'app. `scripts/caprover-archive.sh` place le dossier de l'app
-> (`git archive test:app/<app>`) **à la racine de l'archive** et y ajoute
+> (`git archive origin/test:app/<app>`) **à la racine de l'archive** et y ajoute
 > `_workspace/` : le `pnpm-lock.yaml` du monorepo et les manifestes du
 > workspace. `Dockerfile.prod` installe avec `pnpm install --frozen-lockfile` :
 > la prod reçoit exactement les versions vérifiées par la CI. Seuls les fichiers
-> commités sur `test` partent (pas de `.env` local, pas de `node_modules`). Un
+> poussés sur `origin/test` partent, récupérés juste avant (jamais des commits locaux non poussés) (pas de `.env` local, pas de `node_modules`). Un
 > `Dockerfile.prod` construit sans cette archive échoue (`_workspace/` absent).
 
 Procédure détaillée d'installation du serveur : voir

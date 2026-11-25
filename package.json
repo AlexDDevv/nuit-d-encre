@@ -13,8 +13,8 @@
     },
     "scripts": {
         "start": "docker compose up --build",
-        "deploy:back": "scripts/caprover-archive.sh backend test /tmp/back.tar && caprover deploy -a nuit-encre-back -t /tmp/back.tar",
-        "deploy:front": "scripts/caprover-archive.sh frontend test /tmp/front.tar && caprover deploy -a nuit-encre-front -t /tmp/front.tar",
+        "deploy:back": "scripts/caprover-archive.sh backend origin/test /tmp/back.tar && caprover deploy -a nuit-encre-back -t /tmp/back.tar",
+        "deploy:front": "scripts/caprover-archive.sh frontend origin/test /tmp/front.tar && caprover deploy -a nuit-encre-front -t /tmp/front.tar",
         "deploy:all": "pnpm run deploy:back && pnpm run deploy:front",
         "format": "prettier --write \"app/*/src/**/*.{ts,tsx,css}\"",
         "format:check": "prettier --check \"app/*/src/**/*.{ts,tsx,css}\""

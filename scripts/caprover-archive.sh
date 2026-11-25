@@ -2,7 +2,10 @@
 # Construit l'archive de déploiement CapRover d'une app du monorepo.
 #
 # Usage : scripts/caprover-archive.sh <backend|frontend> [ref] [sortie]
-#   ref    : branche ou commit à déployer (défaut : test)
+#   ref    : branche ou commit à déployer (défaut : origin/test). Une ref
+#            distante (origin/…) est d'abord récupérée : la prod reçoit
+#            exactement ce qui a été poussé et vérifié par la CI, jamais des
+#            commits locaux non poussés.
 #   sortie : chemin du tar (défaut : /tmp/<app>.tar)
 #
 # L'archive contient le dossier de l'app à sa racine (captain-definition et
@@ -15,7 +18,7 @@
 set -euo pipefail
 
 app="${1:?usage: $0 <backend|frontend> [ref] [sortie]}"
-ref="${2:-test}"
+ref="${2:-origin/test}"
 out="${3:-/tmp/${app}.tar}"
 
 case "$app" in
@@ -24,6 +27,10 @@ case "$app" in
 esac
 
 cd "$(git rev-parse --show-toplevel)"
+
+if [[ "$ref" == origin/* ]]; then
+    git fetch --quiet origin "${ref#origin/}"
+fi
 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
