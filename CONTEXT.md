@@ -115,6 +115,14 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Coût : les toasts de formulaire reconnaissent encore les erreurs par leur message.
 - Référence : `f9232d0`, `2f22cfb`.
 
+### Activité publique, bibliothèque privée par défaut
+
+- Décision : l'activité des lecteurs est publique (fil des abonnements, fil global pour découvrir d'autres lecteurs, activité du profil), mais la bibliothèque n'est montrée que si son propriétaire active « Partager ma bibliothèque ». Sans partage, les ajouts et lectures terminées disparaissent des fils et du profil ; critiques, recommandations et favoris restent visibles.
+- Intention : un fonctionnement de réseau social où l'on découvre ce que lisent les autres, sans exposer une bibliothèque que personne n'a choisi de montrer.
+- Alternative écartée : un réglage par livre (`UserBook.isPublic`), qui existait en base sans interface et n'était respecté nulle part.
+- Effet : les comptes existants passent en privé ; la règle s'appliquant à la lecture, basculer le réglage cache ou réaffiche aussi l'activité passée.
+- Référence : `937ffc9`, `f5291ba`, `4ed186f`.
+
 ## Difficultés rencontrées
 
 ### XP gagnée en boucle
@@ -163,6 +171,11 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 
 - Problème : le format d'erreur testait `instanceof AppError` sur l'erreur enveloppée par Apollo, test jamais vrai. Toute erreur métier arrivait au client en `INTERNAL_SERVER_ERROR`, et les pages détail affichaient un 404 pour n'importe quelle panne, faute de code fiable.
 - Solution : déballage avec `unwrapResolverError`, code dérivé du statut, détection par code côté front. Découvert en testant l'image de production dans un conteneur (`f9232d0`, `2f22cfb`).
+
+### Modérateurs bloqués
+
+- Problème : la plupart des endpoints exigeaient `@Authorized(Roles.User, Roles.Admin)`, ce qui excluait le rôle modérateur : il ne pouvait ni gérer sa bibliothèque ni critiquer.
+- Solution : `@Authorized()` pour « toute session », convention notée dans `CLAUDE.md` (`ff5daa1`).
 
 ### Ce que j'en retiens
 
