@@ -13,9 +13,10 @@ docker compose down         # Arrête les services
 
 pnpm --filter backend test  # Tests d'un seul workspace depuis la racine
 pnpm --filter frontend test
+pnpm format                 # Prettier sur app/*/src (format:check en CI)
 ```
 
-Avant de pousser, ce que la CI vérifiera : `pnpm lint` + `pnpm test` dans les deux workspaces, `pnpm build` (front) et `pnpm exec tsc --noEmit` (back).
+Avant de pousser, ce que la CI vérifiera : `pnpm format:check` (racine), `pnpm lint` + `pnpm test` dans les deux workspaces, `pnpm build` (front) et `pnpm exec tsc --noEmit` (back).
 
 ### Frontend (`app/frontend/`)
 
@@ -124,7 +125,7 @@ Nuit-d-Encre/
 │   │       │   └── loader.css            # Styles d'animation
 │   │       └── data/                     # Données statiques
 │   │
-│   └── backend/                          # Apollo Server 4 + TypeGraphQL + TypeORM
+│   └── backend/                          # Apollo Server 5 + TypeGraphQL + TypeORM
 │       └── src/
 │           ├── server.ts                 # Initialisation (BDD → admin → titres → schema → serveur)
 │           ├── types/
@@ -273,6 +274,24 @@ Nuit-d-Encre/
   - `targetId` et `metadata` gardent leur rôle d'affichage (fil d'activité, liens `feedTargetHref`) et sont indépendants de `xpKey`.
   - Les actions antérieures à la migration ont `xpKey = NULL` et ne dédupliquent rien : chaque cible déjà récompensée peut rapporter une dernière fois.
 
+## Checklist : nouvel endpoint (resolver, query, mutation)
+
+Chaque point renvoie à une primitive existante : l'utiliser plutôt que recoder la règle localement.
+
+1. **Accès** : `@Authorized()` (toute session) ou `@Authorized(Roles.Admin)`. Sans décorateur uniquement si toutes les données renvoyées sont publiques.
+2. **Utilisateur** : `requireUser(context)` ou `getCurrentUser(context)` (`utils/current-user.ts`). Jamais `whoami()` ni lecture directe du cookie.
+3. **Propriété** : filtrer sur le propriétaire dans le `where` (`user: { id: user.id }`), un élément d'autrui renvoie alors NOT_FOUND. `isOwnerOrAdmin` seulement si l'admin doit pouvoir agir (voir `updateBook`).
+4. **Visibilité** : toute donnée d'un autre utilisateur passe par `utils/visibility.ts` (étendre ce fichier, pas de règle ad hoc).
+5. **Exposition** : pas de `@Field` sur une relation ni sur un champ privé (`hashedPassword`, `googleId`, `tokenVersion`, `xpKey`, `email` hors FieldResolver). Exposer via un FieldResolver qui applique la visibilité.
+6. **Entrées** : InputType class-validator. Toute chaîne bornée (`Length` / `MaxLength`), optionnel vide → `SkipIfEmpty()`, URL → `@IsUrl(EXTERNAL_URL_OPTIONS)`, ISBN → `normalizeIsbn13`, enum → `@IsEnum`, id → `ID`.
+7. **Listes** : étendre `PaginationInput` (ou `clampPagination` pour des arguments séparés). Aucune liste publique non bornée ; un besoin admin « tout charger » a sa propre query `admin*`.
+8. **Coût** : appel externe, service payant ou action facile à spammer → `enforceRateLimit` (ou `tryRateLimit` pour dégrader) avec une règle dans `RATE_LIMIT_RULES`.
+9. **Erreurs** : `throw new AppError(message, statut)`, sans `try/catch` d'enrobage ni détail technique dans le message. Le statut donne le code reçu par le front.
+10. **XP** : `grantXpService` avec une clé stable de `utils/xp-keys.ts`.
+11. **Schéma** : toute colonne passe par une migration (`synchronize: false`). Donnée personnelle → l'ajouter à l'export (`rgpd/export-service.ts`) et vérifier l'effacement (`rgpd/erasure-service.ts`).
+12. **Tests** : un test d'autorisation par mutation sensible (visiteur, non-propriétaire, admin), avec `src/test/factories.ts`.
+13. **Front** : erreurs détectées par code (`lib/graphqlErrors.ts`, règles de `utils/graphql-error.ts`) ; requête de 8 niveaux au plus (`QUERY_LIMITS`) ; toute nouvelle origine externe ajoutée à la CSP nginx.
+
 ## Gotchas
 
 - **Proxy Vite → Docker** : le frontend appelle `/api` qui est proxifié vers `http://back:3310`. En dehors de Docker, ce proxy ne fonctionne pas — lancer via `docker compose up` obligatoirement.
@@ -294,7 +313,7 @@ Nuit-d-Encre/
 - **Decorators TypeScript** activés dans le backend (`experimentalDecorators: true`, `emitDecoratorMetadata: true`) — requis pour TypeORM et TypeGraphQL.
 - **`schema.gql` auto-généré** : `emitSchemaFile: true` dans `buildSchema()` génère un fichier de schéma en développement — ne pas éditer manuellement.
 - **Admin auto-créé** : `createAdmin()` est appelé au démarrage du serveur et crée l'admin si absent — configurer les variables `ADMIN_*` dans `.env`.
-- **Cloudinary unsigned** : les uploads d'images frontend utilisent un preset non signé (`VITE_CLOUDINARY_UPLOAD_PRESET`) — le backend utilise les clés API pour les opérations serveur.
+- **Cloudinary côté serveur uniquement** : tous les uploads (avatar, bannière, couvertures importées) passent par le backend avec les clés API (`cloudinary.service.ts`). Le front n'envoie que des data URI ; aucun preset non signé n'est utilisé.
 - **Contrainte unique** `(user, book)` sur `BookReview` — une seule critique par utilisateur par livre, géré par contrainte BDD.
 - **Prettier 4 espaces** : tabWidth: 4 avec `prettier-plugin-tailwindcss` pour le tri automatique des classes Tailwind.
 - **`CONTEXT.md` (public)** : source de référence sur le « pourquoi » du projet, lue par une IA qui rédige des posts. Le mettre à jour lors de toute décision importante (nouvelle fonctionnalité, changement de schéma ou migration, bug marquant) : décision, intention, alternative écartée, effet ou coût, avec le commit ou le fichier de référence. Ne jamais y inventer d'intention : la demander à l'utilisateur, ou décrire la décision sans intention. Style sobre, sans tiret cadratin. Ne rien y écrire de secret, de personnel ni sur la situation professionnelle de l'auteur.
@@ -327,8 +346,6 @@ Nuit-d-Encre/
 
 | Variable                       | Rôle                                        |
 | ------------------------------ | ------------------------------------------- |
-| `VITE_CLOUDINARY_CLOUD_NAME`   | Nom du cloud Cloudinary (uploads frontend)  |
-| `VITE_CLOUDINARY_UPLOAD_PRESET` | Preset d'upload non signé Cloudinary       |
 | `VITE_GOOGLE_CLIENT_ID`         | Client ID OAuth Google (public, GoogleOAuthProvider) |
 
 ## Deployment
@@ -350,5 +367,5 @@ Nuit-d-Encre/
 - **Prettier** : 4 espaces, `prettier-plugin-tailwindcss` pour le tri des classes
 - **TypeScript strict** : mode strict activé sur frontend et backend, `noUnusedLocals`, `noUnusedParameters`
 - **Alias** : `@/*` → `src/*` (frontend uniquement, configuré dans `vite.config.ts` et `tsconfig.json`)
-- **Pas de semicolons** — à vérifier : la config Prettier du projet ne le spécifie pas explicitement, Prettier utilise ses défauts (avec semicolons)
+- **Formatage** : défauts Prettier (points-virgules, guillemets doubles) + `tabWidth: 4`, config unique `.prettierrc` à la racine. `pnpm format` / `pnpm format:check` depuis la racine (portée `app/*/src`), vérifié en CI. Le reformatage initial est listé dans `.git-blame-ignore-revs` (`git config blame.ignoreRevsFile .git-blame-ignore-revs`).
 - **Module CommonJS** côté backend, **ESM** côté frontend (`"type": "module"`)

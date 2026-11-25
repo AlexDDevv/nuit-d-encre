@@ -137,6 +137,18 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Coût : une CSP mal réglée casserait la connexion Google ou les couvertures ; elle n'est appliquée qu'après vérification.
 - Référence : `682bdf0`, `31aef0a`, `75d548c`, `f574fb4`.
 
+### Une checklist pour les futurs endpoints
+
+- Décision : `CLAUDE.md` liste les points à respecter pour tout nouveau resolver (accès, utilisateur courant, propriété, visibilité, exposition des champs, validation, pagination, rate limiting, erreurs, migration et RGPD, tests), chacun renvoyant à une primitive existante. Le formatage Prettier est vérifié en CI après un reformatage unique du code.
+- Intention : une base où le chemin sûr est le chemin le plus simple, pour faire évoluer le projet par petites touches sans réintroduire les failles corrigées pendant l'audit.
+- Référence : `CLAUDE.md` (section Checklist), `29f9128`.
+
+### Erreurs reconnues par code jusque dans les toasts
+
+- Décision : les toasts d'échec des formulaires reconnaissent l'erreur à son code et non plus à son message.
+- Effet : deux toasts qui ne se déclenchaient jamais (message attendu différent de celui du backend) fonctionnent ; renommer un message côté backend ne casse plus l'affichage.
+- Référence : `c78d4b0`.
+
 ## Difficultés rencontrées
 
 ### XP gagnée en boucle
