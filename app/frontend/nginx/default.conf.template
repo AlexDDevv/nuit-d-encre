@@ -24,14 +24,16 @@ server {
     # HTTPS imposé au navigateur pendant 180 jours (ignoré en HTTP). Sans
     # includeSubDomains : les sous-domaines CapRover restent hors du champ.
     add_header Strict-Transport-Security "max-age=15552000" always;
-    # CSP en observation : les violations s'affichent dans la console sans
-    # rien bloquer. À passer en Content-Security-Policy une fois vérifié que
-    # le site (connexion Google comprise) n'en déclenche aucune.
+    # Politique de sécurité du contenu : le navigateur refuse toute source
+    # absente de cette liste. Appliquée après une phase en Report-Only sans
+    # aucune violation en prod (connexion Google et navigation comprises).
+    # Toute nouvelle origine externe (script, iframe, API appelée par le
+    # navigateur) doit être ajoutée ici, sinon elle sera bloquée.
     #   - images : couvertures externes (Open Library, Google Books) et
     #     Cloudinary, d'où https: ;
     #   - accounts.google.com/gsi : bouton et popup de connexion Google ;
     #   - style 'unsafe-inline' : attributs style de React et des animations.
-    add_header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
 
     # IP réelle du client. Le nginx de CapRover ajoute l'IP du client en fin
     # de X-Forwarded-For ; tout ce qui précède vient du client et peut être
