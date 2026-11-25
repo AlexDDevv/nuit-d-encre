@@ -10,7 +10,7 @@ import {
     SET_FAVORITE_BOOK,
     GET_USER_FAVORITE_BOOKS,
 } from "@/graphql/user/profile";
-import { GET_USER_BOOKS } from "@/graphql/user/userBook";
+import { GET_FAVORITE_PICKER_BOOKS } from "@/graphql/user/userBook";
 import { useDebounce } from "@/hooks/search/useDebounce";
 import { Skeleton } from "@/components/UI/skeleton/Skeleton";
 import { cn } from "@/lib/utils";
@@ -53,7 +53,7 @@ export default function FavoriteBookPicker({
         data,
         previousData,
         loading: loadingBooks,
-    } = useQuery(GET_USER_BOOKS, {
+    } = useQuery(GET_FAVORITE_PICKER_BOOKS, {
         variables: {
             filters: {
                 limit: FAVORITE_PICKER_LIMIT,

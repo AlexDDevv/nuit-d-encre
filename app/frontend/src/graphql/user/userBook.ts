@@ -110,3 +110,34 @@ export const DELETE_USER_BOOK = gql`
         }
     }
 `;
+
+/**
+ * Sélecteur de favoris : seulement ce que la modale affiche. La requête de la
+ * page Bibliothèque calculerait en plus note, compteurs et méta pour chaque
+ * livre (jusqu'à 100).
+ */
+export const GET_FAVORITE_PICKER_BOOKS = gql`
+    query FavoritePickerBooks($filters: UserBooksQueryInput) {
+        userBooks(filters: $filters) {
+            userBooks {
+                id
+                favoriteRank
+                book {
+                    id
+                    title
+                    coverUrl
+                    publishedYear
+                    author {
+                        id
+                        firstname
+                        lastname
+                    }
+                    category {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+    }
+`;
