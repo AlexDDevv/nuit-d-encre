@@ -7,6 +7,7 @@ import { dataSource } from "./database/config/datasource";
 import { AuthResolver } from "./graphql/resolvers/user/auth-resolver";
 import { customAuthChecker } from "./middlewares/auth-checker";
 import { formatError } from "./middlewares/format-error";
+import { QUERY_LIMITS, queryLimitsRule } from "./middlewares/query-limits";
 import { createAdmin } from "./scripts/create-admin";
 import { seedTitles } from "./scripts/seed-titles";
 import { CategoryResolver } from "./graphql/resolvers/category/category-resolver";
@@ -89,7 +90,12 @@ for (const name of ["COOKIE_SECRET", "JWT_SECRET", "APP_PORT"]) {
             emitSchemaFile: process.env.NODE_ENV !== "production",
         });
 
-        const server = new ApolloServer<Context>({ schema, formatError });
+        const server = new ApolloServer<Context>({
+            schema,
+            formatError,
+            // Profondeur et largeur bornées : refus avant tout resolver.
+            validationRules: [queryLimitsRule(QUERY_LIMITS)],
+        });
 
         // Start the server
         const { url } = await startStandaloneServer(server, {
