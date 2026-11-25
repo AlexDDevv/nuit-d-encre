@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsString } from "class-validator"
+import { IsOptional, IsArray, IsString, MaxLength } from "class-validator"
 import { Field, ID, InputType } from "type-graphql"
 import { BookFormat } from "../../../types/types"
 import { PaginationInput } from "../shared/pagination-input"
@@ -26,6 +26,7 @@ export class BooksQueryInput extends PaginationInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@IsString()
+	@MaxLength(200)
 	search?: string
 
 	@Field(() => [ID], { nullable: true })
@@ -41,5 +42,6 @@ export class BooksQueryInput extends PaginationInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@IsString()
+	@MaxLength(50)
 	language?: string
 }

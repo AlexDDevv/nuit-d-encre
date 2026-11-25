@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsStrongPassword, Length } from "class-validator";
+import { IsEmail, IsNotEmpty, IsStrongPassword, Length, MaxLength } from "class-validator";
 import { Field, InputType } from "type-graphql";
 import {
     PASSWORD_MAX_LENGTH,
@@ -70,5 +70,7 @@ export class LogUserInput {
 
     @Field()
     @IsNotEmpty({ message: "Password is required" })
+    // Borne haute : même plafond que la politique de mot de passe.
+    @MaxLength(255)
     password!: string;
 }

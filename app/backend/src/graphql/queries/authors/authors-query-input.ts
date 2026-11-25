@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from "class-validator"
+import { IsOptional, IsString, MaxLength } from "class-validator"
 import { Field, InputType } from "type-graphql"
 import { PaginationInput } from "../shared/pagination-input"
 
@@ -24,5 +24,6 @@ export class AuthorsQueryInput extends PaginationInput {
 	@Field(() => String, { nullable: true })
 	@IsOptional()
 	@IsString()
+	@MaxLength(200)
 	search?: string
 }

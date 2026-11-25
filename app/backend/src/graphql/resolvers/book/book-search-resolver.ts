@@ -41,6 +41,9 @@ export class BookSearchResolver {
     ): Promise<BookSearchResult[]> {
         const trimmed = query.trim();
         if (trimmed.length < 3) return [];
+        if (trimmed.length > 200) {
+            throw new AppError("Recherche trop longue (200 caractères max)", 400, "ValidationError");
+        }
 
         // Les ISBN sont stockés sans séparateurs : normaliser la saisie
         // "978-2-07-036822-8" → "9782070368228" pour le matching.
