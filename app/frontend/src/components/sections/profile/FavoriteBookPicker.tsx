@@ -12,11 +12,30 @@ import {
 } from "@/graphql/user/profile";
 import { GET_USER_BOOKS } from "@/graphql/user/userBook";
 import { useDebounce } from "@/hooks/search/useDebounce";
+import { Skeleton } from "@/components/UI/skeleton/Skeleton";
 import { cn } from "@/lib/utils";
 import { FavoriteBookPickerProps, UserBook } from "@/types/types";
 
 /** Plafond serveur des listes (MAX_PAGE_SIZE côté backend). */
 const FAVORITE_PICKER_LIMIT = 100;
+
+/** Lignes fantômes du premier chargement, au gabarit des vraies lignes. */
+const SKELETON_ROWS = 5;
+
+function PickerRowSkeleton() {
+    return (
+        <li
+            aria-hidden="true"
+            className="border-border flex items-center gap-3.5 rounded-xl border bg-[hsl(20_3%_14%/0.6)] px-3 py-2.5"
+        >
+            <Skeleton className="aspect-2/3 w-11 shrink-0" />
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <Skeleton className="h-4 w-3/5" />
+                <Skeleton className="h-3 w-2/5" />
+            </div>
+        </li>
+    );
+}
 
 /** Modale de choix d'un livre de la bibliothèque pour une place du podium. */
 export default function FavoriteBookPicker({
@@ -62,8 +81,12 @@ export default function FavoriteBookPicker({
         };
     }, [requestClose]);
 
-    const userBooks: UserBook[] =
-        (data ?? previousData)?.userBooks?.userBooks ?? [];
+    const shown = data ?? previousData;
+    const userBooks: UserBook[] = shown?.userBooks?.userBooks ?? [];
+    // Premier chargement : rien à montrer encore. Les recherches suivantes
+    // gardent les résultats précédents (estompés) jusqu'à la réponse.
+    const firstLoad = loadingBooks && !shown;
+    const refreshing = loadingBooks && !!shown;
 
     return (
         <div
@@ -123,8 +146,19 @@ export default function FavoriteBookPicker({
                     />
                 </div>
 
-                {/* liste défilable */}
-                <ul className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto border-t border-dashed border-[hsl(0_0%_100%/0.08)] px-5 py-4 sm:px-8">
+                {/* liste défilable : hauteur fixe pour que la modale ne
+                    change pas de taille à l'arrivée des résultats */}
+                <ul
+                    aria-busy={loadingBooks}
+                    className={cn(
+                        "mt-4 flex h-[min(28rem,55vh)] min-h-0 shrink flex-col gap-2 overflow-y-auto border-t border-dashed border-[hsl(0_0%_100%/0.08)] px-5 py-4 transition-opacity duration-200 sm:px-8",
+                        refreshing && "opacity-60",
+                    )}
+                >
+                    {firstLoad &&
+                        Array.from({ length: SKELETON_ROWS }, (_, i) => (
+                            <PickerRowSkeleton key={i} />
+                        ))}
                     {userBooks.map((ub) => {
                         const author = `${ub.book.author.firstname} ${ub.book.author.lastname}`;
                         const current = ub.favoriteRank === rank;
