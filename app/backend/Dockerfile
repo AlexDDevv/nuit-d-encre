@@ -11,8 +11,8 @@ COPY package.json ./
 # Install dependencies
 RUN pnpm install
 
-# COPY tsconfig and nodemon config
-COPY tsconfig.json nodemon.json ./
+# COPY tsconfig
+COPY tsconfig.json ./
 
 # COPY the entire src directory
 COPY src ./src

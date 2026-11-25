@@ -29,7 +29,7 @@ services:
             - ./app/backend/.env # Loads environment variables from a file
         volumes:
             - ./app/backend/src:/app/src
-        command: ["pnpm", "start"] # Start the Express.js server (hot reload enabled with nodemon if configured)
+        command: ["pnpm", "start"] # Serveur Apollo avec hot reload (ts-node-dev)
         depends_on:
             db:
                 condition: service_healthy
