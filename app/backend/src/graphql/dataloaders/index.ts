@@ -40,7 +40,7 @@ export type Loaders = {
  * @param getUser - résolution mémoïsée (lazy) de l'utilisateur courant.
  */
 export function createLoaders(
-    getUser: () => Promise<User | null | undefined>,
+    getUser: () => Promise<User | null>,
 ): Loaders {
     return {
         averageRating: new DataLoader((ids) => batchAverageRating(ids)),

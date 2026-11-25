@@ -23,6 +23,7 @@ import { xpKeys } from "../../../utils/xp-keys";
 import { BookRecommendation } from "../../../database/entities/book/bookRecommendation";
 import { CreateBookRecommendationInput } from "../../inputs/create/book/create-book-recommendation-input";
 import { BookRecommendationToggleResult } from "../../../database/filteredResults/books/book-recommendation-result";
+import { requireUser } from "../../../utils/current-user";
 
 /**
  * BookRecommendation Resolver
@@ -64,33 +65,20 @@ export class BookRecommendationsResolver {
         @Arg("bookId", () => ID) bookId: string,
         @Ctx() context: Context
     ): Promise<BookRecommendation | null> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const recommendation = await BookRecommendation.findOne({
+            where: {
+                user: { id: user.id },
+                book: { id: bookId },
+            },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            const recommendation = await BookRecommendation.findOne({
-                where: {
-                    user: { id: user.id },
-                    book: { id: bookId },
-                },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
-
-            return recommendation;
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch recommendation",
-                500,
-                "InternalServerError"
-            );
-        }
+        return recommendation;
     }
 
     /**
@@ -133,70 +121,57 @@ export class BookRecommendationsResolver {
         data: CreateBookRecommendationInput,
         @Ctx() context: Context
     ): Promise<BookRecommendationToggleResult> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        // Check if book exists
+        const book = await Book.findOne({
+            where: { id: data.bookId },
+        });
 
-            // Check if book exists
-            const book = await Book.findOne({
-                where: { id: data.bookId },
-            });
+        if (!book) {
+            throw new AppError("Book not found", 404, "NotFoundError");
+        }
 
-            if (!book) {
-                throw new AppError("Book not found", 404, "NotFoundError");
-            }
+        // Check if recommendation already exists
+        const existingRecommendation = await BookRecommendation.findOne({
+            where: {
+                user: { id: user.id },
+                book: { id: book.id },
+            },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            // Check if recommendation already exists
-            const existingRecommendation = await BookRecommendation.findOne({
-                where: {
-                    user: { id: user.id },
-                    book: { id: book.id },
-                },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
-
-            // If exists, remove it
-            if (existingRecommendation) {
-                await existingRecommendation.remove();
-
-                return {
-                    recommendation: null,
-                    action: "removed",
-                };
-            }
-
-            // Otherwise, create new recommendation
-            const newRecommendation = new BookRecommendation();
-            newRecommendation.user = user;
-            newRecommendation.book = book;
-
-            await newRecommendation.save();
-
-            // Grant XP for recommending a book
-            await grantXpService(user, UserActionType.BOOK_RECOMMENDED, {
-                xpKey: xpKeys.book(book.id),
-                targetId: book.id,
-                metadata: { title: book.title },
-            });
+        // If exists, remove it
+        if (existingRecommendation) {
+            await existingRecommendation.remove();
 
             return {
-                recommendation: newRecommendation,
-                action: "created",
+                recommendation: null,
+                action: "removed",
             };
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to toggle recommendation",
-                500,
-                "InternalServerError"
-            );
         }
+
+        // Otherwise, create new recommendation
+        const newRecommendation = new BookRecommendation();
+        newRecommendation.user = user;
+        newRecommendation.book = book;
+
+        await newRecommendation.save();
+
+        // Grant XP for recommending a book
+        await grantXpService(user, UserActionType.BOOK_RECOMMENDED, {
+            xpKey: xpKeys.book(book.id),
+            targetId: book.id,
+            metadata: { title: book.title },
+        });
+
+        return {
+            recommendation: newRecommendation,
+            action: "created",
+        };
     }
 
     /**
@@ -230,44 +205,31 @@ export class BookRecommendationsResolver {
         @Arg("bookId", () => ID) bookId: string,
         @Ctx() context: Context
     ): Promise<BookRecommendation | null> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const recommendation = await BookRecommendation.findOne({
+            where: {
+                user: { id: user.id },
+                book: { id: bookId },
+            },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            const recommendation = await BookRecommendation.findOne({
-                where: {
-                    user: { id: user.id },
-                    book: { id: bookId },
-                },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
-
-            if (!recommendation) {
-                throw new AppError(
-                    "Recommendation not found",
-                    404,
-                    "NotFoundError"
-                );
-            }
-
-            const recommendationId = recommendation.id;
-            await recommendation.remove();
-            recommendation.id = recommendationId;
-
-            return recommendation;
-        } catch (error) {
-            if (error instanceof AppError) throw error;
+        if (!recommendation) {
             throw new AppError(
-                "Failed to delete recommendation",
-                500,
-                "InternalServerError"
+                "Recommendation not found",
+                404,
+                "NotFoundError"
             );
         }
+
+        const recommendationId = recommendation.id;
+        await recommendation.remove();
+        recommendation.id = recommendationId;
+
+        return recommendation;
     }
 }

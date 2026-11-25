@@ -22,8 +22,8 @@ import { CreateSiteBannerInput } from "../../inputs/create/banner/create-site-ba
 import { UpdateSiteBannerInput } from "../../inputs/update/banner/update-site-banner-input"
 import { AppError } from "../../../middlewares/error-handler"
 import { Context, Roles } from "../../../types/types"
-import { whoami } from "../../../services/auth-service"
 import { isBannerVisibleTo } from "../../../utils/banner-visibility"
+import { getCurrentUser, requireUser } from "../../../utils/current-user"
 
 @Resolver(SiteBanner)
 export class SiteBannersResolver {
@@ -42,13 +42,7 @@ export class SiteBannersResolver {
 		})
 		if (!banner) return null
 
-		let isAuthenticated = false
-		try {
-			const user = await whoami(context.cookies)
-			isAuthenticated = !!user
-		} catch {
-			isAuthenticated = false
-		}
+		const isAuthenticated = (await getCurrentUser(context)) !== null
 
 		return isBannerVisibleTo(banner.audience, isAuthenticated)
 			? banner
@@ -76,9 +70,7 @@ export class SiteBannersResolver {
 		@Arg("data", () => CreateSiteBannerInput) data: CreateSiteBannerInput,
 		@Ctx() context: Context,
 	): Promise<SiteBanner> {
-		const user = context.user
-		if (!user) throw new AppError("User not found", 404, "NotFoundError")
-
+		const user = await requireUser(context);
 		return dataSource.transaction(async (manager) => {
 			if (data.isActive) {
 				await manager.update(

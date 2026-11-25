@@ -2,6 +2,7 @@ import { Arg, Authorized, Ctx, ID, Query, Resolver } from "type-graphql";
 import { UserActions } from "../../../database/entities/user/user-actions";
 import { AppError } from "../../../middlewares/error-handler";
 import { Context, Roles } from "../../../types/types";
+import { requireUser } from "../../../utils/current-user";
 
 @Resolver(UserActions)
 export class UserActionsResolver {
@@ -11,10 +12,7 @@ export class UserActionsResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context
     ): Promise<UserActions[]> {
-        const currentUser = context.user;
-        if (!currentUser) {
-            throw new AppError("Non authentifié", 401, "UnauthorizedError");
-        }
+        const currentUser = await requireUser(context);
         if (id !== currentUser.id && currentUser.role !== Roles.Admin) {
             throw new AppError("Non autorisé", 403, "ForbiddenError");
         }

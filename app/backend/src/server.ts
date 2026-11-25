@@ -2,12 +2,11 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import Cookies from "cookies";
 import dotenv from "dotenv";
-import { GraphQLFormattedError } from "graphql";
-import { buildSchema, ArgumentValidationError } from "type-graphql";
+import { buildSchema } from "type-graphql";
 import { dataSource } from "./database/config/datasource";
 import { AuthResolver } from "./graphql/resolvers/user/auth-resolver";
 import { customAuthChecker } from "./middlewares/auth-checker";
-import { AppError } from "./middlewares/error-handler";
+import { formatError } from "./middlewares/format-error";
 import { createAdmin } from "./scripts/create-admin";
 import { seedTitles } from "./scripts/seed-titles";
 import { CategoryResolver } from "./graphql/resolvers/category/category-resolver";
@@ -29,20 +28,18 @@ import { SiteBannersResolver } from "./graphql/resolvers/banner/site-banner-reso
 import { StatsResolver } from "./graphql/resolvers/stats/stats-resolver";
 import { PrivacyResolver } from "./graphql/resolvers/user/privacy-resolver";
 import { createLoaders } from "./graphql/dataloaders";
-import { whoami } from "./services/auth-service";
-import { User } from "./database/entities/user/user";
+import { createUserResolver } from "./utils/current-user";
+import { Context } from "./types/types";
 import { getClientIp } from "./utils/client-ip";
 
 dotenv.config(); // Load environment variables from .env file
 
-// Check that COOKIE_SECRET is defined
-if (!process.env.COOKIE_SECRET) {
-    throw new Error("COOKIE_SECRET is not defined in environment variables.");
-}
-
-// Check that APP_PORT is defined
-if (!process.env.APP_PORT) {
-    throw new Error("APP_PORT is not defined in environment variables.");
+// Variables indispensables : échouer au démarrage plutôt qu'au premier
+// login (JWT_SECRET n'était vérifié qu'à la signature du jeton).
+for (const name of ["COOKIE_SECRET", "JWT_SECRET", "APP_PORT"]) {
+    if (!process.env[name]) {
+        throw new Error(`${name} is not defined in environment variables.`);
+    }
 }
 
 (async () => {
@@ -92,52 +89,7 @@ if (!process.env.APP_PORT) {
             emitSchemaFile: process.env.NODE_ENV !== "production",
         });
 
-        //Create instance of ApolloServer with the schema
-        const server = new ApolloServer({
-            schema,
-            formatError: (
-                formattedError: GraphQLFormattedError,
-                error: unknown,
-            ): GraphQLFormattedError => {
-                // Check if the error is an instance of AppError
-                if (error instanceof AppError) {
-                    // Customize the format
-                    return {
-                        message: error.message,
-                        extensions: {
-                            code: error.errorType || "INTERNAL_SERVER_ERROR",
-                            statusCode: error.statusCode,
-                            additionalInfo: error.additionalInfo,
-                        },
-                    };
-                }
-
-                // Manage validation errors (class-validator)
-                if (Array.isArray((error as any).validationErrors)) {
-                    return {
-                        message: "Erreur de validation",
-                        extensions: {
-                            code: "BAD_USER_INPUT",
-                            validationErrors: (error as any).validationErrors,
-                        },
-                    };
-                }
-
-                // Manage validation errors (type-graphql)
-                if (error instanceof ArgumentValidationError) {
-                    return {
-                        message: "Données invalides",
-                        extensions: {
-                            code: "BAD_USER_INPUT",
-                            originalError: error.message,
-                        },
-                    };
-                }
-
-                // For other errors, you can handle them differently
-                return formattedError;
-            },
-        });
+        const server = new ApolloServer<Context>({ schema, formatError });
 
         // Start the server
         const { url } = await startStandaloneServer(server, {
@@ -150,24 +102,17 @@ if (!process.env.APP_PORT) {
                 // silencieux du login). On lui indique explicitement l'état
                 // sécurisé, aligné sur la condition de `setAuthCookie`.
                 const cookies = new Cookies(req, res, {
-                    keys: [process.env.COOKIE_SECRET || "default-secret"],
+                    keys: [process.env.COOKIE_SECRET as string],
                     secure: process.env.NODE_ENV === "production",
                 });
 
                 const ip = getClientIp(req);
 
-                // Résolution paresseuse + mémoïsée de l'utilisateur :
-                // partagée par tous les loaders dépendant de l'utilisateur,
-                // évite N appels whoami() sur le catalogue public.
-                let userPromise: Promise<User | null | undefined> | undefined;
-                const getUser = () => {
-                    if (!userPromise) {
-                        userPromise = whoami(cookies).catch(() => null);
-                    }
-                    return userPromise;
-                };
+                // Résolution paresseuse + mémoïsée de l'utilisateur, partagée
+                // par l'authChecker, les resolvers et les DataLoaders.
+                const getUser = createUserResolver(cookies);
 
-                return { cookies, ip, loaders: createLoaders(getUser) };
+                return { cookies, ip, getUser, loaders: createLoaders(getUser) };
             },
         });
 

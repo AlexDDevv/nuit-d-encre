@@ -20,6 +20,7 @@ import { AppError } from "../../../middlewares/error-handler"
 import { Category } from "../../../database/entities/category/category"
 import { CreateCategoryInput } from "../../inputs/create/category/create-category-input"
 import { UpdateCategoryInput } from "../../inputs/update/category/update-category-input"
+import { requireUser } from "../../../utils/current-user"
 
 /**
  * CategoryResolver
@@ -37,20 +38,12 @@ export class CategoryResolver {
 	 */
 	@Query(() => [Category])
 	async categories(): Promise<Category[]> {
-		try {
-			return await Category.find({
-				relations: {
-					books: true,
-					createdBy: true,
-				},
-			})
-		} catch {
-			throw new AppError(
-				"Failed to fetch categories",
-				500,
-				"InternalServerError"
-			)
-		}
+		return await Category.find({
+			relations: {
+				books: true,
+				createdBy: true,
+			},
+		})
 	}
 
 	/**
@@ -64,28 +57,19 @@ export class CategoryResolver {
 	 */
 	@Query(() => Category, { nullable: true })
 	async category(@Arg("id", () => ID) id: string): Promise<Category | null> {
-		try {
-			const category = await Category.findOne({
-				where: { id },
-				relations: {
-					books: true,
-					createdBy: true,
-				},
-			})
+		const category = await Category.findOne({
+			where: { id },
+			relations: {
+				books: true,
+				createdBy: true,
+			},
+		})
 
-			if (!category) {
-				throw new AppError("Category not found", 404, "NotFoundError")
-			}
-
-			return category
-		} catch (error) {
-			if (error instanceof AppError) throw error;
-			throw new AppError(
-				"Failed to fetch category",
-				500,
-				"InternalServerError"
-			)
+		if (!category) {
+			throw new AppError("Category not found", 404, "NotFoundError")
 		}
+
+		return category
 	}
 
 	/**
@@ -105,26 +89,13 @@ export class CategoryResolver {
 		data: CreateCategoryInput,
 		@Ctx() context: Context
 	): Promise<Category> {
-		try {
-			const user = context.user
+		const user = await requireUser(context);
 
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
+		const newCategory = new Category()
+		Object.assign(newCategory, data, { createdBy: user })
 
-			const newCategory = new Category()
-			Object.assign(newCategory, data, { createdBy: user })
-
-			await newCategory.save()
-			return newCategory
-		} catch (error) {
-			if (error instanceof AppError) throw error;
-			throw new AppError(
-				"Failed to create category",
-				500,
-				"InternalServerError"
-			)
-		}
+		await newCategory.save()
+		return newCategory
 	}
 
 	/**
@@ -132,7 +103,6 @@ export class CategoryResolver {
 	 *
 	 * @param id - The ID of the category to update.
 	 * @param data - The input data containing the updated category name.
-	 * @param context - The context object that contains the currently authenticated user.
 	 *
 	 * @returns A Promise that resolves to the updated Category object, or null if the category could not be found or updated.
 	 *
@@ -144,40 +114,23 @@ export class CategoryResolver {
 		@Arg("id", () => ID) id: string,
 		@Arg("data", () => UpdateCategoryInput)
 		data: UpdateCategoryInput,
-		@Ctx() context: Context
 	): Promise<Category | null> {
-		try {
-			const user = context.user
+		const category = await Category.findOneBy({ id })
 
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
-
-			const category = await Category.findOneBy({ id })
-
-			if (!category) {
-				throw new AppError("Category not found", 404, "NotFoundError")
-			}
-
-			Object.assign(category, data)
-			await category.save()
-
-			return category
-		} catch (error) {
-			if (error instanceof AppError) throw error;
-			throw new AppError(
-				"Failed to update category",
-				500,
-				"InternalServerError"
-			)
+		if (!category) {
+			throw new AppError("Category not found", 404, "NotFoundError")
 		}
+
+		Object.assign(category, data)
+		await category.save()
+
+		return category
 	}
 
 	/**
 	 * Mutation to delete an existing book category.
 	 *
 	 * @param id - The ID of the category to delete.
-	 * @param context - The context object that contains the currently authenticated user.
 	 *
 	 * @returns A Promise that resolves to the deleted Category object, or null if the category could not be found or deleted.
 	 *
@@ -187,32 +140,16 @@ export class CategoryResolver {
 	@Mutation(() => Category, { nullable: true })
 	async deleteCategory(
 		@Arg("id", () => ID) id: string,
-		@Ctx() context: Context
 	): Promise<Category | null> {
-		try {
-			const user = context.user
+		const category = await Category.findOneBy({ id })
 
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
-
-			const category = await Category.findOneBy({ id })
-
-			if (!category) {
-				throw new AppError("Category not found", 404, "NotFoundError")
-			}
-
-			await category.remove()
-			category.id = id
-
-			return category
-		} catch (error) {
-			if (error instanceof AppError) throw error;
-			throw new AppError(
-				"Failed to delete category",
-				500,
-				"InternalServerError"
-			)
+		if (!category) {
+			throw new AppError("Category not found", 404, "NotFoundError")
 		}
+
+		await category.remove()
+		category.id = id
+
+		return category
 	}
 }

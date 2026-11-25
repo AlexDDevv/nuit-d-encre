@@ -6,6 +6,7 @@ import { CloudinaryService } from "../../../services/cloudinary.service";
 import { eraseUserAccount } from "../../../services/rgpd/erasure-service";
 import { exportUserData } from "../../../services/rgpd/export-service";
 import { Context } from "../../../types/types";
+import { requireUser } from "../../../utils/current-user";
 
 /**
  * Resolver des droits RGPD self-service de l'utilisateur connecté :
@@ -18,8 +19,7 @@ export class PrivacyResolver {
     @Authorized()
     @Query(() => String)
     async exportMyData(@Ctx() context: Context): Promise<string> {
-        const user = context.user;
-        if (!user) throw new AppError("User not found", 404, "NotFoundError");
+        const user = await requireUser(context);
         return exportUserData(user.id);
     }
 
@@ -30,9 +30,7 @@ export class PrivacyResolver {
         @Arg("password", () => String, { nullable: true })
         password?: string | null,
     ): Promise<boolean> {
-        const contextUser = context.user;
-        if (!contextUser)
-            throw new AppError("User not found", 404, "NotFoundError");
+        const contextUser = await requireUser(context);
 
         // Recharge depuis la BDD pour disposer du hash (non exposé en GraphQL).
         const user = await User.findOne({ where: { id: contextUser.id } });

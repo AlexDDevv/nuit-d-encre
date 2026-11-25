@@ -5,7 +5,7 @@ import { BookReview } from "../../../database/entities/book/bookReview";
 import { UserBook } from "../../../database/entities/user/user-book";
 import { Category } from "../../../database/entities/category/category";
 import { BookSearchResult } from "../../types/book-search-result";
-import { whoami } from "../../../services/auth-service";
+import { getCurrentUser } from "../../../utils/current-user";
 import { OpenLibraryService } from "../../../services/books/open-library.service";
 import { GoogleBooksService } from "../../../services/books/google-books.service";
 import { CloudinaryService } from "../../../services/cloudinary.service";
@@ -19,6 +19,7 @@ import {
 } from "../../../utils/author-factory";
 import { Author } from "../../../database/entities/author/author";
 import { enforceRateLimit, tryRateLimit } from "../../../middlewares/rate-limiter";
+import { requireUser } from "../../../utils/current-user";
 
 const DB_THRESHOLD = 5;
 const EXTERNAL_LIMIT = 5;
@@ -93,16 +94,9 @@ export class BookSearchResolver {
                 });
             }
 
-            // La query n'est pas @Authorized : on résout l'utilisateur via le
-            // cookie pour pouvoir exposer isInLibrary sur les résultats.
-            let user = context.user;
-            if (!user) {
-                try {
-                    user = (await whoami(context.cookies)) ?? undefined;
-                } catch {
-                    user = undefined;
-                }
-            }
+            // Query publique : isInLibrary n'est calculé que pour un visiteur
+            // connecté.
+            const user = await getCurrentUser(context);
             if (user) {
                 const libRows = await UserBook.createQueryBuilder("ub")
                     .select("ub.bookId", "bookId")
@@ -262,8 +256,7 @@ export class BookSearchResolver {
     ): Promise<Book> {
         enforceRateLimit("importBook", ctx.ip);
 
-        const user = ctx.user;
-        if (!user) throw new AppError("User not found", 404, "NotFoundError");
+        const user = await requireUser(ctx);
 
         // Vérif doublon
         const existing = await Book.findOne({ where: { isbn13 } });

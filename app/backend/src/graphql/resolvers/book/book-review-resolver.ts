@@ -34,6 +34,7 @@ import { BookReview } from "../../../database/entities/book/bookReview";
 import { BookReviewsResult } from "../../../database/filteredResults/books/book-reviews-result";
 import { CreateBookReviewInput } from "../../inputs/create/book/create-book-review-input";
 import { UpdateBookReviewInput } from "../../inputs/update/book/update-book-review-input";
+import { requireUser } from "../../../utils/current-user";
 
 /**
  * BookReview Resolver
@@ -74,34 +75,26 @@ export class BookReviewsResolver {
     async bookReview(
         @Arg("id", () => ID) id: string,
     ): Promise<BookReview | null> {
-        try {
-            const review = await BookReview.findOne({
-                where: { id },
-                relations: {
-                    user: true,
-                    book: true,
-                    comments: true,
+        const review = await BookReview.findOne({
+            where: { id },
+            relations: {
+                user: true,
+                book: true,
+                comments: true,
+            },
+            // Chronological comments (spec §1, decision 1).
+            order: {
+                comments: {
+                    createdAt: "ASC",
                 },
-                // Chronological comments (spec §1, decision 1).
-                order: {
-                    comments: {
-                        createdAt: "ASC",
-                    },
-                },
-            });
+            },
+        });
 
-            if (!review) {
-                throw new AppError("Review not found", 404, "NotFoundError");
-            }
-
-            return review;
-        } catch {
-            throw new AppError(
-                "Failed to fetch review",
-                500,
-                "InternalServerError",
-            );
+        if (!review) {
+            throw new AppError("Review not found", 404, "NotFoundError");
         }
+
+        return review;
     }
 
     /**
@@ -148,96 +141,87 @@ export class BookReviewsResolver {
         sortBy: BookReviewSortBy,
     ): Promise<BookReviewsResult> {
         ({ page, limit } = clampPagination(page, limit));
-        try {
-            // Verify book exists
-            const book = await Book.findOne({ where: { id: bookId } });
-            if (!book) {
-                throw new AppError("Book not found", 404, "NotFoundError");
-            }
+        // Verify book exists
+        const book = await Book.findOne({ where: { id: bookId } });
+        if (!book) {
+            throw new AppError("Book not found", 404, "NotFoundError");
+        }
 
-            const totalCount = await BookReview.count({
-                where: { book: { id: bookId } },
-            });
+        const totalCount = await BookReview.count({
+            where: { book: { id: bookId } },
+        });
 
-            let reviews: BookReview[];
+        let reviews: BookReview[];
 
-            if (sortBy === BookReviewSortBy.HELPFUL) {
-                const rawIds = await BookReview.createQueryBuilder("review")
-                    .select("review.id", "id")
-                    .addSelect(
-                        `(SELECT COUNT(*) FROM "book_review_vote" "bv" WHERE "bv"."reviewId" = "review"."id" AND "bv"."isHelpful" = true)`,
-                        "helpfulCount",
-                    )
-                    .where("review.bookId = :bookId", { bookId })
-                    .orderBy('"helpfulCount"', "DESC")
-                    .addOrderBy("review.createdAt", "DESC")
-                    .limit(limit)
-                    .offset((page - 1) * limit)
-                    .getRawMany();
+        if (sortBy === BookReviewSortBy.HELPFUL) {
+            const rawIds = await BookReview.createQueryBuilder("review")
+                .select("review.id", "id")
+                .addSelect(
+                    `(SELECT COUNT(*) FROM "book_review_vote" "bv" WHERE "bv"."reviewId" = "review"."id" AND "bv"."isHelpful" = true)`,
+                    "helpfulCount",
+                )
+                .where("review.bookId = :bookId", { bookId })
+                .orderBy('"helpfulCount"', "DESC")
+                .addOrderBy("review.createdAt", "DESC")
+                .limit(limit)
+                .offset((page - 1) * limit)
+                .getRawMany();
 
-                const ids: string[] = rawIds.map((r: any) => String(r.id));
+            const ids: string[] = rawIds.map((r: any) => String(r.id));
 
-                // Step 2 - fetch full entities for those IDs (no skip/take = no DISTINCT pagination).
-                if (ids.length === 0) {
-                    reviews = [];
-                } else {
-                    // TODO(perf): votes × comments double leftJoinAndSelect is multiplicative — revisit if engagement grows
-                    const reviewsData = await BookReview.createQueryBuilder(
-                        "review",
-                    )
-                        .leftJoinAndSelect("review.user", "user")
-                        .leftJoinAndSelect("review.votes", "votes")
-                        .leftJoinAndSelect("review.comments", "comments")
-                        .whereInIds(ids)
-                        .addOrderBy("comments.createdAt", "ASC")
-                        .getMany();
-
-                    // Restore the sorted order from step 1.
-                    reviews = ids
-                        .map((id) => reviewsData.find((r) => r.id === id)!)
-                        .filter(Boolean);
-                }
+            // Step 2 - fetch full entities for those IDs (no skip/take = no DISTINCT pagination).
+            if (ids.length === 0) {
+                reviews = [];
             } else {
                 // TODO(perf): votes × comments double leftJoinAndSelect is multiplicative — revisit if engagement grows
-                const query = BookReview.createQueryBuilder("review")
+                const reviewsData = await BookReview.createQueryBuilder(
+                    "review",
+                )
                     .leftJoinAndSelect("review.user", "user")
                     .leftJoinAndSelect("review.votes", "votes")
                     .leftJoinAndSelect("review.comments", "comments")
-                    .where("review.bookId = :bookId", { bookId });
+                    .whereInIds(ids)
+                    .addOrderBy("comments.createdAt", "ASC")
+                    .getMany();
 
-                switch (sortBy) {
-                    case BookReviewSortBy.OLDEST:
-                        query.orderBy("review.createdAt", "ASC");
-                        break;
-                    case BookReviewSortBy.RATING_HIGH:
-                        query.orderBy("review.rating", "DESC");
-                        break;
-                    case BookReviewSortBy.RATING_LOW:
-                        query.orderBy("review.rating", "ASC");
-                        break;
-                    case BookReviewSortBy.RECENT:
-                    default:
-                        query.orderBy("review.createdAt", "DESC");
-                        break;
-                }
+                // Restore the sorted order from step 1.
+                reviews = ids
+                    .map((id) => reviewsData.find((r) => r.id === id)!)
+                    .filter(Boolean);
+            }
+        } else {
+            // TODO(perf): votes × comments double leftJoinAndSelect is multiplicative — revisit if engagement grows
+            const query = BookReview.createQueryBuilder("review")
+                .leftJoinAndSelect("review.user", "user")
+                .leftJoinAndSelect("review.votes", "votes")
+                .leftJoinAndSelect("review.comments", "comments")
+                .where("review.bookId = :bookId", { bookId });
 
-                // Chronological comments (spec §1, decision 1) — appended after
-                // the review-level orderBy so it does not affect review sorting.
-                query.addOrderBy("comments.createdAt", "ASC");
-
-                query.skip((page - 1) * limit).take(limit);
-                reviews = await query.getMany();
+            switch (sortBy) {
+                case BookReviewSortBy.OLDEST:
+                    query.orderBy("review.createdAt", "ASC");
+                    break;
+                case BookReviewSortBy.RATING_HIGH:
+                    query.orderBy("review.rating", "DESC");
+                    break;
+                case BookReviewSortBy.RATING_LOW:
+                    query.orderBy("review.rating", "ASC");
+                    break;
+                case BookReviewSortBy.RECENT:
+                default:
+                    query.orderBy("review.createdAt", "DESC");
+                    break;
             }
 
-            return { reviews, totalCount, page, limit };
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch reviews",
-                500,
-                "InternalServerError",
-            );
+            // Chronological comments (spec §1, decision 1) — appended after
+            // the review-level orderBy so it does not affect review sorting.
+            query.addOrderBy("comments.createdAt", "ASC");
+
+            query.skip((page - 1) * limit).take(limit);
+            reviews = await query.getMany();
         }
+
+        return { reviews, totalCount, page, limit };
     }
 
     /**
@@ -272,32 +256,20 @@ export class BookReviewsResolver {
         @Arg("bookId", () => ID) bookId: string,
         @Ctx() context: Context,
     ): Promise<BookReview | null> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const review = await BookReview.findOne({
+            where: {
+                user: { id: user.id },
+                book: { id: bookId },
+            },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            const review = await BookReview.findOne({
-                where: {
-                    user: { id: user.id },
-                    book: { id: bookId },
-                },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
-
-            return review;
-        } catch {
-            throw new AppError(
-                "Failed to fetch review",
-                500,
-                "InternalServerError",
-            );
-        }
+        return review;
     }
 
     /**
@@ -336,84 +308,69 @@ export class BookReviewsResolver {
         @Arg("data", () => CreateBookReviewInput) data: CreateBookReviewInput,
         @Ctx() context: Context,
     ): Promise<BookReview> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        // Check if book exists
+        const book = await Book.findOne({
+            where: { id: data.bookId },
+        });
 
-            // Check if book exists
-            const book = await Book.findOne({
-                where: { id: data.bookId },
-            });
+        if (!book) {
+            throw new AppError("Book not found", 404, "NotFoundError");
+        }
 
-            if (!book) {
-                throw new AppError("Book not found", 404, "NotFoundError");
-            }
+        // Check if user has already reviewed this book
+        const existingReview = await BookReview.findOne({
+            where: {
+                user: { id: user.id },
+                book: { id: book.id },
+            },
+        });
 
-            // Check if user has already reviewed this book
-            const existingReview = await BookReview.findOne({
-                where: {
-                    user: { id: user.id },
-                    book: { id: book.id },
-                },
-            });
-
-            if (existingReview) {
-                throw new AppError(
-                    "You have already reviewed this book. Use updateBookReview to modify your review.",
-                    409,
-                    "ConflictError",
-                );
-            }
-
-            // Create new review
-            const newReview = new BookReview();
-            newReview.rating = data.rating;
-            newReview.reviewText = data.reviewText;
-            newReview.user = user;
-            newReview.book = book;
-
-            await newReview.save();
-
-            // Grant XP for writing a review
-            await grantXpService(user, UserActionType.REVIEW_CREATED, {
-                xpKey: xpKeys.book(book.id),
-                targetId: newReview.id,
-                metadata: {
-                    bookTitle: book.title,
-                    rating: data.rating,
-                },
-            });
-
-            // Bonus XP for detailed reviews (>200 characters)
-            if (data.reviewText && data.reviewText.length > 200) {
-                await grantXpService(
-                    user,
-                    UserActionType.DETAILED_REVIEW_BONUS,
-                    {
-                        xpKey: xpKeys.book(book.id),
-                        targetId: newReview.id,
-                        metadata: {
-                            bookTitle: book.title,
-                            textLength: data.reviewText.length,
-                        },
-                    },
-                );
-            }
-
-            return newReview;
-        } catch (error) {
-            if (error instanceof AppError) {
-                throw error;
-            }
+        if (existingReview) {
             throw new AppError(
-                "Failed to create review",
-                500,
-                "InternalServerError",
+                "You have already reviewed this book. Use updateBookReview to modify your review.",
+                409,
+                "ConflictError",
             );
         }
+
+        // Create new review
+        const newReview = new BookReview();
+        newReview.rating = data.rating;
+        newReview.reviewText = data.reviewText;
+        newReview.user = user;
+        newReview.book = book;
+
+        await newReview.save();
+
+        // Grant XP for writing a review
+        await grantXpService(user, UserActionType.REVIEW_CREATED, {
+            xpKey: xpKeys.book(book.id),
+            targetId: newReview.id,
+            metadata: {
+                bookTitle: book.title,
+                rating: data.rating,
+            },
+        });
+
+        // Bonus XP for detailed reviews (>200 characters)
+        if (data.reviewText && data.reviewText.length > 200) {
+            await grantXpService(
+                user,
+                UserActionType.DETAILED_REVIEW_BONUS,
+                {
+                    xpKey: xpKeys.book(book.id),
+                    targetId: newReview.id,
+                    metadata: {
+                        bookTitle: book.title,
+                        textLength: data.reviewText.length,
+                    },
+                },
+            );
+        }
+
+        return newReview;
     }
 
     /**
@@ -452,56 +409,41 @@ export class BookReviewsResolver {
         @Arg("data", () => UpdateBookReviewInput) data: UpdateBookReviewInput,
         @Ctx() context: Context,
     ): Promise<BookReview> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const review = await BookReview.findOne({
+            where: { id: data.id },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            const review = await BookReview.findOne({
-                where: { id: data.id },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
+        if (!review) {
+            throw new AppError("Review not found", 404, "NotFoundError");
+        }
 
-            if (!review) {
-                throw new AppError("Review not found", 404, "NotFoundError");
-            }
-
-            // Check authorization
-            if (!isOwnerOrAdmin(review.user?.id ?? "", user)) {
-                throw new AppError(
-                    "Not authorized to update this review",
-                    403,
-                    "ForbiddenError",
-                );
-            }
-
-            // Update fields if provided
-            if (data.rating !== undefined) {
-                review.rating = data.rating;
-            }
-
-            if (data.reviewText !== undefined) {
-                review.reviewText = data.reviewText;
-            }
-
-            await review.save();
-
-            return review;
-        } catch (error) {
-            if (error instanceof AppError) {
-                throw error;
-            }
+        // Check authorization
+        if (!isOwnerOrAdmin(review.user?.id ?? "", user)) {
             throw new AppError(
-                "Failed to update review",
-                500,
-                "InternalServerError",
+                "Not authorized to update this review",
+                403,
+                "ForbiddenError",
             );
         }
+
+        // Update fields if provided
+        if (data.rating !== undefined) {
+            review.rating = data.rating;
+        }
+
+        if (data.reviewText !== undefined) {
+            review.reviewText = data.reviewText;
+        }
+
+        await review.save();
+
+        return review;
     }
 
     /**
@@ -533,49 +475,34 @@ export class BookReviewsResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context,
     ): Promise<BookReview> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const review = await BookReview.findOne({
+            where: { id },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            const review = await BookReview.findOne({
-                where: { id },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
+        if (!review) {
+            throw new AppError("Review not found", 404, "NotFoundError");
+        }
 
-            if (!review) {
-                throw new AppError("Review not found", 404, "NotFoundError");
-            }
-
-            // Check authorization
-            if (!isOwnerOrAdmin(review.user?.id ?? "", user)) {
-                throw new AppError(
-                    "Not authorized to delete this review",
-                    403,
-                    "ForbiddenError",
-                );
-            }
-
-            const reviewId = review.id;
-            await review.remove();
-            review.id = reviewId;
-
-            return review;
-        } catch (error) {
-            if (error instanceof AppError) {
-                throw error;
-            }
+        // Check authorization
+        if (!isOwnerOrAdmin(review.user?.id ?? "", user)) {
             throw new AppError(
-                "Failed to delete review",
-                500,
-                "InternalServerError",
+                "Not authorized to delete this review",
+                403,
+                "ForbiddenError",
             );
         }
+
+        const reviewId = review.id;
+        await review.remove();
+        review.id = reviewId;
+
+        return review;
     }
 
     /* ========================================================================

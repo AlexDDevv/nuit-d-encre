@@ -23,6 +23,7 @@ import { BookReviewVote } from "../../../database/entities/book/bookReviewVote";
 import { BookReviewVoteResult } from "../../../database/filteredResults/books/book-review-vote-result";
 import { CreateBookReviewVoteInput } from "../../inputs/create/book/create-book-review-vote-input";
 import { BookReview } from "../../../database/entities/book/bookReview";
+import { requireUser } from "../../../utils/current-user";
 
 /**
  * BookReviewVote Resolver
@@ -66,32 +67,20 @@ export class BookReviewVotesResolver {
         @Arg("reviewId", () => ID) reviewId: string,
         @Ctx() context: Context
     ): Promise<BookReviewVote | null> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const vote = await BookReviewVote.findOne({
+            where: {
+                user: { id: user.id },
+                review: { id: reviewId },
+            },
+            relations: {
+                user: true,
+                review: true,
+            },
+        });
 
-            const vote = await BookReviewVote.findOne({
-                where: {
-                    user: { id: user.id },
-                    review: { id: reviewId },
-                },
-                relations: {
-                    user: true,
-                    review: true,
-                },
-            });
-
-            return vote;
-        } catch {
-            throw new AppError(
-                "Failed to fetch vote",
-                500,
-                "InternalServerError"
-            );
-        }
+        return vote;
     }
 
     /**
@@ -141,97 +130,82 @@ export class BookReviewVotesResolver {
         @Arg("data", () => CreateBookReviewVoteInput) data: CreateBookReviewVoteInput,
         @Ctx() context: Context
     ): Promise<BookReviewVoteResult> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        // Check if review exists
+        const review = await BookReview.findOne({
+            where: { id: data.reviewId },
+            relations: {
+                user: true,
+            },
+        });
 
-            // Check if review exists
-            const review = await BookReview.findOne({
-                where: { id: data.reviewId },
-                relations: {
-                    user: true,
-                },
-            });
+        if (!review) {
+            throw new AppError("Review not found", 404, "NotFoundError");
+        }
 
-            if (!review) {
-                throw new AppError("Review not found", 404, "NotFoundError");
-            }
-
-            // Prevent users from voting on their own reviews
-            if (review.user?.id === user.id) {
-                throw new AppError(
-                    "You cannot vote on your own review",
-                    403,
-                    "ForbiddenError"
-                );
-            }
-
-            // Check if user has already voted on this review
-            const existingVote = await BookReviewVote.findOne({
-                where: {
-                    user: { id: user.id },
-                    review: { id: review.id },
-                },
-                relations: {
-                    user: true,
-                    review: true,
-                },
-            });
-
-            let vote: BookReviewVote;
-            let action: "created" | "updated";
-
-            // If vote exists, update it
-            if (existingVote) {
-                existingVote.isHelpful = data.isHelpful;
-                await existingVote.save();
-                vote = existingVote;
-                action = "updated";
-            } else {
-                // Otherwise, create new vote
-                const newVote = new BookReviewVote();
-                newVote.isHelpful = data.isHelpful;
-                newVote.user = user;
-                newVote.review = review;
-
-                await newVote.save();
-                vote = newVote;
-                action = "created";
-
-                // Grant XP to the review author when their review receives a helpful vote
-                if (data.isHelpful && review.user) {
-                    await grantXpService(
-                        review.user,
-                        UserActionType.REVIEW_VOTED_HELPFUL,
-                        {
-                            xpKey: xpKeys.helpfulVote(review.id, user.id),
-                            targetId: review.id,
-                            metadata: {
-                                voterId: user.id,
-                                voterName: user.userName || "Unknown",
-                            },
-                        }
-                    );
-                }
-            }
-
-            return {
-                vote,
-                action,
-            };
-        } catch (error) {
-            if (error instanceof AppError) {
-                throw error;
-            }
+        // Prevent users from voting on their own reviews
+        if (review.user?.id === user.id) {
             throw new AppError(
-                "Failed to vote on review",
-                500,
-                "InternalServerError"
+                "You cannot vote on your own review",
+                403,
+                "ForbiddenError"
             );
         }
+
+        // Check if user has already voted on this review
+        const existingVote = await BookReviewVote.findOne({
+            where: {
+                user: { id: user.id },
+                review: { id: review.id },
+            },
+            relations: {
+                user: true,
+                review: true,
+            },
+        });
+
+        let vote: BookReviewVote;
+        let action: "created" | "updated";
+
+        // If vote exists, update it
+        if (existingVote) {
+            existingVote.isHelpful = data.isHelpful;
+            await existingVote.save();
+            vote = existingVote;
+            action = "updated";
+        } else {
+            // Otherwise, create new vote
+            const newVote = new BookReviewVote();
+            newVote.isHelpful = data.isHelpful;
+            newVote.user = user;
+            newVote.review = review;
+
+            await newVote.save();
+            vote = newVote;
+            action = "created";
+
+            // Grant XP to the review author when their review receives a helpful vote
+            if (data.isHelpful && review.user) {
+                await grantXpService(
+                    review.user,
+                    UserActionType.REVIEW_VOTED_HELPFUL,
+                    {
+                        xpKey: xpKeys.helpfulVote(review.id, user.id),
+                        targetId: review.id,
+                        metadata: {
+                            voterId: user.id,
+                            voterName: user.userName || "Unknown",
+                        },
+                    }
+                );
+            }
+        }
+
+        return {
+            vote,
+            action,
+        };
     }
 
     /**
@@ -264,43 +238,28 @@ export class BookReviewVotesResolver {
         @Arg("reviewId", () => ID) reviewId: string,
         @Ctx() context: Context
     ): Promise<BookReviewVote | null> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        const vote = await BookReviewVote.findOne({
+            where: {
+                user: { id: user.id },
+                review: { id: reviewId },
+            },
+            relations: {
+                user: true,
+                review: true,
+            },
+        });
 
-            const vote = await BookReviewVote.findOne({
-                where: {
-                    user: { id: user.id },
-                    review: { id: reviewId },
-                },
-                relations: {
-                    user: true,
-                    review: true,
-                },
-            });
-
-            if (!vote) {
-                throw new AppError("Vote not found", 404, "NotFoundError");
-            }
-
-            const voteId = vote.id;
-            await vote.remove();
-            vote.id = voteId;
-
-            return vote;
-        } catch (error) {
-            if (error instanceof AppError) {
-                throw error;
-            }
-            throw new AppError(
-                "Failed to remove vote",
-                500,
-                "InternalServerError"
-            );
+        if (!vote) {
+            throw new AppError("Vote not found", 404, "NotFoundError");
         }
+
+        const voteId = vote.id;
+        await vote.remove();
+        vote.id = voteId;
+
+        return vote;
     }
 
     /**
@@ -343,95 +302,80 @@ export class BookReviewVotesResolver {
         @Arg("reviewId", () => ID) reviewId: string,
         @Ctx() context: Context
     ): Promise<BookReviewVoteResult> {
-        try {
-            const user = context.user;
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError");
-            }
+        // Check if review exists
+        const review = await BookReview.findOne({
+            where: { id: reviewId },
+            relations: {
+                user: true,
+            },
+        });
 
-            // Check if review exists
-            const review = await BookReview.findOne({
-                where: { id: reviewId },
-                relations: {
-                    user: true,
-                },
-            });
+        if (!review) {
+            throw new AppError("Review not found", 404, "NotFoundError");
+        }
 
-            if (!review) {
-                throw new AppError("Review not found", 404, "NotFoundError");
-            }
-
-            // Prevent users from voting on their own reviews
-            if (review.user?.id === user.id) {
-                throw new AppError(
-                    "You cannot vote on your own review",
-                    403,
-                    "ForbiddenError"
-                );
-            }
-
-            // Check if user has already voted
-            const existingVote = await BookReviewVote.findOne({
-                where: {
-                    user: { id: user.id },
-                    review: { id: review.id },
-                },
-                relations: {
-                    user: true,
-                    review: true,
-                },
-            });
-
-            const grantHelpfulXp = () =>
-                review.user
-                    ? grantXpService(
-                          review.user,
-                          UserActionType.REVIEW_VOTED_HELPFUL,
-                          {
-                              xpKey: xpKeys.helpfulVote(review.id, user.id),
-                              targetId: review.id,
-                              metadata: {
-                                  voterId: user.id,
-                                  voterName: user.userName || "Unknown",
-                              },
-                          }
-                      )
-                    : Promise.resolve();
-
-            // If exists and is helpful, remove it (toggle off)
-            if (existingVote && existingVote.isHelpful) {
-                await existingVote.remove();
-                return { vote: null, action: "removed" };
-            }
-
-            // If exists and is not helpful, change to helpful
-            if (existingVote) {
-                existingVote.isHelpful = true;
-                await existingVote.save();
-                await grantHelpfulXp();
-                return { vote: existingVote, action: "updated" };
-            }
-
-            // If doesn't exist, create helpful vote
-            const newVote = new BookReviewVote();
-            newVote.isHelpful = true;
-            newVote.user = user;
-            newVote.review = review;
-
-            await newVote.save();
-            await grantHelpfulXp();
-
-            return { vote: newVote, action: "created" };
-        } catch (error) {
-            if (error instanceof AppError) {
-                throw error;
-            }
+        // Prevent users from voting on their own reviews
+        if (review.user?.id === user.id) {
             throw new AppError(
-                "Failed to toggle helpful vote",
-                500,
-                "InternalServerError"
+                "You cannot vote on your own review",
+                403,
+                "ForbiddenError"
             );
         }
+
+        // Check if user has already voted
+        const existingVote = await BookReviewVote.findOne({
+            where: {
+                user: { id: user.id },
+                review: { id: review.id },
+            },
+            relations: {
+                user: true,
+                review: true,
+            },
+        });
+
+        const grantHelpfulXp = () =>
+            review.user
+                ? grantXpService(
+                      review.user,
+                      UserActionType.REVIEW_VOTED_HELPFUL,
+                      {
+                          xpKey: xpKeys.helpfulVote(review.id, user.id),
+                          targetId: review.id,
+                          metadata: {
+                              voterId: user.id,
+                              voterName: user.userName || "Unknown",
+                          },
+                      }
+                  )
+                : Promise.resolve();
+
+        // If exists and is helpful, remove it (toggle off)
+        if (existingVote && existingVote.isHelpful) {
+            await existingVote.remove();
+            return { vote: null, action: "removed" };
+        }
+
+        // If exists and is not helpful, change to helpful
+        if (existingVote) {
+            existingVote.isHelpful = true;
+            await existingVote.save();
+            await grantHelpfulXp();
+            return { vote: existingVote, action: "updated" };
+        }
+
+        // If doesn't exist, create helpful vote
+        const newVote = new BookReviewVote();
+        newVote.isHelpful = true;
+        newVote.user = user;
+        newVote.review = review;
+
+        await newVote.save();
+        await grantHelpfulXp();
+
+        return { vote: newVote, action: "created" };
     }
 }

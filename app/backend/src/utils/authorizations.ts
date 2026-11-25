@@ -1,16 +1,17 @@
-import { Context, Roles } from "../types/types"
+import { User } from "../database/entities/user/user"
+import { Roles } from "../types/types"
 
 /**
  * Checks if the current user is either the owner of the resource or has admin role.
  *
  * @param ownerId - The user ID of the resource owner.
- * @param currentUser - The currently authenticated user from the GraphQL context.
+ * @param currentUser - The currently authenticated user (`requireUser(context)`).
  *
  * @returns `true` if the current user is the owner or has an admin role; otherwise `false`.
  *
  * @example
  * ```ts
- * const isAuthorized = isOwnerOrAdmin(book.user.id, context.user)
+ * const isAuthorized = isOwnerOrAdmin(book.user.id, await requireUser(context))
  * if (!isAuthorized) {
  *   throw new AppError("Not authorized", 403, "ForbiddenError")
  * }
@@ -18,7 +19,7 @@ import { Context, Roles } from "../types/types"
  */
 export function isOwnerOrAdmin(
 	ownerId: string,
-	currentUser: Context["user"]
+	currentUser: User | null | undefined
 ): boolean {
 	if (!currentUser) return false
 	return ownerId === currentUser.id || currentUser.role === Roles.Admin

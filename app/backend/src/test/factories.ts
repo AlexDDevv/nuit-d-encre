@@ -12,10 +12,10 @@ export function makeUser(id: string, role: UserRole = Roles.User): User {
     return user;
 }
 
-/** Contexte GraphQL minimal : seuls `user` et `cookies` sont exploités par les resolvers testés. */
+/** Contexte GraphQL minimal : `getUser` renvoie l'utilisateur fourni (ou `null` pour un visiteur). */
 export function makeContext(user: User | null): Context {
     return {
-        user,
+        getUser: jest.fn().mockResolvedValue(user),
         ip: "127.0.0.1",
         cookies: { get: jest.fn(), set: jest.fn() },
         loaders: {},

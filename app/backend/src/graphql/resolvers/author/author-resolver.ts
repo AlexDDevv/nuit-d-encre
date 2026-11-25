@@ -31,6 +31,7 @@ import { isOwnerOrAdmin } from "../../../utils/authorizations"
 import { AuthorsResult } from "../../../database/filteredResults/authors/authors-result"
 import { AuthorsQueryInput } from "../../queries/authors/authors-query-input"
 import { Book } from "../../../database/entities/book/book"
+import { requireUser } from "../../../utils/current-user"
 
 function isAuthorIncomplete(author: Author): boolean {
     return (
@@ -149,61 +150,52 @@ export class AuthorsResolver {
         @Arg("filters", () => AuthorsQueryInput, { nullable: true })
         filters: AuthorsQueryInput
     ): Promise<AuthorsResult> {
-        try {
-            const {
-                search,
-                page = 1,
-                limit = 12,
-            } = filters || {}
+        const {
+            search,
+            page = 1,
+            limit = 12,
+        } = filters || {}
 
-            // Retrieve the base query with all authors created
-            const baseQuery = Author.createQueryBuilder("author")
-                .leftJoinAndSelect("author.user", "user")
-                .leftJoinAndSelect("author.books", "books")
-                .leftJoinAndSelect("books.category", "category")
+        // Retrieve the base query with all authors created
+        const baseQuery = Author.createQueryBuilder("author")
+            .leftJoinAndSelect("author.user", "user")
+            .leftJoinAndSelect("author.books", "books")
+            .leftJoinAndSelect("books.category", "category")
 
-            // Get the total number of unfiltered authors and clone the query to apply filters
-            const [totalCountAll, filteredQuery] = await Promise.all([
-                baseQuery.getCount(),
-                baseQuery.clone(),
-            ])
+        // Get the total number of unfiltered authors and clone the query to apply filters
+        const [totalCountAll, filteredQuery] = await Promise.all([
+            baseQuery.getCount(),
+            baseQuery.clone(),
+        ])
 
-            // Filter firstname and lastname (search)
-            if (search?.trim()) {
-                const trimmedSearch = `%${search.trim()}%`;
+        // Filter firstname and lastname (search)
+        if (search?.trim()) {
+            const trimmedSearch = `%${search.trim()}%`;
 
-                filteredQuery.andWhere(new Brackets(qb => {
-                    qb.where("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                }));
-            }
+            filteredQuery.andWhere(new Brackets(qb => {
+                qb.where("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
+            }));
+        }
 
-            // Get the total number of authors matching the filters (for pagination)
-            const totalCount = await filteredQuery.getCount()
+        // Get the total number of authors matching the filters (for pagination)
+        const totalCount = await filteredQuery.getCount()
 
-            // Apply pagination
-            filteredQuery.skip((page - 1) * limit).take(limit)
+        // Apply pagination
+        filteredQuery.skip((page - 1) * limit).take(limit)
 
-            const allAuthors = await filteredQuery.getMany()
+        const allAuthors = await filteredQuery.getMany()
 
-            if (!allAuthors) {
-                throw new AppError("Authors not found", 404, "NotFoundError")
-            }
+        if (!allAuthors) {
+            throw new AppError("Authors not found", 404, "NotFoundError")
+        }
 
-            return {
-                allAuthors,
-                totalCount,
-                totalCountAll,
-                page,
-                limit,
-            }
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch authors",
-                500,
-                "InternalServerError"
-            )
+        return {
+            allAuthors,
+            totalCount,
+            totalCountAll,
+            page,
+            limit,
         }
     }
 
@@ -220,29 +212,20 @@ export class AuthorsResolver {
      */
     @Query(() => Author, { nullable: true })
     async author(@Arg("id", () => ID) id: string): Promise<Author | null> {
-        try {
-            const author = await Author.findOne({
-                where: { id },
-                relations: {
-                    user: true,
-                    books: {
-                        category: true,
-                    },
+        const author = await Author.findOne({
+            where: { id },
+            relations: {
+                user: true,
+                books: {
+                    category: true,
                 },
-            })
-            if (!author) {
-                throw new AppError("Author not found", 404, "NotFoundError")
-            }
-
-            return author
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch author",
-                500,
-                "InternalServerError"
-            )
+            },
+        })
+        if (!author) {
+            throw new AppError("Author not found", 404, "NotFoundError")
         }
+
+        return author
     }
 
     /**
@@ -264,26 +247,13 @@ export class AuthorsResolver {
         @Arg("data", () => CreateAuthorInput) data: CreateAuthorInput,
         @Ctx() context: Context
     ): Promise<Author> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const newAuthor = new Author()
+        Object.assign(newAuthor, data, { user })
 
-            const newAuthor = new Author()
-            Object.assign(newAuthor, data, { user })
-
-            await newAuthor.save()
-            return newAuthor
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to create author",
-                500,
-                "InternalServerError"
-            )
-        }
+        await newAuthor.save()
+        return newAuthor
     }
 
     /**
@@ -305,62 +275,49 @@ export class AuthorsResolver {
         @Arg("data", () => UpdateAuthorInput) data: UpdateAuthorInput,
         @Ctx() context: Context
     ): Promise<Author | null> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const author = await Author.findOne({
+            // Un admin peut corriger la fiche de n'importe qui ; les autres
+            // ne voient que leurs propres auteurs.
+            where:
+                user.role === Roles.Admin
+                    ? { id: data.id }
+                    : { id: data.id, user: { id: user.id } },
+            relations: {
+                user: true,
+            },
+        })
 
-            const author = await Author.findOne({
-                // Un admin peut corriger la fiche de n'importe qui ; les autres
-                // ne voient que leurs propres auteurs.
-                where:
-                    user.role === Roles.Admin
-                        ? { id: data.id }
-                        : { id: data.id, user: { id: user.id } },
-                relations: {
-                    user: true,
-                },
-            })
+        if (!author) {
+            throw new AppError("Author not found", 404, "NotFoundError")
+        }
 
-            if (!author) {
-                throw new AppError("Author not found", 404, "NotFoundError")
-            }
-
-            if (!isOwnerOrAdmin(author.user?.id ?? "", user)) {
-                throw new AppError(
-                    "Not authorized to update this author",
-                    403,
-                    "ForbiddenError"
-                )
-            }
-
-            const wasIncomplete = isAuthorIncomplete(author);
-
-            const { id, ...updateData } = data
-
-            Object.assign(author, updateData)
-
-            await author.save()
-
-            if (wasIncomplete && !isAuthorIncomplete(author)) {
-                await grantXpService(user, UserActionType.AUTHOR_COMPLETED, {
-                    xpKey: xpKeys.author(author.id),
-                    targetId: author.id,
-                    metadata: { firstname: author.firstname, lastname: author.lastname },
-                });
-            }
-
-            return author
-        } catch (error) {
-            if (error instanceof AppError) throw error;
+        if (!isOwnerOrAdmin(author.user?.id ?? "", user)) {
             throw new AppError(
-                "Failed to update author",
-                500,
-                "InternalServerError"
+                "Not authorized to update this author",
+                403,
+                "ForbiddenError"
             )
         }
+
+        const wasIncomplete = isAuthorIncomplete(author);
+
+        const { id, ...updateData } = data
+
+        Object.assign(author, updateData)
+
+        await author.save()
+
+        if (wasIncomplete && !isAuthorIncomplete(author)) {
+            await grantXpService(user, UserActionType.AUTHOR_COMPLETED, {
+                xpKey: xpKeys.author(author.id),
+                targetId: author.id,
+                metadata: { firstname: author.firstname, lastname: author.lastname },
+            });
+        }
+
+        return author
     }
 
     /**
@@ -381,49 +338,36 @@ export class AuthorsResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context
     ): Promise<Author | null> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const author = await Author.findOne({
+            where: { id },
+            relations: { user: true, books: true }
+        });
 
-            const author = await Author.findOne({
-                where: { id },
-                relations: { user: true, books: true }
-            });
+        if (!author) {
+            throw new AppError("Author not found", 404, "NotFoundError")
+        }
 
-            if (!author) {
-                throw new AppError("Author not found", 404, "NotFoundError")
-            }
-
-            if (!isOwnerOrAdmin(author.user?.id ?? "", user)) {
-                throw new AppError(
-                    "Not authorized to delete this author",
-                    403,
-                    "ForbiddenError"
-                )
-            }
-
-            if (author.books.length > 0) {
-                throw new AppError(
-                    "Cannot delete author with existing books",
-                    400,
-                    "BadRequestError"
-                );
-            }
-
-            await author.remove()
-            author.id = id
-
-            return author
-        } catch (error) {
-            if (error instanceof AppError) throw error;
+        if (!isOwnerOrAdmin(author.user?.id ?? "", user)) {
             throw new AppError(
-                "Failed to delete author",
-                500,
-                "InternalServerError"
+                "Not authorized to delete this author",
+                403,
+                "ForbiddenError"
             )
         }
+
+        if (author.books.length > 0) {
+            throw new AppError(
+                "Cannot delete author with existing books",
+                400,
+                "BadRequestError"
+            );
+        }
+
+        await author.remove()
+        author.id = id
+
+        return author
     }
 }

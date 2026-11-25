@@ -21,6 +21,7 @@ import { AppError } from "../../../middlewares/error-handler";
 import { CloudinaryService } from "../../../services/cloudinary.service";
 import { eraseUserAccount } from "../../../services/rgpd/erasure-service";
 import { Context, Roles } from "../../../types/types";
+import { requireUser } from "../../../utils/current-user";
 
 @Resolver()
 export class AdminResolver {
@@ -141,11 +142,7 @@ export class AdminResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context,
     ): Promise<boolean> {
-        const currentUser = context.user;
-
-        if (!currentUser) {
-            throw new AppError("User not found", 404, "NotFoundError");
-        }
+        const currentUser = await requireUser(context);
 
         if (currentUser.id === id) {
             throw new AppError(

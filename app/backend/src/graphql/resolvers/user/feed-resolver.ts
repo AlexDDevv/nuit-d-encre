@@ -9,9 +9,9 @@ import {
 import { In } from "typeorm";
 import { UserActions } from "../../../database/entities/user/user-actions";
 import { UserFollow } from "../../../database/entities/user/user-follow";
-import { AppError } from "../../../middlewares/error-handler";
 import { Context } from "../../../types/types";
 import { FeedEntry } from "./feed-entry";
+import { requireUser } from "../../../utils/current-user";
 
 /** Projette une action (avec sa relation `user`) vers un FeedEntry. */
 export function toFeedEntry(action: UserActions): FeedEntry {
@@ -39,8 +39,7 @@ export class FeedResolver {
         @Arg("offset", () => Int, { defaultValue: 0 }) offset: number,
         @Ctx() context: Context,
     ): Promise<FeedEntry[]> {
-        const me = context.user;
-        if (!me) throw new AppError("Non authentifié", 401, "UnauthorizedError");
+        const me = await requireUser(context);
 
         const follows = await UserFollow.find({
             where: { follower: { id: me.id } },

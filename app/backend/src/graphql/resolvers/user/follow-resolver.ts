@@ -14,6 +14,7 @@ import { User } from "../../../database/entities/user/user";
 import { UserFollow } from "../../../database/entities/user/user-follow";
 import { AppError } from "../../../middlewares/error-handler";
 import { Context } from "../../../types/types";
+import { requireUser } from "../../../utils/current-user";
 
 @Resolver(() => User)
 export class FollowResolver {
@@ -23,8 +24,7 @@ export class FollowResolver {
         @Arg("userId", () => ID) userId: string,
         @Ctx() context: Context,
     ): Promise<boolean> {
-        const me = context.user;
-        if (!me) throw new AppError("Non authentifié", 401, "UnauthorizedError");
+        const me = await requireUser(context);
         if (userId === me.id) {
             throw new AppError("Impossible de se suivre soi-même", 400, "BadUserInput");
         }
@@ -50,8 +50,7 @@ export class FollowResolver {
         @Arg("userId", () => ID) userId: string,
         @Ctx() context: Context,
     ): Promise<boolean> {
-        const me = context.user;
-        if (!me) throw new AppError("Non authentifié", 401, "UnauthorizedError");
+        const me = await requireUser(context);
         await UserFollow.delete({
             follower: { id: me.id },
             following: { id: userId },

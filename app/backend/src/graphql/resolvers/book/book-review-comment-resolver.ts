@@ -5,6 +5,7 @@ import { AppError } from "../../../middlewares/error-handler";
 import { Context } from "../../../types/types";
 import { isOwnerOrAdmin } from "../../../utils/authorizations";
 import { CreateBookReviewCommentInput } from "../../inputs/create/book/create-book-review-comment-input";
+import { requireUser } from "../../../utils/current-user";
 
 /**
  * Mutations create/delete pour les commentaires de critique. Liste plate,
@@ -19,10 +20,7 @@ export class BookReviewCommentsResolver {
         data: CreateBookReviewCommentInput,
         @Ctx() context: Context,
     ): Promise<BookReviewComment> {
-        const user = context.user;
-        if (!user) {
-            throw new AppError("User not found", 404, "NotFoundError");
-        }
+        const user = await requireUser(context);
 
         const content = data.content.trim();
         if (!content) {
@@ -55,10 +53,7 @@ export class BookReviewCommentsResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context,
     ): Promise<boolean> {
-        const user = context.user;
-        if (!user) {
-            throw new AppError("User not found", 404, "NotFoundError");
-        }
+        const user = await requireUser(context);
 
         const comment = await BookReviewComment.findOne({
             where: { id },

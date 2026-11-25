@@ -34,6 +34,7 @@ import { grantXpService } from "../../../services/grind/grant-xp-service"
 import { xpKeys } from "../../../utils/xp-keys"
 import { getOrCreateAuthorByFullName } from "../../../utils/author-factory"
 import { BookReview } from "../../../database/entities/book/bookReview"
+import { requireUser } from "../../../utils/current-user"
 
 const IMPORTED_SUMMARY_PLACEHOLDER = "Importé depuis une source externe.";
 
@@ -78,91 +79,82 @@ export class BooksResolver {
         @Arg("filters", () => BooksQueryInput, { nullable: true })
         filters: BooksQueryInput
     ): Promise<BooksResult> {
-        try {
-            const {
-                search,
-                categoryIds,
-                format,
-                language,
-                page = 1,
-                limit = 12,
-            } = filters || {}
+        const {
+            search,
+            categoryIds,
+            format,
+            language,
+            page = 1,
+            limit = 12,
+        } = filters || {}
 
-            // Retrieve the base query with all books created
-            const baseQuery = Book.createQueryBuilder("book")
-                .leftJoinAndSelect("book.user", "user")
-                .leftJoinAndSelect("book.category", "category")
-                .leftJoinAndSelect("book.author", "author")
+        // Retrieve the base query with all books created
+        const baseQuery = Book.createQueryBuilder("book")
+            .leftJoinAndSelect("book.user", "user")
+            .leftJoinAndSelect("book.category", "category")
+            .leftJoinAndSelect("book.author", "author")
 
-            // Get the total number of unfiltered books and clone the query to apply filters
-            const [totalCountAll, filteredQuery] = await Promise.all([
-                baseQuery.getCount(),
-                baseQuery.clone(),
-            ])
+        // Get the total number of unfiltered books and clone the query to apply filters
+        const [totalCountAll, filteredQuery] = await Promise.all([
+            baseQuery.getCount(),
+            baseQuery.clone(),
+        ])
 
-            // Filter by title, isnb13, authors and publisher (search)
-            if (search?.trim()) {
-                const trimmedSearch = `%${search.trim()}%`;
+        // Filter by title, isnb13, authors and publisher (search)
+        if (search?.trim()) {
+            const trimmedSearch = `%${search.trim()}%`;
 
-                filteredQuery.andWhere(new Brackets((qb) => {
-                    qb.where("unaccent(book.title) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("book.isbn13 ILIKE :search", { search: trimmedSearch }) 
-                        .orWhere("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("unaccent(book.publisher) ILIKE unaccent(:search)", { search: trimmedSearch });
-                }));
-            }
+            filteredQuery.andWhere(new Brackets((qb) => {
+                qb.where("unaccent(book.title) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("book.isbn13 ILIKE :search", { search: trimmedSearch }) 
+                    .orWhere("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("unaccent(book.publisher) ILIKE unaccent(:search)", { search: trimmedSearch });
+            }));
+        }
 
-            // Filter by category
-            if (categoryIds && categoryIds.length > 0) {
-                filteredQuery.andWhere(
-                    "book.category.id IN (:...categoryIds)",
-                    {
-                        categoryIds,
-                    }
-                )
-            }
-
-            // Filter by format
-            if (format && format.length > 0) {
-                filteredQuery.andWhere("book.format IN (:...format)", {
-                    format,
-                })
-            }
-
-            // Filter by language
-            if (language?.trim()) {
-                filteredQuery.andWhere("unaccent(book.language) ILIKE unaccent(:language)", {
-                    language: `%${language.trim()}%`,
-                });
-            }
-
-            // Get the total number of books matching the filters (for pagination)
-            const totalCount = await filteredQuery.getCount()
-
-            // Apply pagination
-            filteredQuery.skip((page - 1) * limit).take(limit)
-
-            const allBooks = await filteredQuery.getMany()
-
-            if (!allBooks) {
-                throw new AppError("Books not found", 404, "NotFoundError")
-            }
-
-            return {
-                allBooks,
-                totalCount,
-                totalCountAll,
-                page,
-                limit,
-            }
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch books",
-                500,
-                "InternalServerError"
+        // Filter by category
+        if (categoryIds && categoryIds.length > 0) {
+            filteredQuery.andWhere(
+                "book.category.id IN (:...categoryIds)",
+                {
+                    categoryIds,
+                }
             )
+        }
+
+        // Filter by format
+        if (format && format.length > 0) {
+            filteredQuery.andWhere("book.format IN (:...format)", {
+                format,
+            })
+        }
+
+        // Filter by language
+        if (language?.trim()) {
+            filteredQuery.andWhere("unaccent(book.language) ILIKE unaccent(:language)", {
+                language: `%${language.trim()}%`,
+            });
+        }
+
+        // Get the total number of books matching the filters (for pagination)
+        const totalCount = await filteredQuery.getCount()
+
+        // Apply pagination
+        filteredQuery.skip((page - 1) * limit).take(limit)
+
+        const allBooks = await filteredQuery.getMany()
+
+        if (!allBooks) {
+            throw new AppError("Books not found", 404, "NotFoundError")
+        }
+
+        return {
+            allBooks,
+            totalCount,
+            totalCountAll,
+            page,
+            limit,
         }
     }
 
@@ -179,29 +171,20 @@ export class BooksResolver {
      */
     @Query(() => Book, { nullable: true })
     async book(@Arg("id", () => ID) id: string): Promise<Book | null> {
-        try {
-            const book = await Book.findOne({
-                where: { id },
-                relations: {
-                    user: true,
-                    category: true,
-                    author: true,
-                },
-            })
+        const book = await Book.findOne({
+            where: { id },
+            relations: {
+                user: true,
+                category: true,
+                author: true,
+            },
+        })
 
-            if (!book) {
-                throw new AppError("Book not found", 404, "NotFoundError")
-            }
-
-            return book
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch book",
-                500,
-                "InternalServerError"
-            )
+        if (!book) {
+            throw new AppError("Book not found", 404, "NotFoundError")
         }
+
+        return book
     }
 
     /**
@@ -223,58 +206,45 @@ export class BooksResolver {
         @Arg("data", () => CreateBookInput) data: CreateBookInput,
         @Ctx() context: Context
     ): Promise<Book> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const category = await Category.findOne({
+            where: { id: data.category },
+        })
 
-            const category = await Category.findOne({
-                where: { id: data.category },
-            })
-
-            if (!category) {
-                throw new AppError("Category not found", 404, "NotFoundError")
-            }
-
-            const newBook = await dataSource.transaction(async (manager) => {
-                const authorEntity = await getOrCreateAuthorByFullName(data.author, user, manager);
-
-                const book = new Book()
-
-                Object.assign(book, data, {
-                    user,
-                    category,
-                    author: authorEntity,
-                });
-
-                // isbn10 est optionnel mais soumis à une contrainte UNIQUE :
-                // une chaîne vide doit être persistée comme NULL, sinon le 2e
-                // livre sans ISBN-10 viole la contrainte (plusieurs NULL sont
-                // autorisés, plusieurs "" non).
-                if (!book.isbn10 || book.isbn10.trim() === "") {
-                    book.isbn10 = undefined;
-                }
-
-                return manager.save(book);
-            });
-
-            await grantXpService(user, UserActionType.BOOK_ADDED, {
-                xpKey: xpKeys.isbn13(newBook.isbn13),
-                targetId: newBook.id,
-                metadata: { title: newBook.title }
-            });
-
-            return newBook
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to create book",
-                500,
-                "InternalServerError"
-            )
+        if (!category) {
+            throw new AppError("Category not found", 404, "NotFoundError")
         }
+
+        const newBook = await dataSource.transaction(async (manager) => {
+            const authorEntity = await getOrCreateAuthorByFullName(data.author, user, manager);
+
+            const book = new Book()
+
+            Object.assign(book, data, {
+                user,
+                category,
+                author: authorEntity,
+            });
+
+            // isbn10 est optionnel mais soumis à une contrainte UNIQUE :
+            // une chaîne vide doit être persistée comme NULL, sinon le 2e
+            // livre sans ISBN-10 viole la contrainte (plusieurs NULL sont
+            // autorisés, plusieurs "" non).
+            if (!book.isbn10 || book.isbn10.trim() === "") {
+                book.isbn10 = undefined;
+            }
+
+            return manager.save(book);
+        });
+
+        await grantXpService(user, UserActionType.BOOK_ADDED, {
+            xpKey: xpKeys.isbn13(newBook.isbn13),
+            targetId: newBook.id,
+            metadata: { title: newBook.title }
+        });
+
+        return newBook
     }
 
     /**
@@ -296,93 +266,80 @@ export class BooksResolver {
         @Arg("data", () => UpdateBookInput) data: UpdateBookInput,
         @Ctx() context: Context
     ): Promise<Book | null> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const book = await Book.findOne({
+            // Un admin peut corriger la fiche de n'importe qui ; les autres
+            // ne voient que leurs propres livres.
+            where:
+                user.role === Roles.Admin
+                    ? { id: data.id }
+                    : { id: data.id, user: { id: user.id } },
+            relations: {
+                user: true,
+                category: true,
+                author: true
+            },
+        })
 
-            const book = await Book.findOne({
-                // Un admin peut corriger la fiche de n'importe qui ; les autres
-                // ne voient que leurs propres livres.
-                where:
-                    user.role === Roles.Admin
-                        ? { id: data.id }
-                        : { id: data.id, user: { id: user.id } },
-                relations: {
-                    user: true,
-                    category: true,
-                    author: true
-                },
-            })
-
-            if (!book) {
-                throw new AppError(
-                    "Book not found",
-                    404,
-                    "BookNotFoundError"
-                )
-            }
-
-            if (!isOwnerOrAdmin(book.user?.id ?? "", user)) {
-                throw new AppError(
-                    "Not authorized to update this book",
-                    403,
-                    "ForbiddenError"
-                )
-            }
-
-            const { id, category, author, ...updateData } = data
-
-            if (category) {
-                const categoryBook = await Category.findOne({
-                    where: { id: category },
-                })
-                if (!categoryBook) {
-                    throw new AppError(
-                        "Category not found",
-                        404,
-                        "NotFoundError"
-                    )
-                }
-                book.category = categoryBook
-            }
-
-            if (author) {
-                const authorEntity = await getOrCreateAuthorByFullName(author, user);
-                book.author = authorEntity;
-            }
-
-            const wasIncomplete = book.isImported && isImportedBookIncomplete(book);
-
-            Object.assign(book, updateData);
-
-            // Voir createBook : une chaîne vide collisionne sur la contrainte
-            // UNIQUE(isbn10), on la ramène à NULL.
-            if (!book.isbn10 || book.isbn10.trim() === "") {
-                book.isbn10 = undefined;
-            }
-
-            await book.save();
-
-            if (wasIncomplete && !isImportedBookIncomplete(book)) {
-                await grantXpService(user, UserActionType.BOOK_COMPLETED, {
-                    xpKey: xpKeys.book(book.id),
-                    targetId: book.id,
-                    metadata: { title: book.title },
-                });
-            }
-
-            return book;
-        } catch (error) {
-            if (error instanceof AppError) throw error;
+        if (!book) {
             throw new AppError(
-                "Failed to update book",
-                500,
-                "InternalServerError"
+                "Book not found",
+                404,
+                "BookNotFoundError"
             )
         }
+
+        if (!isOwnerOrAdmin(book.user?.id ?? "", user)) {
+            throw new AppError(
+                "Not authorized to update this book",
+                403,
+                "ForbiddenError"
+            )
+        }
+
+        const { id, category, author, ...updateData } = data
+
+        if (category) {
+            const categoryBook = await Category.findOne({
+                where: { id: category },
+            })
+            if (!categoryBook) {
+                throw new AppError(
+                    "Category not found",
+                    404,
+                    "NotFoundError"
+                )
+            }
+            book.category = categoryBook
+        }
+
+        if (author) {
+            const authorEntity = await getOrCreateAuthorByFullName(author, user);
+            book.author = authorEntity;
+        }
+
+        const wasIncomplete = book.isImported && isImportedBookIncomplete(book);
+
+        Object.assign(book, updateData);
+
+        // Voir createBook : une chaîne vide collisionne sur la contrainte
+        // UNIQUE(isbn10), on la ramène à NULL.
+        if (!book.isbn10 || book.isbn10.trim() === "") {
+            book.isbn10 = undefined;
+        }
+
+        await book.save();
+
+        if (wasIncomplete && !isImportedBookIncomplete(book)) {
+            await grantXpService(user, UserActionType.BOOK_COMPLETED, {
+                xpKey: xpKeys.book(book.id),
+                targetId: book.id,
+                metadata: { title: book.title },
+            });
+        }
+
+        return book;
     }
 
     /**
@@ -403,48 +360,35 @@ export class BooksResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context
     ): Promise<Book | null> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const book = await Book.findOne({
+            where: { id },
+            relations: {
+                user: true
+            },
+        })
 
-            const book = await Book.findOne({
-                where: { id },
-                relations: {
-                    user: true
-                },
-            })
-
-            if (!book) {
-                throw new AppError(
-                    "Book not found",
-                    404,
-                    "BookNotFoundError"
-                )
-            }
-
-            if (!isOwnerOrAdmin(book.user?.id ?? "", user)) {
-                throw new AppError(
-                    "Not authorized to delete this book",
-                    403,
-                    "ForbiddenError"
-                )
-            }
-
-            await book.remove()
-            book.id = id
-
-            return book
-        } catch (error) {
-            if (error instanceof AppError) throw error;
+        if (!book) {
             throw new AppError(
-                "Failed to delete book",
-                500,
-                "InternalServerError"
+                "Book not found",
+                404,
+                "BookNotFoundError"
             )
         }
+
+        if (!isOwnerOrAdmin(book.user?.id ?? "", user)) {
+            throw new AppError(
+                "Not authorized to delete this book",
+                403,
+                "ForbiddenError"
+            )
+        }
+
+        await book.remove()
+        book.id = id
+
+        return book
     }
 
     /* ========================================================================

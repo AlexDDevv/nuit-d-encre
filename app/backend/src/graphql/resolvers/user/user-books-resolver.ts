@@ -28,7 +28,6 @@ import { AppError } from "../../../middlewares/error-handler"
 import { Context, ReadingStatus, Roles, UserActionType } from "../../../types/types"
 import { Book } from "../../../database/entities/book/book"
 import { Brackets } from "typeorm"
-import { isOwnerOrAdmin } from "../../../utils/authorizations"
 import { grantXpService } from "../../../services/grind/grant-xp-service"
 import { xpKeys } from "../../../utils/xp-keys"
 import { UserBooksResult } from "../../../database/filteredResults/user/user-books-result"
@@ -37,6 +36,7 @@ import { UserBooksQueryInput } from "../../queries/user/user-books-input"
 import { UserBook } from "../../../database/entities/user/user-book"
 import { CreateUserBookInput } from "../../inputs/create/user/create-user-book-input"
 import { UpdateUserBookInput } from "../../inputs/update/user/update-user-book-input"
+import { requireUser } from "../../../utils/current-user"
 
 /**
  * UserBook Resolver
@@ -73,111 +73,98 @@ export class UserBooksResolver {
         filters: UserBooksQueryInput,
         @Ctx() context: Context
     ): Promise<UserBooksResult> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const {
+            status,
+            isPublic,
+            search,
+            categoryIds,
+            format,
+            language,
+            page = 1,
+            limit = 12,
+        } = filters || {}
 
-            const {
-                status,
-                isPublic,
-                search,
-                categoryIds,
-                format,
-                language,
-                page = 1,
-                limit = 12,
-            } = filters || {}
+        // Retrieve the base query filtered by the authenticated user
+        const baseQuery = UserBook.createQueryBuilder("userBook")
+            .leftJoinAndSelect("userBook.user", "user")
+            .leftJoinAndSelect("userBook.book", "book")
+            .leftJoinAndSelect("book.category", "category")
+            .leftJoinAndSelect("book.author", "author")
+            .where("user.id = :userId", { userId: user.id })
 
-            // Retrieve the base query filtered by the authenticated user
-            const baseQuery = UserBook.createQueryBuilder("userBook")
-                .leftJoinAndSelect("userBook.user", "user")
-                .leftJoinAndSelect("userBook.book", "book")
-                .leftJoinAndSelect("book.category", "category")
-                .leftJoinAndSelect("book.author", "author")
-                .where("user.id = :userId", { userId: user.id })
+        // Get the total number of unfiltered books and clone the query to apply filters
+        const [totalCountAll, filteredQuery] = await Promise.all([
+            baseQuery.getCount(),
+            baseQuery.clone(),
+        ])
 
-            // Get the total number of unfiltered books and clone the query to apply filters
-            const [totalCountAll, filteredQuery] = await Promise.all([
-                baseQuery.getCount(),
-                baseQuery.clone(),
-            ])
+        // Filter by status
+        if (status && status.length > 0) {
+            filteredQuery.andWhere("userBook.status IN (:...status)", { status });
+        }
 
-            // Filter by status
-            if (status && status.length > 0) {
-                filteredQuery.andWhere("userBook.status IN (:...status)", { status });
-            }
+        // Filter by public or private book
+        if (typeof isPublic === "boolean") {
+            filteredQuery.andWhere("userBook.isPublic = :isPublic", { isPublic });
+        }
 
-            // Filter by public or private book
-            if (typeof isPublic === "boolean") {
-                filteredQuery.andWhere("userBook.isPublic = :isPublic", { isPublic });
-            }
+        // Filter by title, isnb13, authors and publisher (search)
+        if (search?.trim()) {
+            const trimmedSearch = `%${search.trim()}%`;
 
-            // Filter by title, isnb13, authors and publisher (search)
-            if (search?.trim()) {
-                const trimmedSearch = `%${search.trim()}%`;
+            filteredQuery.andWhere(new Brackets((qb) => {
+                qb.where("unaccent(book.title) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("book.isbn13 ILIKE :search", { search: trimmedSearch })
+                    .orWhere("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
+                    .orWhere("unaccent(book.publisher) ILIKE unaccent(:search)", { search: trimmedSearch });
+            }));
+        }
 
-                filteredQuery.andWhere(new Brackets((qb) => {
-                    qb.where("unaccent(book.title) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("book.isbn13 ILIKE :search", { search: trimmedSearch })
-                        .orWhere("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                        .orWhere("unaccent(book.publisher) ILIKE unaccent(:search)", { search: trimmedSearch });
-                }));
-            }
-
-            // Filter by category
-            if (categoryIds && categoryIds.length > 0) {
-                filteredQuery.andWhere(
-                    "book.category.id IN (:...categoryIds)",
-                    {
-                        categoryIds,
-                    }
-                )
-            }
-
-            // Filter by format
-            if (format && format.length > 0) {
-                filteredQuery.andWhere("book.format IN (:...format)", {
-                    format,
-                })
-            }
-
-            // Filter by language
-            if (language?.trim()) {
-                filteredQuery.andWhere("unaccent(book.language) ILIKE unaccent(:language)", {
-                    language: `%${language.trim()}%`,
-                });
-            }
-
-            // Get the total number of user's books matching the filters (for pagination)
-            const totalCount = await filteredQuery.getCount()
-
-            // Apply pagination
-            filteredQuery.skip((page - 1) * limit).take(limit)
-
-            const userBooks = await filteredQuery.getMany()
-
-            if (!userBooks) {
-                throw new AppError("Books not found", 404, "NotFoundError")
-            }
-
-            return {
-                userBooks,
-                totalCount,
-                totalCountAll,
-                page,
-                limit,
-            }
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch books",
-                500,
-                "InternalServerError"
+        // Filter by category
+        if (categoryIds && categoryIds.length > 0) {
+            filteredQuery.andWhere(
+                "book.category.id IN (:...categoryIds)",
+                {
+                    categoryIds,
+                }
             )
+        }
+
+        // Filter by format
+        if (format && format.length > 0) {
+            filteredQuery.andWhere("book.format IN (:...format)", {
+                format,
+            })
+        }
+
+        // Filter by language
+        if (language?.trim()) {
+            filteredQuery.andWhere("unaccent(book.language) ILIKE unaccent(:language)", {
+                language: `%${language.trim()}%`,
+            });
+        }
+
+        // Get the total number of user's books matching the filters (for pagination)
+        const totalCount = await filteredQuery.getCount()
+
+        // Apply pagination
+        filteredQuery.skip((page - 1) * limit).take(limit)
+
+        const userBooks = await filteredQuery.getMany()
+
+        if (!userBooks) {
+            throw new AppError("Books not found", 404, "NotFoundError")
+        }
+
+        return {
+            userBooks,
+            totalCount,
+            totalCountAll,
+            page,
+            limit,
         }
     }
 
@@ -191,10 +178,7 @@ export class UserBooksResolver {
     async userBookStatusCounts(
         @Ctx() context: Context
     ): Promise<UserBookStatusCounts> {
-        const user = context.user
-        if (!user) {
-            throw new AppError("User not found", 404, "NotFoundError")
-        }
+        const user = await requireUser(context);
 
         const rows = await UserBook.createQueryBuilder("ub")
             .select("ub.status", "status")
@@ -238,33 +222,21 @@ export class UserBooksResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context
     ): Promise<UserBook | null> {
-        try {
-            const user = context.user;
-            if (!user) {
-                throw new AppError("Non authentifié", 401, "UnauthorizedError");
-            }
+        const user = await requireUser(context);
 
-            const userBook = await UserBook.findOne({
-                where: { id, user: { id: user.id } },
-                relations: {
-                    user: true,
-                    book: true,
-                },
-            });
+        const userBook = await UserBook.findOne({
+            where: { id, user: { id: user.id } },
+            relations: {
+                user: true,
+                book: true,
+            },
+        });
 
-            if (!userBook) {
-                throw new AppError("Book not found", 404, "NotFoundError");
-            }
-
-            return userBook;
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to fetch book",
-                500,
-                "InternalServerError"
-            );
+        if (!userBook) {
+            throw new AppError("Book not found", 404, "NotFoundError");
         }
+
+        return userBook;
     }
 
     /**
@@ -286,69 +258,56 @@ export class UserBooksResolver {
         @Arg("data", () => CreateUserBookInput) data: CreateUserBookInput,
         @Ctx() context: Context
     ): Promise<UserBook> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const { bookId, ...rest } = data;
 
-            const { bookId, ...rest } = data;
+        const book = await Book.findOne({ where: { id: data.bookId } });
 
-            const book = await Book.findOne({ where: { id: data.bookId } });
+        if (!book) {
+            throw new AppError("Book not found", 404, "NotFoundError");
+        }
 
-            if (!book) {
-                throw new AppError("Book not found", 404, "NotFoundError");
-            }
+        const existing = await UserBook.findOne({
+            where: { user: { id: user.id }, book: { id: book.id } },
+        });
 
-            const existing = await UserBook.findOne({
-                where: { user: { id: user.id }, book: { id: book.id } },
-            });
+        if (existing) {
+            throw new AppError("Book already in user's library", 409, "ConflictError");
+        }
 
-            if (existing) {
-                throw new AppError("Book already in user's library", 409, "ConflictError");
-            }
+        const newUserBook = new UserBook()
 
-            const newUserBook = new UserBook()
+        Object.assign(newUserBook, rest, { user, book });
 
-            Object.assign(newUserBook, rest, { user, book });
+        await newUserBook.save();
 
-            await newUserBook.save();
+        await grantXpService(user, UserActionType.BOOK_ADDED_TO_LIBRARY, {
+            xpKey: xpKeys.book(book.id),
+            targetId: newUserBook.id,
+            metadata: { title: book.title },
+        });
 
-            await grantXpService(user, UserActionType.BOOK_ADDED_TO_LIBRARY, {
+        if (newUserBook.status === ReadingStatus.READ) {
+            await grantXpService(user, UserActionType.BOOK_FINISHED, {
                 xpKey: xpKeys.book(book.id),
                 targetId: newUserBook.id,
-                metadata: { title: book.title },
+                metadata: { to: newUserBook.status, title: book.title },
             });
-
-            if (newUserBook.status === ReadingStatus.READ) {
-                await grantXpService(user, UserActionType.BOOK_FINISHED, {
-                    xpKey: xpKeys.book(book.id),
-                    targetId: newUserBook.id,
-                    metadata: { to: newUserBook.status, title: book.title },
-                });
-            }
-
-            const userBookWithRelations = await UserBook.findOne({
-                where: { id: newUserBook.id },
-                relations: {
-                    user: true,
-                    book: {
-                        author: true,
-                        category: true
-                    }
-                },
-            });
-
-            return userBookWithRelations!
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to create book",
-                500,
-                "InternalServerError"
-            )
         }
+
+        const userBookWithRelations = await UserBook.findOne({
+            where: { id: newUserBook.id },
+            relations: {
+                user: true,
+                book: {
+                    author: true,
+                    category: true
+                }
+            },
+        });
+
+        return userBookWithRelations!
     }
 
     /**
@@ -360,7 +319,7 @@ export class UserBooksResolver {
      * @returns The updated UserBook object.
      *
      * Only users with the role `User` or `Admin` can update a user book.
-     * The user can only update their own books.
+     * The user can only update their own books (lookup scoped to the user).
      *
      * @throws AppError - If the user book is not found, user is unauthorized, or update fails.
      */
@@ -370,80 +329,58 @@ export class UserBooksResolver {
         @Arg("data", () => UpdateUserBookInput) data: UpdateUserBookInput,
         @Ctx() context: Context
     ): Promise<UserBook> {
-        try {
-            const user = context.user
-            
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
+        const user = await requireUser(context);
 
-            const userBook = await UserBook.findOne({
-                where: {
-                    id: data.id,
-                    user: { id: user.id }
-                },
-                relations: {
-                    user: true,
-                    book: {
-                        author: true,
-                        category: true
-                    }
-                },
-            })
+        const userBook = await UserBook.findOne({
+            where: {
+                id: data.id,
+                user: { id: user.id }
+            },
+            relations: {
+                user: true,
+                book: {
+                    author: true,
+                    category: true
+                }
+            },
+        })
 
-            if (!userBook) {
-                throw new AppError("User book not found", 404, "NotFoundError");
-            }
-
-            // Check authorization
-            if (!isOwnerOrAdmin(userBook.user.id, user)) {
-                throw new AppError(
-                    "Not authorized to update this book",
-                    403,
-                    "ForbiddenError"
-                )
-            }
-
-            // Track if status changed to READ
-            const wasRead = userBook.status === ReadingStatus.READ;
-
-            const { id, ...updateData } = data
-
-            // Apply updates
-            Object.assign(userBook, updateData);
-
-            await userBook.save();
-
-            // Grant XP if book status changed to READ
-            if (!wasRead && userBook.status === ReadingStatus.READ) {
-                await grantXpService(user, UserActionType.BOOK_FINISHED, {
-                    xpKey: xpKeys.book(userBook.book.id),
-                    targetId: userBook.id,
-                    metadata: { to: userBook.status, title: userBook.book.title },
-                });
-            }
-
-            // Reload with all relations
-            const updatedUserBook = await UserBook.findOne({
-                where: { id: userBook.id },
-                relations: {
-                    user: true,
-                    book: {
-                        author: true,
-                        category: true
-                    }
-                },
-            });
-
-            return updatedUserBook!
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-            throw new AppError(
-                "Failed to update user book",
-                500,
-                "InternalServerError"
-            )
+        if (!userBook) {
+            throw new AppError("User book not found", 404, "NotFoundError");
         }
+
+        // Track if status changed to READ
+        const wasRead = userBook.status === ReadingStatus.READ;
+
+        const { id, ...updateData } = data
+
+        // Apply updates
+        Object.assign(userBook, updateData);
+
+        await userBook.save();
+
+        // Grant XP if book status changed to READ
+        if (!wasRead && userBook.status === ReadingStatus.READ) {
+            await grantXpService(user, UserActionType.BOOK_FINISHED, {
+                xpKey: xpKeys.book(userBook.book.id),
+                targetId: userBook.id,
+                metadata: { to: userBook.status, title: userBook.book.title },
+            });
+        }
+
+        // Reload with all relations
+        const updatedUserBook = await UserBook.findOne({
+            where: { id: userBook.id },
+            relations: {
+                user: true,
+                book: {
+                    author: true,
+                    category: true
+                }
+            },
+        });
+
+        return updatedUserBook!
     }
 
     /**
@@ -454,7 +391,8 @@ export class UserBooksResolver {
     *
     * @returns The deleted UserBook object (with ID), or null if not found.
     *
-    * Only the admin or the user book’s owner can perform this action.
+    * Only the owner can perform this action: the lookup is scoped to the
+    * authenticated user, so another user's entry is simply not found.
     *
     * @throws AppError - If the user book is not found, user is unauthorized, or deletion fails.
     */
@@ -464,50 +402,29 @@ export class UserBooksResolver {
         @Arg("id", () => ID) id: string,
         @Ctx() context: Context
     ): Promise<UserBook | null> {
-        try {
-            const user = context.user
+        const user = await requireUser(context);
+        
+        const userBook = await UserBook.findOne({
+            where: {
+                id,
+                user: { id: user.id },
+            },
+            relations: {
+                user: true
+            },
+        })
 
-            if (!user) {
-                throw new AppError("User not found", 404, "NotFoundError")
-            }
-            
-            const userBook = await UserBook.findOne({
-                where: {
-                    id,
-                    user: { id: user.id },
-                },
-                relations: {
-                    user: true
-                },
-            })
-
-            if (!userBook) {
-                throw new AppError(
-                    "Book not found",
-                    404,
-                    "BookNotFoundError"
-                )
-            }
-            
-            if (!isOwnerOrAdmin(userBook.user.id, user)) {
-                throw new AppError(
-                    "Not authorized to delete this book",
-                    403,
-                    "ForbiddenError"
-                )
-            }
-
-            await userBook.remove()
-            userBook.id = id
-
-            return userBook
-        } catch (error) {
-            if (error instanceof AppError) throw error;
+        if (!userBook) {
             throw new AppError(
-                "Failed to delete book",
-                500,
-                "InternalServerError"
+                "Book not found",
+                404,
+                "BookNotFoundError"
             )
         }
+
+        await userBook.remove()
+        userBook.id = id
+
+        return userBook
     }
 }
