@@ -2,9 +2,9 @@ name: CI
 
 on:
     push:
-        branches: [master, test]
+        branches: [main, test]
     pull_request:
-        branches: [master, test]
+        branches: [main, test]
 
 # Un nouveau push sur la même branche annule le run précédent devenu obsolète.
 concurrency:
@@ -18,7 +18,7 @@ permissions:
 jobs:
     frontend:
         # Nom figé : c'est le check exigé par le ruleset de protection de
-        # master. Le renommer désactiverait silencieusement la règle.
+        # main. Le renommer désactiverait silencieusement la règle.
         name: Frontend (lint, typecheck, test)
         runs-on: ubuntu-latest
         timeout-minutes: 10

@@ -84,7 +84,7 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 
 - Décision : pas d'objectif de couverture. Les tests portent sur ce qui coûte cher en cas de bug (authentification, autorisations, XP, RGPD, logique d'affichage dérivée). La logique pure du front est isolée dans `lib/` pour être testée sans navigateur simulé. Côté back, les accès TypeORM sont simulés, sans base de données.
 - Alternative écartée : tests de composants avec jsdom et Testing Library, jugés peu utiles pour leur coût.
-- Complément : CI stricte (un avertissement de lint fait échouer le build), branche `master` protégée, un commit n'y arrive qu'après une CI verte sur `test`.
+- Complément : CI stricte (un avertissement de lint fait échouer le build), branche `main` protégée, un commit n'y arrive qu'après une CI verte sur `test`.
 - Référence : `.github/workflows/ci.yml`, `src/test/factories.ts` (back).
 
 ### Pagination plafonnée par une classe commune

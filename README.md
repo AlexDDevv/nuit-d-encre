@@ -356,7 +356,7 @@ pnpm --filter backend test     # Jest
 ```
 
 La CI GitHub Actions (`.github/workflows/ci.yml`) s'exécute sur les pushs vers
-`test` et `master`, ainsi que sur les pull requests visant ces branches, en deux
+`test` et `main`, ainsi que sur les pull requests visant ces branches, en deux
 jobs parallèles sous Node 24 (même version que les images Docker) :
 
 - **Frontend** — lint (ESLint), tests (Vitest), build (`tsc -b` + Vite)
@@ -365,10 +365,10 @@ jobs parallèles sous Node 24 (même version que les images Docker) :
 Les étapes sont ordonnées de la moins coûteuse à la plus coûteuse pour échouer
 au plus tôt, le lint est strict (`--max-warnings 0` : un avertissement fait
 échouer la CI) et chaque job a un `timeout-minutes`. Pas de hooks git locaux
-(husky) : la CI fait foi. La branche `master` est protégée par un ruleset —
+(husky) : la CI fait foi. La branche `main` est protégée par un ruleset —
 force push et suppression interdits, les deux checks doivent être verts. Comme
 un check est attaché à un commit, le flux est : pousser sur `test`, attendre la
-CI verte, puis pousser le **même** commit sur `master`.
+CI verte, puis pousser le **même** commit sur `main`.
 
 Les tests visent le sensible plutôt que la couverture exhaustive.
 
