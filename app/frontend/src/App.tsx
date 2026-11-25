@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { Toaster } from "sonner";
 import Sidebar from "@/components/sections/sidebar/Sidebar";
 import SiteBannerHost from "@/components/sections/banner/SiteBannerHost";
@@ -6,6 +6,10 @@ import SiteBannerHost from "@/components/sections/banner/SiteBannerHost";
 function App() {
     return (
         <>
+            {/* Nouvelle page : retour en haut ; précédent / suivant : position
+                restaurée. Les filtres et recherches (paramètres d'URL) passent
+                preventScrollReset pour ne pas faire défiler la page. */}
+            <ScrollRestoration />
             <Toaster richColors position="bottom-center" closeButton />
             <div className="flex min-h-dvh">
                 <Sidebar />

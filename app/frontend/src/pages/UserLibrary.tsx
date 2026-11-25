@@ -123,7 +123,7 @@ export default function UserLibrary() {
         const newParams = new URLSearchParams(searchParams);
         newParams.delete("category");
         newParams.delete("categoryId");
-        setSearchParams(newParams);
+        setSearchParams(newParams, { preventScrollReset: true });
     };
 
     const { updateUserBook, isUpdatingUserBook, deleteUserBook } =

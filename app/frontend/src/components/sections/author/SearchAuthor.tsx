@@ -23,7 +23,7 @@ export default function SearchAuthor() {
         if (searchValue === "") {
             const newParams = new URLSearchParams(searchParams);
             newParams.delete("search");
-            setSearchParams(newParams);
+            setSearchParams(newParams, { preventScrollReset: true });
         }
     }, [searchValue, searchParams, setSearchParams]);
 
@@ -36,7 +36,7 @@ export default function SearchAuthor() {
             newParams.delete("search");
         }
 
-        setSearchParams(newParams);
+        setSearchParams(newParams, { preventScrollReset: true });
     };
 
     return (

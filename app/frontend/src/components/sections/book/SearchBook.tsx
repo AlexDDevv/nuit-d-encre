@@ -24,21 +24,27 @@ export default function SearchBook({ isInLibrary }: { isInLibrary?: boolean }) {
 
     useEffect(() => {
         if (isInLibrary) {
-            setSearchParams((prev) => {
-                const param = new URLSearchParams(prev);
-                if (debouncedSearchValue.trim()) {
-                    param.set("search", debouncedSearchValue.trim());
-                } else {
-                    param.delete("search");
-                }
-                return param;
-            });
+            setSearchParams(
+                (prev) => {
+                    const param = new URLSearchParams(prev);
+                    if (debouncedSearchValue.trim()) {
+                        param.set("search", debouncedSearchValue.trim());
+                    } else {
+                        param.delete("search");
+                    }
+                    return param;
+                },
+                { preventScrollReset: true },
+            );
         } else if (searchValue === "") {
-            setSearchParams((prev) => {
-                const param = new URLSearchParams(prev);
-                param.delete("search");
-                return param;
-            });
+            setSearchParams(
+                (prev) => {
+                    const param = new URLSearchParams(prev);
+                    param.delete("search");
+                    return param;
+                },
+                { preventScrollReset: true },
+            );
         }
     }, [debouncedSearchValue, isInLibrary, searchValue, setSearchParams]);
 
@@ -51,7 +57,7 @@ export default function SearchBook({ isInLibrary }: { isInLibrary?: boolean }) {
             newParams.delete("search");
         }
 
-        setSearchParams(newParams);
+        setSearchParams(newParams, { preventScrollReset: true });
     };
 
     return (

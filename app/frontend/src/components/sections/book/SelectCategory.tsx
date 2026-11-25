@@ -59,7 +59,7 @@ export default function SelectCategory() {
             newParams.set("categoryId", category.id);
         }
 
-        setSearchParams(newParams);
+        setSearchParams(newParams, { preventScrollReset: true });
     };
 
     const handleResetFilter = () => {
@@ -67,7 +67,7 @@ export default function SelectCategory() {
         newParams.delete("category");
         newParams.delete("categoryId");
 
-        setSearchParams(newParams);
+        setSearchParams(newParams, { preventScrollReset: true });
     };
 
     return (
