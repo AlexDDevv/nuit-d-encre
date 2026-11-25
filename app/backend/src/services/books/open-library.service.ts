@@ -75,7 +75,7 @@ export class OpenLibraryService {
 
     async findByIsbn(isbn13: string): Promise<BookSearchResult | null> {
         try {
-            const url = `${BASE_URL}/search.json?isbn=${isbn13}&fields=${FIELDS}`;
+            const url = `${BASE_URL}/search.json?isbn=${encodeURIComponent(isbn13)}&fields=${FIELDS}`;
             const res = await fetch(url);
             if (!res.ok) return null;
             const data: OpenLibrarySearchResponse = await res.json();

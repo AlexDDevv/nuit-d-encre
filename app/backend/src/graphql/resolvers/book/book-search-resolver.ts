@@ -13,6 +13,7 @@ import { AppError } from "../../../middlewares/error-handler";
 import { Context, UserActionType } from "../../../types/types";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
+import { normalizeIsbn13 } from "../../../utils/isbn";
 import {
     getOrCreateAuthorByFullName,
     parseFullName,
@@ -181,9 +182,10 @@ export class BookSearchResolver {
 
     @Query(() => BookSearchResult, { nullable: true })
     async previewBook(
-        @Arg("isbn13") isbn13: string,
+        @Arg("isbn13") rawIsbn13: string,
         @Ctx() context: Context,
     ): Promise<BookSearchResult | null> {
+        const isbn13 = normalizeIsbn13(rawIsbn13);
         // Vérifier si déjà en DB
         const dbBook = await Book.findOne({
             where: { isbn13 },
@@ -251,9 +253,10 @@ export class BookSearchResolver {
     @Authorized()
     @Mutation(() => Book)
     async importBook(
-        @Arg("isbn13") isbn13: string,
+        @Arg("isbn13") rawIsbn13: string,
         @Ctx() ctx: Context,
     ): Promise<Book> {
+        const isbn13 = normalizeIsbn13(rawIsbn13);
         enforceRateLimit("importBook", ctx.ip);
 
         const user = await requireUser(ctx);

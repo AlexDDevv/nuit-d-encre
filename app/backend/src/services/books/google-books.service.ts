@@ -67,7 +67,7 @@ export class GoogleBooksService {
 
     async findByIsbn(isbn13: string): Promise<BookSearchResult | null> {
         try {
-            const url = `${BASE_URL}?q=isbn:${isbn13}&fields=items(volumeInfo/title,volumeInfo/authors,volumeInfo/publishedDate,volumeInfo/publisher,volumeInfo/pageCount,volumeInfo/description,volumeInfo/language,volumeInfo/imageLinks,volumeInfo/industryIdentifiers)`;
+            const url = `${BASE_URL}?q=isbn:${encodeURIComponent(isbn13)}&fields=items(volumeInfo/title,volumeInfo/authors,volumeInfo/publishedDate,volumeInfo/publisher,volumeInfo/pageCount,volumeInfo/description,volumeInfo/language,volumeInfo/imageLinks,volumeInfo/industryIdentifiers)`;
             const res = await fetch(url);
             if (!res.ok) return null;
             const data: GoogleBooksResponse = await res.json();

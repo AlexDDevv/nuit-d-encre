@@ -274,9 +274,9 @@ export default function BookForm() {
                         rules={{
                             required: "Le ISBN-13 est requis",
                             pattern: {
-                                value: /^.{13}$/,
+                                value: /^\d{13}$/,
                                 message:
-                                    "Le ISBN-13 doit contenir exactement 13 caractères.",
+                                    "Le ISBN-13 doit contenir exactement 13 chiffres, sans tiret.",
                             },
                         }}
                     />

@@ -1,4 +1,5 @@
-import { Length, IsIn, IsInt, Min, Max, ValidateIf } from "class-validator"
+import { Length, Matches, IsIn, IsInt, Min, Max, ValidateIf } from "class-validator"
+import { ISBN13_PATTERN } from "../../../../utils/isbn"
 import { Field, ID, InputType, Int } from "type-graphql"
 
 /**
@@ -46,7 +47,7 @@ export class CreateBookInput {
     isbn10?: string
 
     @Field()
-    @Length(13, 13, { message: "ISBN-13 must be exactly 13 characters" })
+    @Matches(ISBN13_PATTERN, { message: "ISBN-13 must be exactly 13 digits" })
     isbn13!: string
 
     @Field(() => Int)
