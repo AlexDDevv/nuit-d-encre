@@ -7,7 +7,7 @@ export function useAdminBooks() {
     const { data, loading, error } = useQuery<AdminBooksQuery>(ADMIN_BOOKS);
 
     return {
-        books: data?.books.allBooks ?? [],
+        books: data?.adminBooks ?? [],
         isLoadingBooks: loading,
         errorBooks: error,
     };

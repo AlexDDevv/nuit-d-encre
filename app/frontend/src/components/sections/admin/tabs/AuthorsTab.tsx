@@ -103,7 +103,7 @@ export function AuthorsTab() {
             tdClass: "text-center",
             cell: (a) => (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary/60 bg-secondary/35 px-2.5 py-0.5 font-title text-xs font-bold text-secondary-foreground">
-                    <LuBookOpen size={12} /> {a.books.length}
+                    <LuBookOpen size={12} /> {a.bookCount}
                 </span>
             ),
         },
@@ -181,8 +181,8 @@ export function AuthorsTab() {
                 title="Supprimer cet auteur ?"
                 confirmLabel="Supprimer l'auteur"
                 warning={
-                    pending && pending.books.length > 0
-                        ? `${pending.books.length} livre(s) sont associés à cet auteur ; détachez-les d'abord, la suppression sera refusée tant qu'ils existent.`
+                    pending && pending.bookCount > 0
+                        ? `${pending.bookCount} livre(s) sont associés à cet auteur ; détachez-les d'abord, la suppression sera refusée tant qu'ils existent.`
                         : undefined
                 }
             >

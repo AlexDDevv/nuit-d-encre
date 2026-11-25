@@ -3,7 +3,8 @@
  * @category Resolvers
  * @description
  * Resolvers réservés au panel d'administration : compteurs globaux, activité
- * récente du dashboard, liste complète des critiques et suppression de compte.
+ * récente du dashboard, listes complètes (livres, auteurs, critiques) et
+ * suppression de compte.
  * Toutes les opérations sont protégées par `@Authorized(Roles.Admin)`.
  */
 
@@ -81,6 +82,32 @@ export class AdminResolver {
         }));
 
         return { recentUsers, recentBooks, recentReviews, recentActions };
+    }
+
+    /**
+     * Catalogue complet pour l'onglet Livres (recherche et pagination côté
+     * client). Query dédiée : la query publique `books` est plafonnée.
+     */
+    @Authorized(Roles.Admin)
+    @Query(() => [Book])
+    async adminBooks(): Promise<Book[]> {
+        return Book.find({
+            order: { createdAt: "DESC" },
+            relations: { author: true, category: true, user: true },
+        });
+    }
+
+    /**
+     * Liste complète des auteurs pour l'onglet Auteurs (même raison que
+     * `adminBooks`). `books` est résolu par le FieldResolver d'Author.
+     */
+    @Authorized(Roles.Admin)
+    @Query(() => [Author])
+    async adminAuthors(): Promise<Author[]> {
+        return Author.find({
+            order: { createdAt: "DESC" },
+            relations: { user: true },
+        });
     }
 
     /**

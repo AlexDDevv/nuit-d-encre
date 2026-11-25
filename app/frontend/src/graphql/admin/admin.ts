@@ -87,28 +87,25 @@ export const ADMIN_USERS = gql`
 /** Tous les livres (onglet Livres) - pagination/recherche côté client. */
 export const ADMIN_BOOKS = gql`
     query AdminBooks {
-        books(filters: { limit: 1000 }) {
-            allBooks {
+        adminBooks {
+            id
+            title
+            isbn13
+            format
+            createdAt
+            author {
                 id
-                title
-                isbn13
-                format
-                createdAt
-                author {
-                    id
-                    firstname
-                    lastname
-                }
-                category {
-                    id
-                    name
-                }
-                user {
-                    id
-                    userName
-                }
+                firstname
+                lastname
             }
-            totalCountAll
+            category {
+                id
+                name
+            }
+            user {
+                id
+                userName
+            }
         }
     }
 `;
@@ -116,22 +113,17 @@ export const ADMIN_BOOKS = gql`
 /** Tous les auteurs (onglet Auteurs). */
 export const ADMIN_AUTHORS = gql`
     query AdminAuthors {
-        authors(filters: { limit: 1000 }) {
-            allAuthors {
+        adminAuthors {
+            id
+            firstname
+            lastname
+            nationality
+            createdAt
+            bookCount
+            user {
                 id
-                firstname
-                lastname
-                nationality
-                createdAt
-                books {
-                    id
-                }
-                user {
-                    id
-                    userName
-                }
+                userName
             }
-            totalCountAll
         }
     }
 `;

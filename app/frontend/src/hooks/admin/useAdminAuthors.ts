@@ -7,7 +7,7 @@ export function useAdminAuthors() {
     const { data, loading, error } = useQuery<AdminAuthorsQuery>(ADMIN_AUTHORS);
 
     return {
-        authors: data?.authors.allAuthors ?? [],
+        authors: data?.adminAuthors ?? [],
         isLoadingAuthors: loading,
         errorAuthors: error,
     };

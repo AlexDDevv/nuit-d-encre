@@ -39,7 +39,7 @@ export interface AdminBookRow {
 }
 
 export interface AdminBooksQuery {
-    books: { allBooks: AdminBookRow[]; totalCountAll: number };
+    adminBooks: AdminBookRow[];
 }
 
 export interface AdminAuthorRow {
@@ -48,12 +48,12 @@ export interface AdminAuthorRow {
     lastname: string;
     nationality: string | null;
     createdAt: string;
-    books: { id: string }[];
+    bookCount: number;
     user: { id: string; userName: string } | null;
 }
 
 export interface AdminAuthorsQuery {
-    authors: { allAuthors: AdminAuthorRow[]; totalCountAll: number };
+    adminAuthors: AdminAuthorRow[];
 }
 
 export interface AdminCategoryRow {
