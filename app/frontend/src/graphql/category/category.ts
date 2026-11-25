@@ -27,14 +27,6 @@ export const CREATE_CATEGORY = gql`
     }
 `;
 
-export const UPDATE_CATEGORY = gql`
-    mutation UpdateSurvey($data: UpdateCategoryInput!) {
-        updateCategory(data: $data) {
-            name
-        }
-    }
-`;
-
 export const DELETE_CATEGORY = gql`
     mutation DeleteCategory($categoryId: ID!) {
         deleteCategory(id: $categoryId) {
