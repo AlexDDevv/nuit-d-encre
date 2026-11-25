@@ -145,6 +145,7 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 ## État et suite
 
 - Début : 27 mars 2025 (`dc769a4`).
-- État : projet considéré comme terminé. Toutes les fonctionnalités décrites sont en place, avec une CI (lint, typecheck, tests) et un déploiement CapRover documenté.
+- État en juillet 2026 : projet considéré comme terminé. Toutes les fonctionnalités décrites sont en place, avec une CI (lint, typecheck, tests) et un déploiement CapRover documenté.
+- Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
-- Suite prévue : éventuellement la purge automatique des données à la fin des durées de conservation, pour compléter la conformité RGPD. Rien d'autre n'est prévu.
+- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). En tête : progression et journal de lecture, citations, statut « abandonné », défi de lecture annuel, leaderboard. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
