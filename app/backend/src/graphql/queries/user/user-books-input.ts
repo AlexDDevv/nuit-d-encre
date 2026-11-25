@@ -21,6 +21,7 @@ import { ReadingStatus } from "../../../types/types";
 @InputType()
 export class UserBooksQueryInput extends BooksQueryInput {
     @Field(() => [ReadingStatus], { nullable: true })
+    @IsOptional()
     @IsEnum(ReadingStatus, { each: true })
     status?: ReadingStatus[];
 
