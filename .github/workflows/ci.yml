@@ -39,6 +39,12 @@ jobs:
               run: pnpm install --frozen-lockfile
               working-directory: .
 
+            # Formatage des deux workspaces (app/*/src), vérifié une seule
+            # fois ici : c'est l'étape la moins chère, elle échoue au plus tôt.
+            - name: Format
+              run: pnpm format:check
+              working-directory: .
+
             - name: Lint
               run: pnpm lint
 

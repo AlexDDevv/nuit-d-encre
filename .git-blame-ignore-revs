@@ -1,0 +1,5 @@
+# Reformatages sans changement de comportement, ignorés par git blame.
+# Activer localement : git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: applique Prettier à tout le code source
+a083048dd1203e7abb23f36f74a816abf1fc0f7e
