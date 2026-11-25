@@ -123,6 +123,20 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Effet : les comptes existants passent en privé ; la règle s'appliquant à la lecture, basculer le réglage cache ou réaffiche aussi l'activité passée.
 - Référence : `937ffc9`, `f5291ba`, `4ed186f`.
 
+### Sessions révocables par version de jeton
+
+- Décision : le JWT contient une version de session (`User.tokenVersion`) comparée à chaque requête ; changer de mot de passe l'incrémente, ce qui déconnecte les autres appareils, et réémet le cookie de l'appareil en cours.
+- Intention : un jeton volé ne doit pas rester valide après un changement de mot de passe.
+- Alternative écartée : une liste noire de jetons, qui demande un stockage partagé pour une durée de vie de 24 h.
+- Référence : `fe981ce`.
+
+### Défenses en profondeur sur l'API
+
+- Décision : profondeur et largeur des requêtes GraphQL bornées (8 niveaux, 400 champs), ISBN et URL validés avant usage, toute chaîne d'entrée plafonnée, en-têtes de sécurité nginx. La politique de sécurité du contenu (CSP) est d'abord en observation.
+- Intention : refuser tôt les requêtes abusives et ne stocker que des données conformes.
+- Coût : une CSP mal réglée casserait la connexion Google ou les couvertures ; elle n'est appliquée qu'après vérification.
+- Référence : `682bdf0`, `31aef0a`, `75d548c`, `f574fb4`.
+
 ## Difficultés rencontrées
 
 ### XP gagnée en boucle
@@ -176,6 +190,11 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 
 - Problème : la plupart des endpoints exigeaient `@Authorized(Roles.User, Roles.Admin)`, ce qui excluait le rôle modérateur : il ne pouvait ni gérer sa bibliothèque ni critiquer.
 - Solution : `@Authorized()` pour « toute session », convention notée dans `CLAUDE.md` (`ff5daa1`).
+
+### Validation des auteurs désactivée par un copier-coller
+
+- Problème : les règles des champs optionnels d'un auteur (biographie, nationalité, liens) étaient conditionnées à un champ de livre, `isbn10`, absent d'un auteur. Elles ne s'exécutaient donc jamais à la création.
+- Solution : un décorateur partagé `SkipIfEmpty` pour les champs optionnels, et des liens limités à http(s) (`75d548c`).
 
 ### Ce que j'en retiens
 
