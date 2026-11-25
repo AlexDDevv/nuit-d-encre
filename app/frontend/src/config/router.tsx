@@ -254,6 +254,21 @@ const router = createBrowserRouter([
                 ),
             },
             {
+                // Bibliothèque partagée d'un autre lecteur, en lecture seule.
+                path: "profil/:id/bibliotheque",
+                element: (
+                    <Suspense
+                        fallback={
+                            <NocturneLoader concept="livre" fullscreen label />
+                        }
+                    >
+                        <ProtectedRoute>
+                            <UserLibrary />
+                        </ProtectedRoute>
+                    </Suspense>
+                ),
+            },
+            {
                 path: "admin",
                 element: (
                     <Suspense

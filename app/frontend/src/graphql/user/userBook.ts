@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_USER_BOOKS = gql`
-    query UserBooks($filters: UserBooksQueryInput) {
-        userBooks(filters: $filters) {
+    query UserBooks($filters: UserBooksQueryInput, $userId: ID) {
+        userBooks(filters: $filters, userId: $userId) {
             userBooks {
                 id
                 isFavorite
@@ -38,8 +38,8 @@ export const GET_USER_BOOKS = gql`
 `;
 
 export const GET_USER_BOOK_STATUS_COUNTS = gql`
-    query UserBookStatusCounts {
-        userBookStatusCounts {
+    query UserBookStatusCounts($userId: ID) {
+        userBookStatusCounts(userId: $userId) {
             total
             toRead
             reading

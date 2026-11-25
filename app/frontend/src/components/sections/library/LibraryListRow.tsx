@@ -6,6 +6,7 @@ import BookCardRating from "@/components/sections/book/BookCard/BookCardRating";
 import SelectBookStatus from "@/components/sections/book/SelectBookStatus";
 import FavoriteBookModal from "@/components/sections/library/FavoriteBookModal";
 import ConfirmRemoveOverlay from "@/components/sections/library/UI/ConfirmRemoveOverlay";
+import StatusPill from "@/components/sections/library/UI/StatusPill";
 import { cn, slugify } from "@/lib/utils";
 import { BookCardLibraryProps } from "@/types/types";
 import Button from "@/components/UI/Button";
@@ -25,6 +26,7 @@ export default function LibraryListRow({
     isUpdatingUserBook,
     handleDeleteUserBook,
     isDeletingUserBook,
+    readOnly = false,
 }: BookCardLibraryProps) {
     const [confirming, setConfirming] = useState(false);
     const [favOpen, setFavOpen] = useState(false);
@@ -104,53 +106,74 @@ export default function LibraryListRow({
 
                     {/* statut (sm+) */}
                     <div className="hidden shrink-0 sm:block">
-                        <SelectBookStatus
-                            value={status}
-                            onChange={(newStatus) =>
-                                onStatusChange?.({
-                                    userBookId: id,
-                                    bookId: book.id,
-                                    status: newStatus,
-                                })
-                            }
-                            disabled={isUpdatingUserBook}
-                            colored
-                            className="min-w-37.5 h-8 w-full rounded-md text-xs"
-                        />
+                        {readOnly ? (
+                            <StatusPill status={status} />
+                        ) : (
+                            <SelectBookStatus
+                                value={status}
+                                onChange={(newStatus) =>
+                                    onStatusChange?.({
+                                        userBookId: id,
+                                        bookId: book.id,
+                                        status: newStatus,
+                                    })
+                                }
+                                disabled={isUpdatingUserBook}
+                                colored
+                                className="min-w-37.5 h-8 w-full rounded-md text-xs"
+                            />
+                        )}
                     </div>
 
                     {/* actions */}
-                    <div className="flex shrink-0 items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setFavOpen(true)}
-                            aria-label={
-                                isFavorite
-                                    ? `Favori, rang ${favoriteRank}. Gérer les favoris`
-                                    : "Ajouter aux favoris"
-                            }
-                            className={cn(
-                                "focus-visible:ring-ring grid h-8 w-8 cursor-pointer place-items-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2",
-                                isFavorite
-                                    ? "border-primary/50 text-primary bg-primary/14"
-                                    : "border-border text-muted-foreground hover:text-primary hover:border-primary/40",
-                            )}
-                        >
-                            <FaStar className="h-3 w-3" aria-hidden="true" />
-                        </button>
-                        <Button
-                            variant="destructiveGhost"
-                            size="icon"
-                            onClick={() => setConfirming(true)}
-                            ariaLabel="Retirer de vos rayons"
-                            className="h-8 w-8 rounded-md"
-                        >
-                            <FaTrashCan
-                                className="h-3 w-3"
-                                aria-hidden="true"
-                            />
-                        </Button>
-                    </div>
+                    {readOnly ? (
+                        isFavorite && (
+                            <span
+                                title={`Favori · rang ${favoriteRank}`}
+                                className="border-primary/50 text-primary bg-primary/14 grid h-8 w-8 shrink-0 place-items-center rounded-md border"
+                            >
+                                <FaStar
+                                    className="h-3 w-3"
+                                    aria-hidden="true"
+                                />
+                            </span>
+                        )
+                    ) : (
+                        <div className="flex shrink-0 items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setFavOpen(true)}
+                                aria-label={
+                                    isFavorite
+                                        ? `Favori, rang ${favoriteRank}. Gérer les favoris`
+                                        : "Ajouter aux favoris"
+                                }
+                                className={cn(
+                                    "focus-visible:ring-ring grid h-8 w-8 cursor-pointer place-items-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2",
+                                    isFavorite
+                                        ? "border-primary/50 text-primary bg-primary/14"
+                                        : "border-border text-muted-foreground hover:text-primary hover:border-primary/40",
+                                )}
+                            >
+                                <FaStar
+                                    className="h-3 w-3"
+                                    aria-hidden="true"
+                                />
+                            </button>
+                            <Button
+                                variant="destructiveGhost"
+                                size="icon"
+                                onClick={() => setConfirming(true)}
+                                ariaLabel="Retirer de vos rayons"
+                                className="h-8 w-8 rounded-md"
+                            >
+                                <FaTrashCan
+                                    className="h-3 w-3"
+                                    aria-hidden="true"
+                                />
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -164,14 +187,16 @@ export default function LibraryListRow({
                 />
             )}
 
-            <FavoriteBookModal
-                isOpen={favOpen}
-                onClose={() => setFavOpen(false)}
-                userBookId={id}
-                book={book}
-                isFavorite={isFavorite}
-                favoriteRank={favoriteRank}
-            />
+            {!readOnly && (
+                <FavoriteBookModal
+                    isOpen={favOpen}
+                    onClose={() => setFavOpen(false)}
+                    userBookId={id}
+                    book={book}
+                    isFavorite={isFavorite}
+                    favoriteRank={favoriteRank}
+                />
+            )}
         </div>
     );
 }

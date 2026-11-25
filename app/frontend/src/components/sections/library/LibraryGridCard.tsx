@@ -7,29 +7,11 @@ import BookCardRating from "@/components/sections/book/BookCard/BookCardRating";
 import SelectBookStatus from "@/components/sections/book/SelectBookStatus";
 import FavoriteBookModal from "@/components/sections/library/FavoriteBookModal";
 import ConfirmRemoveOverlay from "@/components/sections/library/UI/ConfirmRemoveOverlay";
+import StatusPill from "@/components/sections/library/UI/StatusPill";
 import { cn, slugify } from "@/lib/utils";
 import { formatShortLabelMap } from "@/lib/filterMaps";
-import { BOOK_STATES, STATUS_COLORS } from "@/constants/bookStatus";
 import { BookCardLibraryProps } from "@/types/types";
 import Button from "@/components/UI/Button";
-
-/** Pastille de statut en lecture seule, colorée selon le statut. */
-function StatusPill({ status }: { status: BookCardLibraryProps["status"] }) {
-    const config = BOOK_STATES.find((s) => s.value === status);
-    if (!config) return null;
-    const Icon = config.icon;
-    return (
-        <span
-            className={cn(
-                "font-body text-xxs inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 font-bold backdrop-blur-sm",
-                STATUS_COLORS[status].chip,
-            )}
-        >
-            <Icon className="h-3 w-3" />
-            {config.label}
-        </span>
-    );
-}
 
 /**
  * Carte de la vue Grille de la bibliothèque : couverture héros, favori (rang)
@@ -46,6 +28,7 @@ export default function LibraryGridCard({
     isUpdatingUserBook,
     handleDeleteUserBook,
     isDeletingUserBook,
+    readOnly = false,
 }: BookCardLibraryProps) {
     const [confirming, setConfirming] = useState(false);
     const [favOpen, setFavOpen] = useState(false);
@@ -78,33 +61,47 @@ export default function LibraryGridCard({
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(to_top,hsl(20_3%_9%/0.5),transparent)]" />
 
                 {/* favori (haut-gauche) */}
-                <button
-                    type="button"
-                    onClick={() => setFavOpen(true)}
-                    aria-label={
-                        isFavorite
-                            ? `Favori, rang ${favoriteRank}. Gérer les favoris`
-                            : "Ajouter aux favoris"
-                    }
-                    title={
-                        isFavorite
-                            ? `Favori · rang ${favoriteRank}`
-                            : "Ajouter aux favoris"
-                    }
-                    className={cn(
-                        "focus-visible:ring-ring py-1.25 absolute left-2 top-2 z-10 inline-flex cursor-pointer items-center gap-1 rounded-full border px-2 backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2",
-                        isFavorite
-                            ? "text-primary-foreground border-primary/40 bg-primary/90"
-                            : "text-primary border-primary/35 bg-[hsl(20_3%_9%/0.72)]",
-                    )}
-                >
-                    <FaStar size={12} aria-hidden="true" />
-                    {isFavorite && (
-                        <span className="text-xxs font-mono font-medium leading-none">
-                            {favoriteRank}
+                {readOnly ? (
+                    isFavorite && (
+                        <span
+                            title={`Favori · rang ${favoriteRank}`}
+                            className="text-primary-foreground border-primary/40 bg-primary/90 py-1.25 absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border px-2 backdrop-blur-sm"
+                        >
+                            <FaStar size={12} aria-hidden="true" />
+                            <span className="text-xxs font-mono font-medium leading-none">
+                                {favoriteRank}
+                            </span>
                         </span>
-                    )}
-                </button>
+                    )
+                ) : (
+                    <button
+                        type="button"
+                        onClick={() => setFavOpen(true)}
+                        aria-label={
+                            isFavorite
+                                ? `Favori, rang ${favoriteRank}. Gérer les favoris`
+                                : "Ajouter aux favoris"
+                        }
+                        title={
+                            isFavorite
+                                ? `Favori · rang ${favoriteRank}`
+                                : "Ajouter aux favoris"
+                        }
+                        className={cn(
+                            "focus-visible:ring-ring py-1.25 absolute left-2 top-2 z-10 inline-flex cursor-pointer items-center gap-1 rounded-full border px-2 backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2",
+                            isFavorite
+                                ? "text-primary-foreground border-primary/40 bg-primary/90"
+                                : "text-primary border-primary/35 bg-[hsl(20_3%_9%/0.72)]",
+                        )}
+                    >
+                        <FaStar size={12} aria-hidden="true" />
+                        {isFavorite && (
+                            <span className="text-xxs font-mono font-medium leading-none">
+                                {favoriteRank}
+                            </span>
+                        )}
+                    </button>
+                )}
 
                 {/* statut (bas-gauche) */}
                 <div className="absolute bottom-2 left-2 z-10">
@@ -141,30 +138,35 @@ export default function LibraryGridCard({
                 </div>
 
                 {/* actions */}
-                <div className="mt-2.5 flex items-center gap-2 border-t border-dashed border-[hsl(0_0%_100%/0.07)] pt-2.5">
-                    <SelectBookStatus
-                        value={status}
-                        onChange={(newStatus) =>
-                            onStatusChange?.({
-                                userBookId: id,
-                                bookId: book.id,
-                                status: newStatus,
-                            })
-                        }
-                        disabled={isUpdatingUserBook}
-                        colored
-                        className="h-8 w-full min-w-0 flex-1 py-1 text-xs"
-                    />
-                    <Button
-                        variant="destructiveGhost"
-                        size="icon"
-                        onClick={() => setConfirming(true)}
-                        ariaLabel="Retirer de vos rayons"
-                        className="h-8 w-8"
-                    >
-                        <FaTrashCan className="h-3 w-3" aria-hidden="true" />
-                    </Button>
-                </div>
+                {!readOnly && (
+                    <div className="mt-2.5 flex items-center gap-2 border-t border-dashed border-[hsl(0_0%_100%/0.07)] pt-2.5">
+                        <SelectBookStatus
+                            value={status}
+                            onChange={(newStatus) =>
+                                onStatusChange?.({
+                                    userBookId: id,
+                                    bookId: book.id,
+                                    status: newStatus,
+                                })
+                            }
+                            disabled={isUpdatingUserBook}
+                            colored
+                            className="h-8 w-full min-w-0 flex-1 py-1 text-xs"
+                        />
+                        <Button
+                            variant="destructiveGhost"
+                            size="icon"
+                            onClick={() => setConfirming(true)}
+                            ariaLabel="Retirer de vos rayons"
+                            className="h-8 w-8"
+                        >
+                            <FaTrashCan
+                                className="h-3 w-3"
+                                aria-hidden="true"
+                            />
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {confirming && (
@@ -176,14 +178,16 @@ export default function LibraryGridCard({
                 />
             )}
 
-            <FavoriteBookModal
-                isOpen={favOpen}
-                onClose={() => setFavOpen(false)}
-                userBookId={id}
-                book={book}
-                isFavorite={isFavorite}
-                favoriteRank={favoriteRank}
-            />
+            {!readOnly && (
+                <FavoriteBookModal
+                    isOpen={favOpen}
+                    onClose={() => setFavOpen(false)}
+                    userBookId={id}
+                    book={book}
+                    isFavorite={isFavorite}
+                    favoriteRank={favoriteRank}
+                />
+            )}
         </div>
     );
 }

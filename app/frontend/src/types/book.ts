@@ -127,6 +127,12 @@ export type BookCardLibraryProps = {
     isUpdatingUserBook?: boolean;
     handleDeleteUserBook?: (userBookId: string) => void;
     isDeletingUserBook?: boolean;
+    /** Bibliothèque d'un autre lecteur : aucune action d'édition. */
+    readOnly?: boolean;
+};
+
+export type StatusPillProps = {
+    status: UserBookStatus;
 };
 
 export type BookShelfProps = {

@@ -20,12 +20,13 @@ const EMPTY: StatusCounts = {
 
 /**
  * Compteurs d'ouvrages de la bibliothèque par statut (toute la collection),
- * pour l'en-tête « Vos rayons » et les segments de filtre.
+ * pour l'en-tête « Vos rayons » et les segments de filtre. `userId` : celle
+ * d'un autre lecteur (si partagée) ; par défaut la sienne.
  */
-export function useUserBookStatusCounts() {
+export function useUserBookStatusCounts(userId?: string) {
     const { data, loading, error, refetch } = useQuery<{
         userBookStatusCounts: StatusCounts;
-    }>(GET_USER_BOOK_STATUS_COUNTS);
+    }>(GET_USER_BOOK_STATUS_COUNTS, { variables: { userId } });
 
     const counts = data?.userBookStatusCounts ?? EMPTY;
 
@@ -37,5 +38,11 @@ export function useUserBookStatusCounts() {
         PAUSED: counts.paused,
     };
 
-    return { counts, countByStatus, isLoadingCounts: loading, countsError: error, refetchCounts: refetch };
+    return {
+        counts,
+        countByStatus,
+        isLoadingCounts: loading,
+        countsError: error,
+        refetchCounts: refetch,
+    };
 }

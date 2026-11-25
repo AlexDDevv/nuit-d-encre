@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
-import { UseBooksMode, UserBookStatus } from "@/types/types";
+import { UseUserBooksOptions, UserBookStatus } from "@/types/types";
 import { useSearchParams } from "react-router-dom";
 import { GET_USER_BOOKS } from "@/graphql/user/userBook";
 import {
@@ -24,7 +24,6 @@ import {
  *    • Format → GraphQL `format` (derived from `formatLabelMap`)
  *    • Language → GraphQL `language` (derived from `languageLabelMap`)
  *    • Status → GraphQL `status` (derived from `statusLabelMap`)
- *    • Visibility (Public/Private) → GraphQL `isPublic`
  *
  * The hook expects you to manage a single `string[]` of labels in your UI and pass it to `setFilters`.
  * Internally, those labels are mapped to the API variables.
@@ -33,13 +32,12 @@ import {
  * - Format: "Livre relié", "Livre broché", "Livre de poche"
  * - Language: "Français", "Anglais", "Espagnol", "Allemand", "Italien"
  * - Status: "À lire", "En cours", "Lu", "En pause"
- * - Visibility: "Public", "Privé"
  *
  * Usage modes control page size:
  * - `home`   → 12 items per page
  * - `library`→ 24 items per page
  *
- * @param {UseBooksMode} mode - UI mode that drives pagination size (`home` | `library`).
+ * @param {UseUserBooksOptions} mode - UI mode that drives pagination size (`home` | `library`).
  *
  * @returns {Object} An object with:
  * @property {Book[]} userBooks - The list of books for the current page (empty while loading).
@@ -72,7 +70,6 @@ import {
  *     "Livre broché",   // format → format: ["paperback"]
  *     "Français",       // language → language: "fr"
  *     "En cours",       // status → status: ["reading"]
- *     "Public",         // isPublic → isPublic: true
  *   ]);
  * }, [setFilters]);
  *
@@ -100,12 +97,7 @@ import {
 
 const PER_PAGE = { library: 24, home: 12 } as const;
 
-const isPublicLabelMap: Record<"true" | "false", string> = {
-    true: "Public",
-    false: "Privé",
-};
-
-export function useUserBooksData({ mode }: UseBooksMode) {
+export function useUserBooksData({ mode, userId }: UseUserBooksOptions) {
     const [searchParams] = useSearchParams();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filters, setFilters] = useState<string[]>([]);
@@ -134,10 +126,6 @@ export function useUserBooksData({ mode }: UseBooksMode) {
         )
         .filter(Boolean) as UserBookStatus[];
 
-    const selectedIsPublic = Object.entries(isPublicLabelMap).find(
-        ([, label]) => filters.includes(label),
-    )?.[0];
-
     const {
         data: userBooksData,
         loading: isLoadingUserBooks,
@@ -159,10 +147,8 @@ export function useUserBooksData({ mode }: UseBooksMode) {
                     ? languageLabelToCode[selectedLanguage]
                     : undefined,
                 status: statusValues.length ? statusValues : undefined,
-                isPublic: selectedIsPublic
-                    ? selectedIsPublic === "true"
-                    : undefined,
             },
+            userId,
         },
     });
 

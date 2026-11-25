@@ -12,7 +12,6 @@ export interface UserBook {
     status: UserBookStatus;
     startedAt?: string;
     finishedAt?: string;
-    isPublic?: boolean;
     isFavorite: boolean;
     favoriteRank: number | null;
     createdAt: string;
@@ -24,7 +23,6 @@ export interface CreateUserBookInput {
     status: UserBookStatus;
     startedAt?: string;
     finishedAt?: string;
-    isPublic?: boolean;
 }
 
 export interface UpdateUserBookInput {
@@ -32,7 +30,6 @@ export interface UpdateUserBookInput {
     status?: UserBookStatus;
     startedAt?: string;
     finishedAt?: string;
-    isPublic?: boolean;
 }
 
 export type UserBookStatusConfig = {
@@ -60,4 +57,10 @@ export interface FavoriteBookModalProps {
     book: Book;
     isFavorite: boolean;
     favoriteRank: number | null;
+}
+
+/** Options de useUserBooksData : `userId` pour consulter la bibliothèque partagée d'un autre lecteur. */
+export interface UseUserBooksOptions {
+    mode: "library" | "home";
+    userId?: string;
 }
