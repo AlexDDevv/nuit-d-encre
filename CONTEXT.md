@@ -87,6 +87,21 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Complément : CI stricte (un avertissement de lint fait échouer le build), branche `master` protégée, un commit n'y arrive qu'après une CI verte sur `test`.
 - Référence : `.github/workflows/ci.yml`, `src/test/factories.ts` (back).
 
+### Pagination plafonnée par une classe commune
+
+- Décision : toute liste passe par `PaginationInput`, dont `limit` est borné à 100 (`utils/pagination.ts`). Les onglets admin qui lisaient tout le catalogue ont leurs propres queries réservées à l'admin (`adminBooks`, `adminAuthors`).
+- Intention : un `limit` libre permettait de charger toute une table d'une seule requête. Mettre la borne dans une classe héritée fait de la sécurité le comportement par défaut des futures listes.
+- Coût : le sélecteur de favoris cherche désormais côté serveur au lieu de filtrer localement une liste complète.
+- Référence : `4e75b7e`, `f39a800`, `25ce7a7`.
+
+### Builds de production figés par le lockfile
+
+- Décision : l'archive envoyée à CapRover est construite par `scripts/caprover-archive.sh`, qui ajoute le `pnpm-lock.yaml` du monorepo au dossier de l'app. Les `Dockerfile.prod` installent en `--frozen-lockfile`.
+- Intention : la prod reçoit exactement les versions vérifiées par la CI.
+- Alternative écartée : un lockfile par application, qui aurait changé l'installation de tout le workspace et la CI.
+- Coût : un `Dockerfile.prod` ne se construit plus qu'à partir de cette archive.
+- Référence : `d7c4b06`.
+
 ## Difficultés rencontrées
 
 ### XP gagnée en boucle
@@ -121,6 +136,16 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Problème : la règle de robustesse ne s'appliquait qu'à l'inscription. Le changement de mot de passe acceptait n'importe quelle valeur.
 - Solution : règle définie une seule fois (`utils/password-policy.ts`) et appliquée aux deux parcours, avec son miroir côté front (`70cc4f6`, `9a20508`).
 
+### Rate limiting contournable
+
+- Problème : l'IP utilisée par le rate limiting était la première valeur de `X-Forwarded-For`, fournie par le client. Changer d'en-tête à chaque requête permettait de tenter des mots de passe sans limite.
+- Solution : le nginx du front résout l'IP réelle avec le module realip et réécrit les en-têtes ; le back ne lit plus que `X-Real-IP` (`utils/client-ip.ts`). Vérifié en conteneur : des valeurs falsifiées n'empêchent plus le blocage au onzième essai (`55199b9`).
+
+### Dépendances vulnérables
+
+- Problème : l'audit des dépendances de production relevait 60 vulnérabilités, dont une critique, principalement via Apollo Server 4 arrivé en fin de vie.
+- Solution : passage à Apollo Server 5, retrait des paquets inutilisés, montées mineures côté front. Il en reste 10, non exploitables dans l'usage du projet et documentées dans l'audit (`39aa1a2`, `96b59f9`, `d5bb2d7`).
+
 ### Ce que j'en retiens
 
 - Mener seul (avec Claude) un projet de bout en bout, de la base de données au déploiement, demande de réfléchir à chaque couche, pas seulement aux fonctionnalités.
@@ -147,5 +172,6 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Début : 27 mars 2025 (`dc769a4`).
 - État en juillet 2026 : projet considéré comme terminé. Toutes les fonctionnalités décrites sont en place, avec une CI (lint, typecheck, tests) et un déploiement CapRover documenté.
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
+- Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
 - Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). En tête : progression et journal de lecture, citations, statut « abandonné », défi de lecture annuel, leaderboard. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
