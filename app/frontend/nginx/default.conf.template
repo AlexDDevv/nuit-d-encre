@@ -11,6 +11,28 @@ server {
     # l'extérieur (http://nuitdencre.fr:8080/...).
     absolute_redirect off;
 
+    # Ne pas annoncer la version de nginx dans les en-têtes et pages d'erreur.
+    server_tokens off;
+
+    # En-têtes de sécurité, hérités par toutes les locations (aucune ne
+    # redéfinit add_header). `always` : posés aussi sur les réponses d'erreur.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    # Interdit l'affichage du site dans une iframe (clickjacking).
+    add_header X-Frame-Options "DENY" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+    # HTTPS imposé au navigateur pendant 180 jours (ignoré en HTTP). Sans
+    # includeSubDomains : les sous-domaines CapRover restent hors du champ.
+    add_header Strict-Transport-Security "max-age=15552000" always;
+    # CSP en observation : les violations s'affichent dans la console sans
+    # rien bloquer. À passer en Content-Security-Policy une fois vérifié que
+    # le site (connexion Google comprise) n'en déclenche aucune.
+    #   - images : couvertures externes (Open Library, Google Books) et
+    #     Cloudinary, d'où https: ;
+    #   - accounts.google.com/gsi : bouton et popup de connexion Google ;
+    #   - style 'unsafe-inline' : attributs style de React et des animations.
+    add_header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+
     # IP réelle du client. Le nginx de CapRover ajoute l'IP du client en fin
     # de X-Forwarded-For ; tout ce qui précède vient du client et peut être
     # falsifié. realip parcourt l'en-tête depuis la droite en sautant les
