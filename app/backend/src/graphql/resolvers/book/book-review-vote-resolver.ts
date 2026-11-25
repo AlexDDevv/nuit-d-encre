@@ -52,7 +52,7 @@ export class BookReviewVotesResolver {
      * @example
      * ```graphql
      * query {
-     *   myVoteOnReview(reviewId: 1) {
+     *   myVoteOnReview(reviewId: "<uuid>") {
      *     id
      *     isHelpful
      *   }
@@ -110,7 +110,7 @@ export class BookReviewVotesResolver {
      * ```graphql
      * mutation {
      *   voteOnReview(data: {
-     *     reviewId: 1
+     *     reviewId: "<uuid>"
      *     isHelpful: true
      *   }) {
      *     vote {
@@ -224,7 +224,7 @@ export class BookReviewVotesResolver {
      * @example
      * ```graphql
      * mutation {
-     *   removeVoteOnReview(reviewId: 1) {
+     *   removeVoteOnReview(reviewId: "<uuid>") {
      *     id
      *     review { id }
      *   }
@@ -285,7 +285,7 @@ export class BookReviewVotesResolver {
      * @example
      * ```graphql
      * mutation {
-     *   toggleHelpfulVote(reviewId: 1) {
+     *   toggleHelpfulVote(reviewId: "<uuid>") {
      *     vote {
      *       id
      *       isHelpful

@@ -59,10 +59,10 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * query {
-     *   bookReview(id: 1) {
+     *   bookReview(id: "<uuid>") {
      *     rating
      *     reviewText
-     *     user { name }
+     *     user { userName }
      *     book { title }
      *   }
      * }
@@ -113,11 +113,11 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * query {
-     *   bookReviews(bookId: 1, page: 1, limit: 10, sortBy: "helpful") {
+     *   bookReviews(bookId: "<uuid>", page: 1, limit: 10, sortBy: "helpful") {
      *     reviews {
      *       rating
      *       reviewText
-     *       user { name }
+     *       user { userName }
      *       helpfulCount
      *     }
      *     totalCount
@@ -239,7 +239,7 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * query {
-     *   myBookReview(bookId: 1) {
+     *   myBookReview(bookId: "<uuid>") {
      *     id
      *     rating
      *     reviewText
@@ -287,14 +287,14 @@ export class BookReviewsResolver {
      * ```graphql
      * mutation {
      *   createBookReview(data: {
-     *     bookId: 1
+     *     bookId: "<uuid>"
      *     rating: 5
      *     reviewText: "A masterpiece of modern literature..."
      *   }) {
      *     id
      *     rating
      *     reviewText
-     *     user { name }
+     *     user { userName }
      *   }
      * }
      * ```
@@ -384,7 +384,7 @@ export class BookReviewsResolver {
      * ```graphql
      * mutation {
      *   updateBookReview(data: {
-     *     id: 1
+     *     id: "<uuid>"
      *     rating: 4
      *     reviewText: "Revised my opinion after re-reading..."
      *   }) {
@@ -455,7 +455,7 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * mutation {
-     *   deleteBookReview(id: 1) {
+     *   deleteBookReview(id: "<uuid>") {
      *     id
      *     book { title }
      *   }
@@ -517,7 +517,7 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * query {
-     *   bookReview(id: 1) {
+     *   bookReview(id: "<uuid>") {
      *     reviewText
      *     helpfulCount
      *   }
@@ -542,7 +542,7 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * query {
-     *   bookReview(id: 1) {
+     *   bookReview(id: "<uuid>") {
      *     reviewText
      *     notHelpfulCount
      *   }
@@ -567,7 +567,7 @@ export class BookReviewsResolver {
      * @example
      * ```graphql
      * query {
-     *   bookReview(id: 1) {
+     *   bookReview(id: "<uuid>") {
      *     reviewText
      *     commentCount
      *   }

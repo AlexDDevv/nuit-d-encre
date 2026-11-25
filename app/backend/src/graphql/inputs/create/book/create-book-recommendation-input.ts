@@ -19,7 +19,7 @@ import { Field, ID, InputType } from "type-graphql";
  * @example
  * ```graphql
  * mutation {
- *   toggleBookRecommendation(data: { bookId: 1 }) {
+ *   toggleBookRecommendation(data: { bookId: "<uuid>" }) {
  *     id
  *     book { title }
  *   }

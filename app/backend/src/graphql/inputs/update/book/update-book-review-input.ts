@@ -28,7 +28,7 @@ import {
  * ```graphql
  * mutation {
  *   updateBookReview(data: {
- *     id: 1
+ *     id: "<uuid>"
  *     rating: 4
  *     reviewText: "Updated my opinion - still great but not perfect"
  *   }) {

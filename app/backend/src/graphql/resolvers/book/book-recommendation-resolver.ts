@@ -50,7 +50,7 @@ export class BookRecommendationsResolver {
      * @example
      * ```graphql
      * query {
-     *   bookRecommendation(bookId: 1) {
+     *   bookRecommendation(bookId: "<uuid>") {
      *     id
      *     createdAt
      *   }
@@ -102,7 +102,7 @@ export class BookRecommendationsResolver {
      * @example
      * ```graphql
      * mutation {
-     *   toggleBookRecommendation(data: { bookId: 1 }) {
+     *   toggleBookRecommendation(data: { bookId: "<uuid>" }) {
      *     recommendation {
      *       id
      *       book { title }
@@ -190,7 +190,7 @@ export class BookRecommendationsResolver {
      * @example
      * ```graphql
      * mutation {
-     *   deleteBookRecommendation(bookId: 1) {
+     *   deleteBookRecommendation(bookId: "<uuid>") {
      *     id
      *     book { title }
      *   }

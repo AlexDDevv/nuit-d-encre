@@ -21,7 +21,7 @@ import { IsBoolean } from "class-validator";
  * ```graphql
  * mutation {
  *   voteOnReview(data: {
- *     reviewId: 1
+ *     reviewId: "<uuid>"
  *     isHelpful: true
  *   }) {
  *     id

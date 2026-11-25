@@ -419,7 +419,7 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     averageRating  # Returns: 4.2
      *   }
@@ -447,7 +447,7 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     reviewCount  # Returns: 42
      *   }
@@ -475,7 +475,7 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     recommendationCount  # Returns: 327
      *   }
@@ -505,7 +505,7 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     hasUserReviewed  # Returns: true or false
      *   }
@@ -535,7 +535,7 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     hasUserRecommended  # Returns: true or false
      *   }
@@ -566,7 +566,7 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     isInLibrary  # Returns: true or false
      *   }
@@ -596,12 +596,12 @@ export class BooksResolver {
      * @example
      * ```graphql
      * query {
-     *   book(id: 1) {
+     *   book(id: "<uuid>") {
      *     title
      *     topReviews(limit: 3) {
      *       reviewText
      *       rating
-     *       user { name }
+     *       user { userName }
      *     }
      *   }
      * }
