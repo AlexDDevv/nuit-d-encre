@@ -172,12 +172,10 @@ export class BookReviewsResolver {
             if (ids.length === 0) {
                 reviews = [];
             } else {
-                // TODO(perf): votes × comments double leftJoinAndSelect is multiplicative — revisit if engagement grows
                 const reviewsData = await BookReview.createQueryBuilder(
                     "review",
                 )
                     .leftJoinAndSelect("review.user", "user")
-                    .leftJoinAndSelect("review.votes", "votes")
                     .leftJoinAndSelect("review.comments", "comments")
                     .whereInIds(ids)
                     .addOrderBy("comments.createdAt", "ASC")
@@ -189,10 +187,8 @@ export class BookReviewsResolver {
                     .filter(Boolean);
             }
         } else {
-            // TODO(perf): votes × comments double leftJoinAndSelect is multiplicative — revisit if engagement grows
             const query = BookReview.createQueryBuilder("review")
                 .leftJoinAndSelect("review.user", "user")
-                .leftJoinAndSelect("review.votes", "votes")
                 .leftJoinAndSelect("review.comments", "comments")
                 .where("review.bookId = :bookId", { bookId });
 
@@ -477,8 +473,11 @@ export class BookReviewsResolver {
      * ```
      */
     @FieldResolver(() => Int)
-    helpfulCount(@Root() review: BookReview): number {
-        return review.votes?.filter((vote) => vote.isHelpful).length ?? 0;
+    async helpfulCount(
+        @Root() review: BookReview,
+        @Ctx() context: Context,
+    ): Promise<number> {
+        return (await context.loaders.reviewVoteCounts.load(review.id)).helpful;
     }
 
     /**
@@ -502,8 +501,12 @@ export class BookReviewsResolver {
      * ```
      */
     @FieldResolver(() => Int)
-    notHelpfulCount(@Root() review: BookReview): number {
-        return review.votes?.filter((vote) => !vote.isHelpful).length ?? 0;
+    async notHelpfulCount(
+        @Root() review: BookReview,
+        @Ctx() context: Context,
+    ): Promise<number> {
+        return (await context.loaders.reviewVoteCounts.load(review.id))
+            .notHelpful;
     }
 
     /**

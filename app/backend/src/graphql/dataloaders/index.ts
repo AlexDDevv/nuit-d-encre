@@ -5,6 +5,8 @@ import {
     batchAverageRating,
     batchReviewCount,
     batchRecommendationCount,
+    batchReviewVoteCounts,
+    ReviewVoteCounts,
 } from "./book-aggregate-loaders";
 import { batchTitles } from "./title-loader";
 import { makeMyReviewBatch, makeMyVoteBatch } from "./viewer-review-loaders";
@@ -33,6 +35,7 @@ export type Loaders = {
     followingCount: DataLoader<string, number>;
     isFollowedByMe: DataLoader<string, boolean>;
     myVote: DataLoader<string, boolean | null>;
+    reviewVoteCounts: DataLoader<string, ReviewVoteCounts>;
     myReview: DataLoader<string, BookReview | null>;
 };
 
@@ -62,6 +65,7 @@ export function createLoaders(getUser: () => Promise<User | null>): Loaders {
         followingCount: new DataLoader((ids) => batchFollowingCount(ids)),
         isFollowedByMe: new DataLoader(makeIsFollowedByMeBatch(getUser)),
         myVote: new DataLoader(makeMyVoteBatch(getUser)),
+        reviewVoteCounts: new DataLoader((ids) => batchReviewVoteCounts(ids)),
         myReview: new DataLoader(makeMyReviewBatch(getUser)),
     };
 }

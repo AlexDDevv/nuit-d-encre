@@ -29,6 +29,7 @@ import { BooksResult } from "../../../database/filteredResults/books/books-resul
 import { BooksQueryInput } from "../../queries/books/books-query-input";
 import { Brackets } from "typeorm";
 import { dataSource } from "../../../database/config/datasource";
+import { clampPagination } from "../../../utils/pagination";
 import { isOwnerOrAdmin } from "../../../utils/authorizations";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
@@ -615,7 +616,6 @@ export class BooksResolver {
         try {
             const reviews = await BookReview.createQueryBuilder("review")
                 .leftJoinAndSelect("review.user", "user")
-                .leftJoinAndSelect("review.votes", "votes")
                 .where("review.bookId = :bookId", { bookId: book.id })
                 .addSelect(
                     `(SELECT COUNT(*) FROM "book_review_vote" "bv" WHERE "bv"."reviewId" = "review"."id" AND "bv"."isHelpful" = true)`,
@@ -623,7 +623,7 @@ export class BooksResolver {
                 )
                 .orderBy("helpfulvotecount", "DESC")
                 .addOrderBy("review.createdAt", "DESC")
-                .limit(limit)
+                .limit(clampPagination(1, limit).limit)
                 .getMany();
 
             return reviews;

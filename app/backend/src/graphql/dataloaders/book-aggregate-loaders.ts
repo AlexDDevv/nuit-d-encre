@@ -1,5 +1,6 @@
 import { BookReview } from "../../database/entities/book/bookReview";
 import { BookRecommendation } from "../../database/entities/book/bookRecommendation";
+import { BookReviewVote } from "../../database/entities/book/bookReviewVote";
 
 /**
  * Re-mappe des lignes `{ key, value }` sur la liste de clés demandées,
@@ -84,4 +85,37 @@ export async function batchRecommendationCount(
         console.error("Error batching recommendation counts:", error);
         return ids.map(() => 0);
     }
+}
+
+/** Compteurs de votes d'une critique. */
+export type ReviewVoteCounts = { helpful: number; notHelpful: number };
+
+/**
+ * Votes « utile » / « pas utile » par critique, en un GROUP BY pour toute la
+ * page. Toujours à jour, y compris dans la réponse d'une mutation de vote
+ * (la critique renvoyée n'a pas ses votes chargés).
+ */
+export async function batchReviewVoteCounts(
+    reviewIds: readonly string[],
+): Promise<ReviewVoteCounts[]> {
+    const raw = await BookReviewVote.createQueryBuilder("vote")
+        .select("vote.reviewId", "reviewId")
+        .addSelect("COUNT(*) FILTER (WHERE vote.isHelpful)", "helpful")
+        .addSelect("COUNT(*) FILTER (WHERE NOT vote.isHelpful)", "notHelpful")
+        .where("vote.reviewId IN (:...reviewIds)", { reviewIds })
+        .groupBy("vote.reviewId")
+        .getRawMany<{
+            reviewId: string;
+            helpful: string;
+            notHelpful: string;
+        }>();
+
+    const rows = raw.map((r) => ({
+        key: r.reviewId,
+        value: { helpful: Number(r.helpful), notHelpful: Number(r.notHelpful) },
+    }));
+    return mapRowsToKeys<string, ReviewVoteCounts>(reviewIds, rows, {
+        helpful: 0,
+        notHelpful: 0,
+    });
 }
