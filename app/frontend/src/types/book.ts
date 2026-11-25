@@ -1,3 +1,4 @@
+import type { BookReview } from "./book-review";
 import { ReactNode } from "react";
 import { IconType } from "react-icons";
 
@@ -29,6 +30,8 @@ export interface Book {
     recommendationCount?: number;
     hasUserReviewed?: boolean;
     hasUserRecommended?: boolean;
+    /** Critique de l'utilisateur courant sur ce livre (null si aucune). */
+    myReview?: BookReview | null;
     isInLibrary?: boolean;
     createdAt?: string;
 }

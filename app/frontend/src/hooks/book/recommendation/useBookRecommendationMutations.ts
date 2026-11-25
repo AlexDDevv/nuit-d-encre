@@ -1,52 +1,22 @@
 import { ApolloCache, useMutation } from "@apollo/client";
-import {
-    TOGGLE_BOOK_RECOMMENDATION,
-    DELETE_BOOK_RECOMMENDATION,
-    GET_BOOK_RECOMMENDATION,
-} from "@/graphql/book/book-recommendation";
+import { TOGGLE_BOOK_RECOMMENDATION } from "@/graphql/book/book-recommendation";
 
 /**
- * Hook providing all GraphQL mutations related to book recommendations.
+ * Recommandation d'un livre par l'utilisateur courant (ajout ou retrait).
  *
- * @description
- * This hook encapsulates the logic for toggling (creating/removing) and deleting book recommendations.
- * It uses Apollo Client's `useMutation` and exposes loading states,
- * errors, as well as functions to reset them.
- *
- * @returns {Object} An object containing mutation functions and their states.
- * - toggleBookRecommendation(bookId: string): Promise<{ recommendation: any, action: string } | undefined>
- * - isTogglingBookRecommendation: boolean
- * - toggleBookRecommendationError: ApolloError | undefined
- * - resetToggleBookRecommendationError(): void
- * - deleteBookRecommendation(bookId: string): Promise<void>
- * - isDeletingBookRecommendation: boolean
- * - deleteBookRecommendationError: ApolloError | undefined
- * - resetDeleteBookRecommendationError(): void
+ * @returns
+ * - toggleBookRecommendation(bookId) : crée ou retire la recommandation et
+ *   met à jour la fiche en cache (`recommendationCount`, `hasUserRecommended`) ;
+ * - isTogglingBookRecommendation, toggleBookRecommendationError,
+ *   resetToggleBookRecommendationError.
  *
  * @example
  * ```ts
- * import { useBookRecommendationMutations } from "@/hooks/...";
- *
- * const {
- *   toggleBookRecommendation,
- *   isTogglingBookRecommendation,
- *   toggleBookRecommendationError,
- *   resetToggleBookRecommendationError,
- *   deleteBookRecommendation,
- *   isDeletingBookRecommendation,
- *   deleteBookRecommendationError,
- *   resetDeleteBookRecommendationError,
- * } = useBookRecommendationMutations();
- *
- * // Toggle a book recommendation (create or remove)
- * const result = await toggleBookRecommendation("bookId123");
- * console.log(result?.action); // "CREATED" or "DELETED"
- *
- * // Delete a book recommendation
- * await deleteBookRecommendation("bookId123");
+ * const { toggleBookRecommendation } = useBookRecommendationMutations();
+ * const result = await toggleBookRecommendation(book.id);
+ * result?.action; // "created" | "deleted"
  * ```
  */
-
 export function useBookRecommendationMutations() {
     // ************************ TOGGLE ************************
     const [
@@ -57,7 +27,8 @@ export function useBookRecommendationMutations() {
             reset: resetToggleBookRecommendationError,
         },
     ] = useMutation(TOGGLE_BOOK_RECOMMENDATION, {
-        refetchQueries: [GET_BOOK_RECOMMENDATION],
+        // Met à jour la fiche en cache : compteur et état « recommandé par
+        // moi », lus par la page livre (plus de requête dédiée).
         update(cache: ApolloCache<unknown>, { data }, { variables }) {
             const action = data?.toggleBookRecommendation?.action;
             const bookId = variables?.data?.bookId;
@@ -66,10 +37,11 @@ export function useBookRecommendationMutations() {
             cache.modify({
                 id: cache.identify({ __typename: "Book", id: bookId }),
                 fields: {
-                    recommendationCount: (existing = 0) =>
+                    recommendationCount: (existing: number = 0) =>
                         action === "created"
                             ? existing + 1
                             : Math.max(0, existing - 1),
+                    hasUserRecommended: () => action === "created",
                 },
             });
         },
@@ -84,35 +56,11 @@ export function useBookRecommendationMutations() {
         return result.data?.toggleBookRecommendation;
     };
 
-    // ************************ DELETE ************************
-    const [
-        deleteBookRecommendationMutation,
-        {
-            loading: isDeletingBookRecommendation,
-            error: deleteBookRecommendationError,
-            reset: resetDeleteBookRecommendationError,
-        },
-    ] = useMutation(DELETE_BOOK_RECOMMENDATION, {
-        refetchQueries: [GET_BOOK_RECOMMENDATION],
-    });
-
-    const deleteBookRecommendation = async (bookId: string) => {
-        await deleteBookRecommendationMutation({
-            variables: { bookId },
-        });
-    };
-
     return {
         // toggle
         toggleBookRecommendation,
         isTogglingBookRecommendation,
         toggleBookRecommendationError,
         resetToggleBookRecommendationError,
-
-        // delete
-        deleteBookRecommendation,
-        isDeletingBookRecommendation,
-        deleteBookRecommendationError,
-        resetDeleteBookRecommendationError,
     };
 }

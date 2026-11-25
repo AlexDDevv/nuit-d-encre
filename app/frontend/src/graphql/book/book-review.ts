@@ -1,19 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GET_BOOK_REVIEW = gql`
-    query BookReview($id: ID!) {
-        bookReview(id: $id) {
-            id
-            rating
-            reviewText
-            user {
-                id
-                userName
-            }
-        }
-    }
-`;
-
 export const GET_BOOK_REVIEWS = gql`
     query BookReviews(
         $bookId: ID!
@@ -38,6 +24,7 @@ export const GET_BOOK_REVIEWS = gql`
                 }
                 helpfulCount
                 notHelpfulCount
+                myVote
                 commentCount
                 comments {
                     id
@@ -53,16 +40,6 @@ export const GET_BOOK_REVIEWS = gql`
             totalCount
             page
             limit
-        }
-    }
-`;
-
-export const GET_MY_BOOK_REVIEW = gql`
-    query MyBookReview($bookId: ID!) {
-        myBookReview(bookId: $bookId) {
-            id
-            rating
-            reviewText
         }
     }
 `;

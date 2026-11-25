@@ -11,6 +11,8 @@ export interface BookReview {
     book: Book;
     helpfulCount?: number;
     notHelpfulCount?: number;
+    /** Vote de l'utilisateur courant : true utile, false pas utile, null aucun. */
+    myVote?: boolean | null;
     comments?: BookReviewComment[];
     commentCount?: number;
 }

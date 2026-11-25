@@ -78,7 +78,7 @@ export function useBookReviewMutations() {
             reset: resetCreateReviewError,
         },
     ] = useMutation(CREATE_BOOK_REVIEW, {
-        refetchQueries: ["BookReviews", "MyBookReview"],
+        refetchQueries: ["BookReviews", "Book"],
     });
 
     const createReview = async (
@@ -102,7 +102,7 @@ export function useBookReviewMutations() {
         { updateBookReview: BookReview },
         { data: UpdateBookReviewInput }
     >(UPDATE_BOOK_REVIEW, {
-        refetchQueries: ["BookReviews", "MyBookReview"],
+        refetchQueries: ["BookReviews", "Book"],
     });
 
     const updateReview = async (
@@ -129,7 +129,7 @@ export function useBookReviewMutations() {
             reset: resetDeleteReviewError,
         },
     ] = useMutation(DELETE_BOOK_REVIEW, {
-        refetchQueries: ["BookReviews", "MyBookReview"],
+        refetchQueries: ["BookReviews", "Book"],
     });
 
     const deleteReview = async (reviewId: string) => {

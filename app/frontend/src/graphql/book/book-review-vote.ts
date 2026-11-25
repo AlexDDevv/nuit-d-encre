@@ -1,14 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GET_MY_VOTE_ON_REVIEW = gql`
-    query MyVoteOnReview($reviewId: ID!) {
-        myVoteOnReview(reviewId: $reviewId) {
-            id
-            isHelpful
-        }
-    }
-`;
-
 export const VOTE_ON_REVIEW = gql`
     mutation VoteOnReview($data: CreateBookReviewVoteInput!) {
         voteOnReview(data: $data) {
@@ -19,6 +10,7 @@ export const VOTE_ON_REVIEW = gql`
                     id
                     helpfulCount
                     notHelpfulCount
+                    myVote
                 }
             }
             action
@@ -34,6 +26,7 @@ export const REMOVE_VOTE_ON_REVIEW = gql`
                 id
                 helpfulCount
                 notHelpfulCount
+                myVote
             }
         }
     }
@@ -49,6 +42,7 @@ export const TOGGLE_HELPFUL_VOTE = gql`
                     id
                     helpfulCount
                     notHelpfulCount
+                    myVote
                 }
             }
             action

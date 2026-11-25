@@ -3,12 +3,11 @@ import {
     BookReviewVoteResult,
     BookReviewVote,
 } from "@/types/types";
-import { ApolloCache, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
     VOTE_ON_REVIEW,
     REMOVE_VOTE_ON_REVIEW,
     TOGGLE_HELPFUL_VOTE,
-    GET_MY_VOTE_ON_REVIEW,
 } from "@/graphql/book/book-review-vote";
 
 /**
@@ -18,7 +17,8 @@ import {
  * This hook encapsulates the logic for voting on reviews, removing votes,
  * and toggling helpful votes. It uses Apollo Client's `useMutation` and
  * exposes loading states, errors, as well as functions to reset them.
- * Automatically refetches relevant queries after mutations.
+ * Les mutations renvoient la critique (compteurs et `myVote`) : Apollo met
+ * le cache à jour par normalisation, sans requête supplémentaire.
  *
  * @returns {Object} An object containing mutation functions and their states.
  * - voteOnReview(vote: CreateBookReviewVoteInput): Promise<BookReviewVoteResult | undefined>
@@ -68,32 +68,12 @@ import {
  * ```
  */
 
-function updateReviewVotesInCache(
-    cache: ApolloCache<unknown>,
-    review: { id: string; helpfulCount: number; notHelpfulCount: number },
-) {
-    cache.modify({
-        id: cache.identify({ __typename: "BookReview", id: review.id }),
-        fields: {
-            helpfulCount: () => review.helpfulCount,
-            notHelpfulCount: () => review.notHelpfulCount,
-        },
-    });
-}
-
 export function useBookReviewVoteMutations() {
     // ************************ VOTE (UPSERT) ************************
     const [
         voteOnReviewMutation,
         { loading: isVoting, error: voteError, reset: resetVoteError },
-    ] = useMutation(VOTE_ON_REVIEW, {
-        refetchQueries: [{ query: GET_MY_VOTE_ON_REVIEW }],
-        update(cache, { data }) {
-            const review = data?.voteOnReview?.vote?.review;
-            if (!review) return;
-            updateReviewVotesInCache(cache, review);
-        },
-    });
+    ] = useMutation(VOTE_ON_REVIEW);
 
     const voteOnReview = async (
         vote: CreateBookReviewVoteInput,
@@ -112,14 +92,7 @@ export function useBookReviewVoteMutations() {
             error: removeVoteError,
             reset: resetRemoveVoteError,
         },
-    ] = useMutation(REMOVE_VOTE_ON_REVIEW, {
-        refetchQueries: [{ query: GET_MY_VOTE_ON_REVIEW }],
-        update(cache, { data }) {
-            const review = data?.removeVoteOnReview?.review;
-            if (!review) return;
-            updateReviewVotesInCache(cache, review);
-        },
-    });
+    ] = useMutation(REMOVE_VOTE_ON_REVIEW);
 
     const removeVote = async (
         reviewId: string,
@@ -138,14 +111,7 @@ export function useBookReviewVoteMutations() {
             error: toggleHelpfulError,
             reset: resetToggleHelpfulError,
         },
-    ] = useMutation(TOGGLE_HELPFUL_VOTE, {
-        refetchQueries: [{ query: GET_MY_VOTE_ON_REVIEW }],
-        update(cache, { data }) {
-            const review = data?.toggleHelpfulVote?.vote?.review;
-            if (!review) return;
-            updateReviewVotesInCache(cache, review);
-        },
-    });
+    ] = useMutation(TOGGLE_HELPFUL_VOTE);
 
     const toggleHelpful = async (
         reviewId: string,

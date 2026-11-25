@@ -106,6 +106,7 @@ export default function ReviewCard({
                     reviewId={review.id}
                     initialHelpfulCount={review.helpfulCount || 0}
                     initialNotHelpfulCount={review.notHelpfulCount || 0}
+                    myVote={review.myVote ?? null}
                     isOwnReview={isOwnReview}
                 />
                 <ReviewComments

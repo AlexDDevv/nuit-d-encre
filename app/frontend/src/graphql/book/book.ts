@@ -77,6 +77,12 @@ export const GET_BOOK = gql`
             averageRating
             recommendationCount
             reviewCount
+            hasUserRecommended
+            myReview {
+                id
+                rating
+                reviewText
+            }
         }
     }
 `;

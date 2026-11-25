@@ -13,9 +13,7 @@ import Pagination from "@/components/UI/Pagination";
 import { useAuthContext } from "@/hooks/auth/useAuthContext";
 import { useToast } from "@/hooks/toast/useToast";
 import { useBookReviewsData } from "@/hooks/book/review/useBookReviewsData";
-import { useMyBookReview } from "@/hooks/book/review/useBookReviewData";
 import { useBookReviewMutations } from "@/hooks/book/review/useBookReviewMutations";
-import { useBookRecommendationData } from "@/hooks/book/recommendation/useBookRecommendationData";
 import { useBookRecommendationMutations } from "@/hooks/book/recommendation/useBookRecommendationMutations";
 import { parseGraphQLError } from "@/utils/graphql-error";
 
@@ -43,16 +41,14 @@ export default function BookReviews({ book, pageLimit = 6 }: BookReviewsProps) {
         pageLimit,
         sortBy,
     );
-    const { myReview } = useMyBookReview(book.id);
     const { deleteReview, isDeletingReview } = useBookReviewMutations();
-    const { bookRecommendation, isLoadingBookRecommendation } =
-        useBookRecommendationData(user ? book.id : undefined);
     const { toggleBookRecommendation, isTogglingBookRecommendation } =
         useBookRecommendationMutations();
 
     const hasReviews = (totalCount ?? 0) > 0;
-    const hasUserReviewed = !!myReview;
-    const isRecommended = !!bookRecommendation;
+    // Lus sur la fiche (myReview, hasUserRecommended) : pas de requête dédiée.
+    const hasUserReviewed = !!book.myReview;
+    const isRecommended = !!book.hasUserRecommended;
 
     const avgRating = book.averageRating ?? null;
     const reviewCount = book.reviewCount ?? 0;
@@ -137,10 +133,7 @@ export default function BookReviews({ book, pageLimit = 6 }: BookReviewsProps) {
                             on={isRecommended}
                             count={recCount}
                             onToggle={handleToggleRecommendation}
-                            disabled={
-                                isTogglingBookRecommendation ||
-                                isLoadingBookRecommendation
-                            }
+                            disabled={isTogglingBookRecommendation}
                         />
                         <span className="text-muted-foreground font-body text-xs">
                             Conseillez cet ouvrage à la communauté.

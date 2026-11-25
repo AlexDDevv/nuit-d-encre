@@ -1,17 +1,18 @@
 import { LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 import Button from "@/components/UI/Button/Button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/toast/useToast";
 import { useAuthContext } from "@/hooks/auth/useAuthContext";
 import { useBookReviewVoteMutations } from "@/hooks/book/reviewVote/useBookReviewVoteMutations";
-import { useMyVoteOnReview } from "@/hooks/book/reviewVote/useBookReviewVoteData";
 import { parseGraphQLError } from "@/utils/graphql-error";
 
 interface ReviewVoteButtonsProps {
     reviewId: string;
     initialHelpfulCount: number;
     initialNotHelpfulCount: number;
+    /** Vote de l'utilisateur courant, renvoyé avec la critique (`myVote`). */
+    myVote?: boolean | null;
     isOwnReview?: boolean;
 }
 
@@ -19,11 +20,11 @@ export default function ReviewVoteButtons({
     reviewId,
     initialHelpfulCount,
     initialNotHelpfulCount,
+    myVote = null,
     isOwnReview = false,
 }: ReviewVoteButtonsProps) {
     const { user } = useAuthContext();
     const { showToast } = useToast();
-    const { myVote, isLoadingMyVote } = useMyVoteOnReview(reviewId);
     const { voteOnReview, isVoting, removeVote, isRemovingVote } =
         useBookReviewVoteMutations();
 
@@ -31,16 +32,9 @@ export default function ReviewVoteButtons({
     const [notHelpfulCount, setNotHelpfulCount] = useState(
         initialNotHelpfulCount,
     );
-    const [currentVote, setCurrentVote] = useState<boolean | null>(null);
+    const [currentVote, setCurrentVote] = useState<boolean | null>(myVote);
 
-    useEffect(() => {
-        if (myVote) {
-            setCurrentVote(myVote.isHelpful);
-        }
-    }, [myVote]);
-
-    const isDisabled =
-        isOwnReview || isVoting || isRemovingVote || isLoadingMyVote;
+    const isDisabled = isOwnReview || isVoting || isRemovingVote;
 
     const getVoteButtonClasses = (
         isActive: boolean,
