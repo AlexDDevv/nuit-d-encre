@@ -56,7 +56,8 @@ export const register = async (
     }
 };
 
-// Signe un JWT identifiant l'utilisateur et le pose en cookie httpOnly signé.
+// Signe un JWT identifiant l'utilisateur et sa version de session, et le pose
+// en cookie httpOnly signé.
 const setAuthCookie = (user: User, cookies: Cookies): void => {
     if (!process.env.JWT_SECRET) {
         throw new AppError(
@@ -66,9 +67,13 @@ const setAuthCookie = (user: User, cookies: Cookies): void => {
         );
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-    });
+    const token = jwt.sign(
+        { id: user.id, v: user.tokenVersion ?? 0 },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "1d",
+        }
+    );
 
     cookies.set("token", token, {
         httpOnly: true,
@@ -282,6 +287,7 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
             id: string;
+            v?: number;
         };
 
         // Find the user by id
@@ -290,9 +296,11 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
             where: { id: payload.id },
         });
 
-        // Return null if the user is not found instead of throwing an error
-        if (!user) {
-            return null; // Utilisateur non trouvé, retourner null
+        // Compte supprimé, ou session révoquée (version du jeton dépassée,
+        // ex. après un changement de mot de passe) : pas d'utilisateur.
+        // Un jeton sans version (émis avant leur introduction) vaut 0.
+        if (!user || (payload.v ?? 0) !== (user.tokenVersion ?? 0)) {
+            return null;
         }
 
         return user;
@@ -331,10 +339,15 @@ export const updateProfile = async (
     return user;
 };
 
+/**
+ * Change le mot de passe et révoque toutes les sessions ouvertes (version de
+ * session incrémentée), sauf celle en cours, dont le cookie est réémis.
+ */
 export const changePassword = async (
     userId: string,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
+    cookies: Cookies
 ): Promise<boolean> => {
     // Même politique qu'à l'inscription : sans ce contrôle, le changement
     // de mot de passe permettait de choisir un mot de passe faible.
@@ -374,7 +387,9 @@ export const changePassword = async (
     }
 
     user.hashedPassword = await argon2.hash(newPassword);
+    user.tokenVersion = (user.tokenVersion ?? 0) + 1;
     await user.save();
+    setAuthCookie(user, cookies);
     return true;
 };
 

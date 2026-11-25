@@ -57,6 +57,11 @@ export class User extends BaseEntity {
     @Column({ type: "varchar", length: 255, nullable: true })
     hashedPassword?: string | null;
 
+    // Version de session incluse dans le JWT (non exposée) : l'incrémenter
+    // révoque tous les jetons émis. Voir auth-service (issueSession, whoami).
+    @Column({ type: "int", default: 0 })
+    tokenVersion!: number;
+
     // Identifiant Google (`sub`) pour les comptes liés à Google. Non exposé en GraphQL.
     @Column({ type: "varchar", length: 255, nullable: true, unique: true })
     googleId?: string | null;

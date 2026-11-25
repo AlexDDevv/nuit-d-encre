@@ -99,6 +99,24 @@ describe("login", () => {
 });
 
 describe("whoami", () => {
+    it("refuse un jeton dont la version de session est dépassée", async () => {
+        const user = makeUser("user-1");
+        user.tokenVersion = 2;
+        repository.findOne.mockResolvedValue(user);
+        const stale = makeCookies(jwt.sign({ id: "user-1", v: 1 }, JWT_SECRET));
+
+        await expect(whoami(stale)).resolves.toBeNull();
+    });
+
+    it("accepte un ancien jeton sans version tant que la version vaut 0", async () => {
+        const user = makeUser("user-1");
+        user.tokenVersion = 0;
+        repository.findOne.mockResolvedValue(user);
+        const legacy = makeCookies(jwt.sign({ id: "user-1" }, JWT_SECRET));
+
+        await expect(whoami(legacy)).resolves.toBe(user);
+    });
+
     it("rejette une requête sans jeton", async () => {
         await expect(whoami(makeCookies(undefined))).rejects.toMatchObject({
             statusCode: 401,
@@ -146,12 +164,25 @@ describe("whoami", () => {
 });
 
 describe("changePassword", () => {
+    it("révoque les autres sessions et réémet le cookie de la session en cours", async () => {
+        const user = await userWithPassword();
+        user.tokenVersion = 3;
+        repository.findOne.mockResolvedValue(user);
+        const cookies = makeCookies(undefined);
+
+        await changePassword("user-1", PASSWORD, "Nouveau2?", cookies);
+
+        expect(user.tokenVersion).toBe(4);
+        const token = (cookies.set as jest.Mock).mock.calls[0][1];
+        expect(jwt.verify(token, JWT_SECRET)).toMatchObject({ id: "user-1", v: 4 });
+    });
+
     it("remplace le hash quand le mot de passe actuel est correct", async () => {
         const user = await userWithPassword();
         repository.findOne.mockResolvedValue(user);
 
         await expect(
-            changePassword("user-1", PASSWORD, "Nouveau2?")
+            changePassword("user-1", PASSWORD, "Nouveau2?", makeCookies(undefined))
         ).resolves.toBe(true);
         await expect(argon2.verify(user.hashedPassword!, "Nouveau2?")).resolves.toBe(
             true
@@ -162,7 +193,7 @@ describe("changePassword", () => {
         repository.findOne.mockResolvedValue(await userWithPassword());
 
         await expect(
-            changePassword("user-1", "Mauvais1!", "Nouveau2?")
+            changePassword("user-1", "Mauvais1!", "Nouveau2?", makeCookies(undefined))
         ).rejects.toMatchObject({ statusCode: 401 });
         expect(User.prototype.save).not.toHaveBeenCalled();
     });
@@ -178,7 +209,7 @@ describe("changePassword", () => {
         repository.findOne.mockResolvedValue(await userWithPassword());
 
         await expect(
-            changePassword("user-1", PASSWORD, newPassword)
+            changePassword("user-1", PASSWORD, newPassword, makeCookies(undefined))
         ).rejects.toMatchObject({ statusCode: 400 });
         expect(User.prototype.save).not.toHaveBeenCalled();
     });
@@ -189,7 +220,7 @@ describe("changePassword", () => {
         repository.findOne.mockResolvedValue(googleUser);
 
         await expect(
-            changePassword("google-user", PASSWORD, "Nouveau2?")
+            changePassword("google-user", PASSWORD, "Nouveau2?", makeCookies(undefined))
         ).rejects.toMatchObject({ statusCode: 400 });
     });
 });

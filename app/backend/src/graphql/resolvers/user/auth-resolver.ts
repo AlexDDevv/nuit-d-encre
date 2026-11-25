@@ -201,7 +201,12 @@ export class AuthResolver {
     ): Promise<boolean> {
         const user = await requireUser(context);
 
-        return await changePassword(user.id, currentPassword, newPassword);
+        return await changePassword(
+            user.id,
+            currentPassword,
+            newPassword,
+            context.cookies,
+        );
     }
 
     @Authorized()
