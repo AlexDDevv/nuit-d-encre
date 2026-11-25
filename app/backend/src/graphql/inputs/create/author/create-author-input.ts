@@ -9,7 +9,8 @@
  * Wikipedia link or official website.
  */
 
-import { IsUrl, Length, Matches, ValidateIf } from "class-validator";
+import { IsUrl, Length, Matches } from "class-validator";
+import { EXTERNAL_URL_OPTIONS, SkipIfEmpty } from "../../../helpers/validation";
 import { Field, InputType } from "type-graphql";
 import { Column } from "typeorm";
 
@@ -51,7 +52,7 @@ export class CreateAuthorInput {
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    @ValidateIf((o) => o.isbn10 !== "" && o.isbn10 != null)
+    @SkipIfEmpty()
     @Matches(/^\d{2}\/\d{2}\/\d{4}$/, {
         message: "Birth date must be in the format DD/MM/YYYY.",
     })
@@ -59,13 +60,13 @@ export class CreateAuthorInput {
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    @ValidateIf((o) => o.isbn10 !== "" && o.isbn10 != null)
+    @SkipIfEmpty()
     @Length(1, 10000, { message: "Biography must be between 1 and 10000 characters" })
     biography?: string
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    @ValidateIf((o) => o.isbn10 !== "" && o.isbn10 != null)
+    @SkipIfEmpty()
     @Length(1, 100, {
         message: "Nationality must be between 1 and 100 characters ('french', 'english').",
     })
@@ -73,13 +74,13 @@ export class CreateAuthorInput {
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    @ValidateIf((o) => o.isbn10 !== "" && o.isbn10 != null)
-    @IsUrl({}, { message: "Wikipedia URL must be a valid URL." })
+    @SkipIfEmpty()
+    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Wikipedia URL must be a valid http(s) URL." })
     wikipediaUrl?: string;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    @ValidateIf((o) => o.isbn10 !== "" && o.isbn10 != null)
-    @IsUrl({}, { message: "Official website URL must be a valid URL." })
+    @SkipIfEmpty()
+    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Official website URL must be a valid http(s) URL." })
     officialWebsite?: string;
 }

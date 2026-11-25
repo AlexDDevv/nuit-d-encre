@@ -8,6 +8,7 @@
  */
 
 import { IsOptional, IsUrl, Length, Matches } from "class-validator";
+import { EXTERNAL_URL_OPTIONS, SkipIfEmpty } from "../../../helpers/validation";
 import { Field, ID, InputType } from "type-graphql";
 
 /**
@@ -50,31 +51,31 @@ export class UpdateAuthorInput {
     lastname?: string;
 
     @Field({ nullable: true })
-    @IsOptional()
+    @SkipIfEmpty()
     @Matches(/^\d{2}\/\d{2}\/\d{4}$/, {
         message: "Birth date must be in the format DD/MM/YYYY.",
     })
     birthDate?: string;
 
     @Field({ nullable: true })
-    @IsOptional()
+    @SkipIfEmpty()
     @Length(1, 10000, { message: "Biography must be between 1 and 10000 characters" })
     biography?: string
 
     @Field({ nullable: true })
-    @IsOptional()
+    @SkipIfEmpty()
     @Length(1, 100, {
         message: "Nationality must be between 1 and 100 characters ('french', 'english').",
     })
     nationality?: string;
 
     @Field({ nullable: true })
-    @IsOptional()
-    @IsUrl({}, { message: "Wikipedia URL must be a valid URL." })
+    @SkipIfEmpty()
+    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Wikipedia URL must be a valid http(s) URL." })
     wikipediaUrl?: string;
 
     @Field({ nullable: true })
-    @IsOptional()
-    @IsUrl({}, { message: "Official website URL must be a valid URL." })
+    @SkipIfEmpty()
+    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Official website URL must be a valid http(s) URL." })
     officialWebsite?: string;
 }

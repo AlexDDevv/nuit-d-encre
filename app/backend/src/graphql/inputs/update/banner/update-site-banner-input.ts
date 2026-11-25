@@ -7,6 +7,7 @@ import {
 	Length,
 	ValidateIf,
 } from "class-validator"
+import { EXTERNAL_URL_OPTIONS, isInternalPath } from "../../../helpers/validation"
 import { BannerAudience, BannerVariant } from "../../../../types/types"
 
 @InputType()
@@ -49,9 +50,9 @@ export class UpdateSiteBannerInput {
 
 	@Field(() => String, { nullable: true })
 	@IsOptional()
-	@ValidateIf((o) => o.actionUrl != null && !o.actionUrl.startsWith("/"))
+	@ValidateIf((o) => o.actionUrl != null && !isInternalPath(o.actionUrl))
 	@IsUrl(
-		{},
+		EXTERNAL_URL_OPTIONS,
 		{
 			message:
 				"L'URL d'action doit être une URL valide ou un chemin interne.",
