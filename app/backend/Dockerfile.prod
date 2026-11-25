@@ -1,13 +1,17 @@
+# Contexte de build : archive produite par scripts/caprover-archive.sh
+# (dossier de l'app + `_workspace/` avec le lockfile du monorepo).
+
 # --- Build stage ---
 FROM node:24-alpine3.21 AS builder
-WORKDIR /app
+WORKDIR /repo
 RUN corepack enable pnpm
 
-# Dépendances (mêmes conventions que le Dockerfile de dev : pas de lockfile)
-COPY package.json ./
-RUN pnpm install
+# Dépendances figées par le lockfile (mêmes versions que la CI)
+COPY _workspace/ ./
+RUN pnpm install --frozen-lockfile --filter backend
 
 # Sources + config de compilation
+WORKDIR /repo/app/backend
 COPY tsconfig.json ./
 COPY src ./src
 RUN pnpm build
@@ -15,15 +19,16 @@ RUN pnpm build
 # --- Runtime stage ---
 FROM node:24-alpine3.21 AS runner
 ENV NODE_ENV=production
-WORKDIR /app
+WORKDIR /repo
 RUN corepack enable pnpm
 
-# Dépendances de production uniquement
-COPY package.json ./
-RUN pnpm install --prod
+# Dépendances de production uniquement, toujours figées par le lockfile
+COPY _workspace/ ./
+RUN pnpm install --frozen-lockfile --prod --filter backend
 
 # Artefacts compilés
-COPY --from=builder /app/dist ./dist
+WORKDIR /repo/app/backend
+COPY --from=builder /repo/app/backend/dist ./dist
 
 # Exécution non-root
 USER node
