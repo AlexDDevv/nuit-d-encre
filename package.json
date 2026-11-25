@@ -15,7 +15,9 @@
         "start": "docker compose up --build",
         "deploy:back": "scripts/caprover-archive.sh backend test /tmp/back.tar && caprover deploy -a nuit-encre-back -t /tmp/back.tar",
         "deploy:front": "scripts/caprover-archive.sh frontend test /tmp/front.tar && caprover deploy -a nuit-encre-front -t /tmp/front.tar",
-        "deploy": "pnpm run deploy:back && pnpm run deploy:front"
+        "deploy": "pnpm run deploy:back && pnpm run deploy:front",
+        "format": "prettier --write \"app/*/src/**/*.{ts,tsx,css}\"",
+        "format:check": "prettier --check \"app/*/src/**/*.{ts,tsx,css}\""
     },
     "keywords": [
         "books"
@@ -30,5 +32,9 @@
             "esbuild",
             "unrs-resolver"
         ]
+    },
+    "devDependencies": {
+        "prettier": "^3.10.1",
+        "prettier-plugin-tailwindcss": "^0.6.14"
     }
 }
