@@ -200,7 +200,7 @@ export class BooksResolver {
      *
      * @throws AppError - If the category is not found or on save failure.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Book)
     async createBook(
         @Arg("data", () => CreateBookInput) data: CreateBookInput,
@@ -260,7 +260,7 @@ export class BooksResolver {
      *
      * @throws AppError - If the book is not found, user is unauthorized, or update fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Book, { nullable: true })
     async updateBook(
         @Arg("data", () => UpdateBookInput) data: UpdateBookInput,
@@ -354,7 +354,7 @@ export class BooksResolver {
      *
      * @throws AppError - If the book is not found, user is unauthorized, or deletion fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Book, { nullable: true })
     async deleteBook(
         @Arg("id", () => ID) id: string,

@@ -10,7 +10,7 @@ import { OpenLibraryService } from "../../../services/books/open-library.service
 import { GoogleBooksService } from "../../../services/books/google-books.service";
 import { CloudinaryService } from "../../../services/cloudinary.service";
 import { AppError } from "../../../middlewares/error-handler";
-import { Context, Roles, UserActionType } from "../../../types/types";
+import { Context, UserActionType } from "../../../types/types";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
 import {
@@ -248,7 +248,7 @@ export class BookSearchResolver {
         return merged;
     }
 
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Book)
     async importBook(
         @Arg("isbn13") isbn13: string,

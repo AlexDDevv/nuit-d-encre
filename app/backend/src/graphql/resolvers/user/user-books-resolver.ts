@@ -25,7 +25,7 @@ import {
     Resolver,
 } from "type-graphql"
 import { AppError } from "../../../middlewares/error-handler"
-import { Context, ReadingStatus, Roles, UserActionType } from "../../../types/types"
+import { Context, ReadingStatus, UserActionType } from "../../../types/types"
 import { Book } from "../../../database/entities/book/book"
 import { Brackets } from "typeorm"
 import { grantXpService } from "../../../services/grind/grant-xp-service"
@@ -92,7 +92,7 @@ export class UserBooksResolver {
     *
     * @throws AppError - If no user books are found or in case of a server error.
     */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Query(() => UserBooksResult)
     async userBooks(
         @Arg("filters", () => UserBooksQueryInput, { nullable: true })
@@ -194,7 +194,7 @@ export class UserBooksResolver {
      * reading status (across the whole collection, ignoring pagination/filters).
      * Powers the "Vos rayons" header stats and the status filter segments.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Query(() => UserBookStatusCounts)
     async userBookStatusCounts(
         @Ctx() context: Context,
@@ -238,7 +238,7 @@ export class UserBooksResolver {
      *
      * @throws AppError - If the user book is not found or if a server error occurs.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Query(() => UserBook, { nullable: true })
     async userBook(
         @Arg("id", () => ID) id: string,
@@ -274,7 +274,7 @@ export class UserBooksResolver {
      *
      * @throws AppError - If the book is not found, the user book already exists, or on save failure.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => UserBook)
     async createUserBook(
         @Arg("data", () => CreateUserBookInput) data: CreateUserBookInput,
@@ -345,7 +345,7 @@ export class UserBooksResolver {
      *
      * @throws AppError - If the user book is not found, user is unauthorized, or update fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => UserBook, { nullable: true })
     async updateUserBook(
         @Arg("data", () => UpdateUserBookInput) data: UpdateUserBookInput,
@@ -418,7 +418,7 @@ export class UserBooksResolver {
     *
     * @throws AppError - If the user book is not found, user is unauthorized, or deletion fails.
     */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => UserBook, { nullable: true })
     async deleteUserBook(
         @Arg("id", () => ID) id: string,

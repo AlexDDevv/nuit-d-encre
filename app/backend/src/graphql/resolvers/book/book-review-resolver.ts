@@ -22,7 +22,6 @@ import { AppError } from "../../../middlewares/error-handler";
 import {
     BookReviewSortBy,
     Context,
-    Roles,
     UserActionType,
 } from "../../../types/types";
 import { Book } from "../../../database/entities/book/book";
@@ -250,7 +249,7 @@ export class BookReviewsResolver {
      *
      * @throws AppError - If user is not authenticated or query fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Query(() => BookReview, { nullable: true })
     async myBookReview(
         @Arg("bookId", () => ID) bookId: string,
@@ -302,7 +301,7 @@ export class BookReviewsResolver {
      *
      * @throws AppError - If user not found, book not found, review already exists, or creation fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookReview)
     async createBookReview(
         @Arg("data", () => CreateBookReviewInput) data: CreateBookReviewInput,
@@ -403,7 +402,7 @@ export class BookReviewsResolver {
      *
      * @throws AppError - If review not found, user unauthorized, or update fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookReview)
     async updateBookReview(
         @Arg("data", () => UpdateBookReviewInput) data: UpdateBookReviewInput,
@@ -469,7 +468,7 @@ export class BookReviewsResolver {
      *
      * @throws AppError - If review not found, user unauthorized, or deletion fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookReview)
     async deleteBookReview(
         @Arg("id", () => ID) id: string,

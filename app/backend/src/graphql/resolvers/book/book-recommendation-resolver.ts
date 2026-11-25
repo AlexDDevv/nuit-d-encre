@@ -16,7 +16,7 @@ import {
     Resolver,
 } from "type-graphql";
 import { AppError } from "../../../middlewares/error-handler";
-import { Context, Roles, UserActionType } from "../../../types/types";
+import { Context, UserActionType } from "../../../types/types";
 import { Book } from "../../../database/entities/book/book";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
@@ -59,7 +59,7 @@ export class BookRecommendationsResolver {
      * 
      * @throws AppError - If user is not authenticated or query fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Query(() => BookRecommendation, { nullable: true })
     async bookRecommendation(
         @Arg("bookId", () => ID) bookId: string,
@@ -114,7 +114,7 @@ export class BookRecommendationsResolver {
      * 
      * @throws AppError - If user is not found, book doesn't exist, or operation fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookRecommendationToggleResult)
     async toggleBookRecommendation(
         @Arg("data", () => CreateBookRecommendationInput)
@@ -199,7 +199,7 @@ export class BookRecommendationsResolver {
      * 
      * @throws AppError - If recommendation not found or deletion fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookRecommendation, { nullable: true })
     async deleteBookRecommendation(
         @Arg("bookId", () => ID) bookId: string,

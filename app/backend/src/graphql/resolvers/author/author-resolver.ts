@@ -241,7 +241,7 @@ export class AuthorsResolver {
      *
      * @throws AppError - On validation or save failure.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Author)
     async createAuthor(
         @Arg("data", () => CreateAuthorInput) data: CreateAuthorInput,
@@ -269,7 +269,7 @@ export class AuthorsResolver {
      *
      * @throws AppError - If the author is not found, user is unauthorized, or update fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Author, { nullable: true })
     async updateAuthor(
         @Arg("data", () => UpdateAuthorInput) data: UpdateAuthorInput,
@@ -332,7 +332,7 @@ export class AuthorsResolver {
      *
      * @throws AppError - If the author is not found, user is unauthorized, or deletion fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => Author, { nullable: true })
     async deleteAuthor(
         @Arg("id", () => ID) id: string,

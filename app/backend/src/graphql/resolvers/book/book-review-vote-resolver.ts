@@ -16,7 +16,7 @@ import {
     Resolver,
 } from "type-graphql";
 import { AppError } from "../../../middlewares/error-handler";
-import { Context, Roles, UserActionType } from "../../../types/types";
+import { Context, UserActionType } from "../../../types/types";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
 import { BookReviewVote } from "../../../database/entities/book/bookReviewVote";
@@ -61,7 +61,7 @@ export class BookReviewVotesResolver {
      * 
      * @throws AppError - If user is not authenticated or query fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Query(() => BookReviewVote, { nullable: true })
     async myVoteOnReview(
         @Arg("reviewId", () => ID) reviewId: string,
@@ -124,7 +124,7 @@ export class BookReviewVotesResolver {
      * 
      * @throws AppError - If user not found, review not found, voting on own review, or operation fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookReviewVoteResult)
     async voteOnReview(
         @Arg("data", () => CreateBookReviewVoteInput) data: CreateBookReviewVoteInput,
@@ -232,7 +232,7 @@ export class BookReviewVotesResolver {
      * 
      * @throws AppError - If vote not found or deletion fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookReviewVote, { nullable: true })
     async removeVoteOnReview(
         @Arg("reviewId", () => ID) reviewId: string,
@@ -296,7 +296,7 @@ export class BookReviewVotesResolver {
      * 
      * @throws AppError - If user not found, review not found, or operation fails.
      */
-    @Authorized(Roles.User, Roles.Admin)
+    @Authorized()
     @Mutation(() => BookReviewVoteResult)
     async toggleHelpfulVote(
         @Arg("reviewId", () => ID) reviewId: string,
