@@ -1,33 +1,31 @@
 import { ApolloError } from "@apollo/client";
+import { GRAPHQL_ERROR_CODES } from "@/lib/graphqlErrors";
+import { ErrorContext, ErrorResult, ErrorRule } from "@/types/types";
 
-export type ErrorContext =
-    | "createBook"
-    | "updateBook"
-    | "deleteBook"
-    | "createAuthor"
-    | "updateAuthor"
-    | "createReview"
-    | "updateReview"
-    | "deleteReview"
-    | "voteOnReview"
-    | "toggleRecommendation"
-    | "createUserBook"
-    | "updateUserBook"
-    | "deleteUserBook"
-    | "createBookReviewComment"
-    | "deleteBookReviewComment";
+const { notFound, forbidden, unauthenticated, conflict, tooManyRequests } =
+    GRAPHQL_ERROR_CODES;
 
-interface ErrorRule {
-    matches: string;
-    title: string;
-    description: string;
-}
+/** Session absente ou expirée, quelle que soit l'opération. */
+const signInRequired = (action: string): ErrorRule => ({
+    code: unauthenticated,
+    title: "Connexion requise",
+    description: `Vous devez être connecté pour ${action}.`,
+});
 
-interface ErrorResult {
-    title: string;
-    description: string;
-}
+/** Règles communes à toutes les opérations, évaluées après les règles propres. */
+const COMMON_RULES: ErrorRule[] = [
+    {
+        code: tooManyRequests,
+        title: "Trop de tentatives",
+        description: "Patientez quelques minutes avant de réessayer.",
+    },
+];
 
+/**
+ * Traduction des erreurs par opération. Les règles sont évaluées dans
+ * l'ordre : la plus spécifique d'abord (code + extrait de message), la plus
+ * générale ensuite (code seul).
+ */
 const ERROR_MAP: Record<
     ErrorContext,
     { rules: ErrorRule[]; fallback: ErrorResult }
@@ -35,15 +33,11 @@ const ERROR_MAP: Record<
     createBook: {
         rules: [
             {
-                matches: "Category not found",
+                code: notFound,
                 title: "Catégorie introuvable",
                 description: "La catégorie sélectionnée n'existe pas.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description: "Vous devez être connecté pour ajouter un livre.",
-            },
+            signInRequired("ajouter un livre"),
         ],
         fallback: {
             title: "Échec de la création",
@@ -54,25 +48,22 @@ const ERROR_MAP: Record<
     updateBook: {
         rules: [
             {
-                matches: "Book not found",
+                code: notFound,
+                matches: "Category",
+                title: "Catégorie introuvable",
+                description: "La catégorie sélectionnée n'existe pas.",
+            },
+            {
+                code: notFound,
                 title: "Livre introuvable",
                 description: "Ce livre n'existe pas ou a été supprimé.",
             },
             {
-                matches: "Not authorized to delete this book",
+                code: forbidden,
                 title: "Action non autorisée",
                 description: "Vous ne pouvez pas modifier ce livre.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description: "Vous devez être connecté pour modifier un livre.",
-            },
-            {
-                matches: "Category not found",
-                title: "Catégorie introuvable",
-                description: "La catégorie sélectionnée n'existe pas.",
-            },
+            signInRequired("modifier un livre"),
         ],
         fallback: {
             title: "Échec de la modification",
@@ -82,22 +73,17 @@ const ERROR_MAP: Record<
     deleteBook: {
         rules: [
             {
-                matches: "Book not found",
+                code: notFound,
                 title: "Livre introuvable",
                 description: "Ce livre n'existe pas ou a déjà été supprimé.",
             },
             {
-                matches: "Not authorized to delete this book",
+                code: forbidden,
                 title: "Action non autorisée",
                 description:
                     "Vous n'avez pas les droits pour supprimer ce livre.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour supprimer un livre.",
-            },
+            signInRequired("supprimer un livre"),
         ],
         fallback: {
             title: "Échec de la suppression",
@@ -106,13 +92,7 @@ const ERROR_MAP: Record<
         },
     },
     createAuthor: {
-        rules: [
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description: "Vous devez être connecté pour ajouter un auteur.",
-            },
-        ],
+        rules: [signInRequired("ajouter un auteur")],
         fallback: {
             title: "Échec de la création",
             description:
@@ -122,22 +102,16 @@ const ERROR_MAP: Record<
     updateAuthor: {
         rules: [
             {
-                matches: "Author not found",
+                code: notFound,
                 title: "Auteur introuvable",
                 description: "Cet auteur n'existe pas ou a été supprimé.",
             },
-            // Note: le backend utilise "delete" même pour l'opération de modification
             {
-                matches: "Not authorized to delete this author",
+                code: forbidden,
                 title: "Action non autorisée",
                 description: "Vous ne pouvez pas modifier cet auteur.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour modifier un auteur.",
-            },
+            signInRequired("modifier un auteur"),
         ],
         fallback: {
             title: "Échec de la modification",
@@ -147,17 +121,12 @@ const ERROR_MAP: Record<
     createReview: {
         rules: [
             {
-                matches: "already reviewed this book",
+                code: conflict,
                 title: "Critique déjà publiée",
                 description:
                     "Vous avez déjà écrit une critique pour ce livre. Modifiez-la plutôt.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour publier une critique.",
-            },
+            signInRequired("publier une critique"),
         ],
         fallback: {
             title: "Échec de la publication",
@@ -168,21 +137,16 @@ const ERROR_MAP: Record<
     updateReview: {
         rules: [
             {
-                matches: "Review not found",
+                code: notFound,
                 title: "Critique introuvable",
                 description: "Cette critique n'existe pas ou a été supprimée.",
             },
             {
-                matches: "Not authorized to update this review",
+                code: forbidden,
                 title: "Action non autorisée",
                 description: "Vous ne pouvez pas modifier cette critique.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour modifier une critique.",
-            },
+            signInRequired("modifier une critique"),
         ],
         fallback: {
             title: "Échec de la modification",
@@ -193,22 +157,17 @@ const ERROR_MAP: Record<
     deleteReview: {
         rules: [
             {
-                matches: "Review not found",
+                code: notFound,
                 title: "Critique introuvable",
                 description:
                     "Cette critique n'existe pas ou a déjà été supprimée.",
             },
             {
-                matches: "Not authorized to delete this review",
+                code: forbidden,
                 title: "Action non autorisée",
                 description: "Vous ne pouvez pas supprimer cette critique.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour supprimer une critique.",
-            },
+            signInRequired("supprimer une critique"),
         ],
         fallback: {
             title: "Échec de la suppression",
@@ -219,16 +178,12 @@ const ERROR_MAP: Record<
     voteOnReview: {
         rules: [
             {
-                matches: "You cannot vote on your own review",
+                code: forbidden,
                 title: "Vote non autorisé",
                 description:
                     "Vous ne pouvez pas voter pour votre propre critique.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description: "Vous devez être connecté pour voter.",
-            },
+            signInRequired("voter"),
         ],
         fallback: {
             title: "Échec du vote",
@@ -239,16 +194,11 @@ const ERROR_MAP: Record<
     toggleRecommendation: {
         rules: [
             {
-                matches: "Book not found",
+                code: notFound,
                 title: "Livre introuvable",
                 description: "Ce livre n'existe pas ou a été supprimé.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour recommander un livre.",
-            },
+            signInRequired("recommander un livre"),
         ],
         fallback: {
             title: "Échec de la recommandation",
@@ -259,16 +209,11 @@ const ERROR_MAP: Record<
     createUserBook: {
         rules: [
             {
-                matches: "already",
+                code: conflict,
                 title: "Livre déjà ajouté",
                 description: "Ce livre est déjà dans votre bibliothèque.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour ajouter un livre à votre bibliothèque.",
-            },
+            signInRequired("ajouter un livre à votre bibliothèque"),
         ],
         fallback: {
             title: "Échec de l'ajout",
@@ -279,10 +224,11 @@ const ERROR_MAP: Record<
     updateUserBook: {
         rules: [
             {
-                matches: "Access denied",
-                title: "Action non autorisée",
-                description: "Vous ne pouvez pas modifier cette entrée.",
+                code: notFound,
+                title: "Entrée introuvable",
+                description: "Ce livre n'est plus dans votre bibliothèque.",
             },
+            signInRequired("modifier votre bibliothèque"),
         ],
         fallback: {
             title: "Échec de la mise à jour",
@@ -293,11 +239,12 @@ const ERROR_MAP: Record<
     deleteUserBook: {
         rules: [
             {
-                matches: "Access denied",
-                title: "Action non autorisée",
+                code: notFound,
+                title: "Entrée introuvable",
                 description:
-                    "Vous n'avez pas les droits pour supprimer ce livre.",
+                    "Ce livre n'est déjà plus dans votre bibliothèque.",
             },
+            signInRequired("modifier votre bibliothèque"),
         ],
         fallback: {
             title: "Échec de la suppression",
@@ -308,16 +255,11 @@ const ERROR_MAP: Record<
     createBookReviewComment: {
         rules: [
             {
-                matches: "Review not found",
+                code: notFound,
                 title: "Critique introuvable",
                 description: "Cette critique n'existe pas ou a été supprimée.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour publier un commentaire.",
-            },
+            signInRequired("publier un commentaire"),
         ],
         fallback: {
             title: "Échec de la publication",
@@ -328,22 +270,17 @@ const ERROR_MAP: Record<
     deleteBookReviewComment: {
         rules: [
             {
-                matches: "Comment not found",
+                code: notFound,
                 title: "Commentaire introuvable",
                 description:
                     "Ce commentaire n'existe pas ou a déjà été supprimé.",
             },
             {
-                matches: "Not authorized to delete this comment",
+                code: forbidden,
                 title: "Action non autorisée",
                 description: "Vous ne pouvez pas supprimer ce commentaire.",
             },
-            {
-                matches: "Access denied",
-                title: "Connexion requise",
-                description:
-                    "Vous devez être connecté pour supprimer un commentaire.",
-            },
+            signInRequired("supprimer un commentaire"),
         ],
         fallback: {
             title: "Échec de la suppression",
@@ -353,6 +290,11 @@ const ERROR_MAP: Record<
     },
 };
 
+/**
+ * Traduit l'échec d'une mutation en toast. Reconnaît l'erreur à son code
+ * (`extensions.code`, déduit du statut par le backend), pas à son message :
+ * renommer un message côté backend ne casse plus l'affichage.
+ */
 export function parseGraphQLError(
     error: unknown,
     context: ErrorContext,
@@ -367,13 +309,13 @@ export function parseGraphQLError(
         };
     }
 
-    for (const graphQLError of error.graphQLErrors) {
-        for (const rule of rules) {
-            if (graphQLError.message.includes(rule.matches)) {
-                return { title: rule.title, description: rule.description };
-            }
-        }
+    for (const rule of [...rules, ...COMMON_RULES]) {
+        const hit = error.graphQLErrors.some(
+            (e) =>
+                e.extensions?.code === rule.code &&
+                (!rule.matches || e.message.includes(rule.matches)),
+        );
+        if (hit) return { title: rule.title, description: rule.description };
     }
-
     return fallback;
 }

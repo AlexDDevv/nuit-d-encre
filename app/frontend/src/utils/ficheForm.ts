@@ -1,7 +1,7 @@
 import { FieldValues, UseFormSetError } from "react-hook-form";
-import { ErrorContext, parseGraphQLError } from "@/utils/graphql-error";
+import { parseGraphQLError } from "@/utils/graphql-error";
 import { isNotFoundError } from "@/lib/graphqlErrors";
-import { AssertEntityLoadedOptions } from "@/types/types";
+import { AssertEntityLoadedOptions, ErrorContext } from "@/types/types";
 
 /**
  * Garde de chargement d'une fiche (livre, auteur, liste de catégories) :
