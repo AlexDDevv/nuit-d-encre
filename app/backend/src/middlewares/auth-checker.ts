@@ -1,9 +1,11 @@
-import { AuthChecker } from "type-graphql";
+import { AuthChecker, AuthenticationError } from "type-graphql";
 import { Context } from "../types/types";
 
 /**
  * `@Authorized()` : exige une session valide. `@Authorized(roles)` : exige en
- * plus l'un des rôles. L'utilisateur vient de `context.getUser()`, mémoïsé
+ * plus l'un des rôles. Sans session, lève toujours AuthenticationError
+ * (UNAUTHENTICATED) : type-graphql renverrait sinon AuthorizationError
+ * (FORBIDDEN) dès que des rôles sont exigés, même pour un visiteur. L'utilisateur vient de `context.getUser()`, mémoïsé
  * pour la requête : les resolvers le relisent via `requireUser` sans requête
  * BDD supplémentaire.
  */
@@ -12,7 +14,7 @@ export const customAuthChecker: AuthChecker<Context> = async (
     roles: string[],
 ) => {
     const user = await context.getUser();
-    if (!user) return false;
+    if (!user) throw new AuthenticationError();
     if (roles.length === 0) return true;
     return roles.includes(user.role);
 };

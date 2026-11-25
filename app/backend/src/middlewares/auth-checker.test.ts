@@ -1,4 +1,4 @@
-import { AuthCheckerFn, ResolverData } from "type-graphql";
+import { AuthCheckerFn, AuthenticationError, ResolverData } from "type-graphql";
 import { makeContext, makeUser } from "../test/factories";
 import { Context, Roles } from "../types/types";
 import { customAuthChecker } from "./auth-checker";
@@ -11,11 +11,13 @@ function check(context: Context, roles: string[]) {
 }
 
 describe("customAuthChecker", () => {
-    it("refuse un visiteur sans session valide", async () => {
-        await expect(check(makeContext(null), [])).resolves.toBe(false);
-        await expect(check(makeContext(null), [Roles.Admin])).resolves.toBe(
-            false,
+    it("refuse un visiteur sans session valide comme non authentifié, rôles exigés ou non", async () => {
+        await expect(check(makeContext(null), [])).rejects.toBeInstanceOf(
+            AuthenticationError,
         );
+        await expect(
+            check(makeContext(null), [Roles.Admin]),
+        ).rejects.toBeInstanceOf(AuthenticationError);
     });
 
     it("autorise tout utilisateur connecté quand aucun rôle n'est exigé", async () => {
