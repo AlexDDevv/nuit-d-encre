@@ -4,6 +4,7 @@ import { FaCheck, FaLock } from "react-icons/fa6";
 import ModalCloseButton from "@/components/UI/ModalCloseButton";
 import { useModalTransition } from "@/hooks/modal/useModalTransition";
 import Button from "@/components/UI/Button/Button";
+import { Switch } from "@/components/UI/Switch/Switch";
 import { UPDATE_PROFILE, CHANGE_PASSWORD } from "@/graphql/user/profile";
 import { WHOAMI } from "@/graphql/user/auth";
 import { useToast } from "@/hooks/toast/useToast";
@@ -37,6 +38,9 @@ export default function EditProfileModal({
     const [tab, setTab] = useState<Tab>(initialTab);
     const [name, setName] = useState(user.userName);
     const [bio, setBio] = useState(user.bio ?? "");
+    const [isLibraryPublic, setIsLibraryPublic] = useState(
+        user.isLibraryPublic ?? false,
+    );
     const [current, setCurrent] = useState("");
     const [newpw, setNewpw] = useState("");
     const [confirm, setConfirm] = useState("");
@@ -157,7 +161,11 @@ export default function EditProfileModal({
     const submitInfos = () => {
         setSubmitted((s) => ({ ...s, infos: true }));
         if (Object.keys(errInfos).length) return;
-        updateProfile({ variables: { data: { userName: name.trim(), bio } } });
+        updateProfile({
+            variables: {
+                data: { userName: name.trim(), bio, isLibraryPublic },
+            },
+        });
     };
     const submitSecurity = () => {
         setSubmitted((s) => ({ ...s, security: true }));
@@ -288,6 +296,31 @@ export default function EditProfileModal({
                                     </span>
                                 </div>
                             </Field>
+
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex flex-col gap-1">
+                                    <label
+                                        htmlFor="f-library-public"
+                                        className="text-foreground/85 font-quote text-base italic"
+                                    >
+                                        Partager ma bibliothèque
+                                    </label>
+                                    <p className="text-muted-foreground font-body text-xs leading-relaxed">
+                                        Les autres lecteurs pourront parcourir
+                                        vos rayons depuis votre profil et voir
+                                        vos ajouts et lectures terminées dans le
+                                        fil d'activité. Vos critiques et
+                                        recommandations restent visibles dans
+                                        tous les cas.
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="f-library-public"
+                                    checked={isLibraryPublic}
+                                    onCheckedChange={setIsLibraryPublic}
+                                    className="mt-1 shrink-0"
+                                />
+                            </div>
                         </div>
                     ) : tab === "security" ? (
                         <div

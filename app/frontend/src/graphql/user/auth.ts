@@ -39,6 +39,7 @@ export const WHOAMI = gql`
             avatar
             banner
             bio
+            isLibraryPublic
             createdAt
             title {
                 id

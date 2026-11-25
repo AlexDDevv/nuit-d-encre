@@ -4,10 +4,12 @@ import {
     FaCircleCheck,
     FaPenToSquare,
     FaFeatherPointed,
+    FaLock,
     FaThumbsUp,
     FaWandMagicSparkles,
 } from "react-icons/fa6";
 import { ProfileStats as Stats } from "@/lib/profileActivity";
+import { ProfileStatsProps } from "@/types/types";
 import { Card, SectionHeading } from "./ProfileUI";
 
 const STAT_META: { key: keyof Stats; label: string; icon: IconType }[] = [
@@ -18,7 +20,10 @@ const STAT_META: { key: keyof Stats; label: string; icon: IconType }[] = [
     { key: "recommendations", label: "Recommandés", icon: FaThumbsUp },
 ];
 
-export default function ProfileStats({ stats }: { stats: Stats }) {
+export default function ProfileStats({
+    stats,
+    privateKeys = [],
+}: ProfileStatsProps) {
     return (
         <section className="fade-up">
             <SectionHeading icon={FaWandMagicSparkles}>
@@ -34,9 +39,22 @@ export default function ProfileStats({ stats }: { stats: Stats }) {
                             <Icon className="size-4 sm:size-5" />
                         </span>
                         <div className="min-w-0 leading-none">
-                            <div className="text-foreground font-title text-xl font-black tracking-tight sm:text-3xl">
-                                {stats[key].toLocaleString("fr-FR")}
-                            </div>
+                            {privateKeys.includes(key) ? (
+                                <div
+                                    className="text-muted-foreground font-title flex items-center gap-1.5 text-base font-bold sm:text-xl"
+                                    title="Ce lecteur ne partage pas sa bibliothèque"
+                                >
+                                    <FaLock
+                                        className="size-3.5 sm:size-4"
+                                        aria-hidden="true"
+                                    />
+                                    Privé
+                                </div>
+                            ) : (
+                                <div className="text-foreground font-title text-xl font-black tracking-tight sm:text-3xl">
+                                    {stats[key].toLocaleString("fr-FR")}
+                                </div>
+                            )}
                             <div className="text-muted-foreground font-body text-xxs mt-1 overflow-hidden text-ellipsis font-bold uppercase leading-tight tracking-widest sm:text-xs sm:tracking-[0.14em]">
                                 {label}
                             </div>

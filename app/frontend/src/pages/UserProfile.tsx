@@ -44,6 +44,13 @@ export default function UserProfile() {
     );
     const stats = useMemo(() => computeStats(actions), [actions]);
 
+    // Les lectures terminées viennent de la bibliothèque : sans accès, le
+    // backend ne renvoie pas ces actions, le compteur vaudrait 0 à tort.
+    const libraryHidden =
+        !isOwner &&
+        !profileUser?.isLibraryPublic &&
+        currentUser?.role !== "admin";
+
     if (loading && !profileUser) {
         return (
             <div className="text-muted-foreground p-8 text-center">
@@ -62,7 +69,7 @@ export default function UserProfile() {
     return (
         <section className="mx-auto w-full max-w-5xl">
             {!isOwner && (
-                <div className="text-muted-foreground mb-4 flex items-center justify-center gap-3 text-xs tracking-[0.22em] uppercase">
+                <div className="text-muted-foreground mb-4 flex items-center justify-center gap-3 text-xs uppercase tracking-[0.22em]">
                     <Ornament width="w-8" />
                     Lecture seule · vous visitez ce profil
                     <Ornament width="w-8" />
@@ -78,7 +85,10 @@ export default function UserProfile() {
 
                 <ProfileProgression user={profileUser} />
 
-                <ProfileStats stats={stats} />
+                <ProfileStats
+                    stats={stats}
+                    privateKeys={libraryHidden ? ["finished"] : []}
+                />
 
                 <div className="grid grid-cols-1 gap-6 md:gap-7 lg:grid-cols-[1.05fr_1fr]">
                     <FavoriteBooks
@@ -92,7 +102,7 @@ export default function UserProfile() {
 
             <footer className="mt-12 flex flex-col items-center gap-3 pb-6 text-center">
                 <Ornament />
-                <p className="text-muted-foreground/70 max-w-md font-quote text-base italic">
+                <p className="text-muted-foreground/70 font-quote max-w-md text-base italic">
                     « On n'habite pas un pays, on habite une langue. » - et, la
                     nuit venue, une bibliothèque.
                 </p>

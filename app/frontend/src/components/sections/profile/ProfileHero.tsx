@@ -7,6 +7,7 @@ import {
     FaCamera,
     FaRegCalendar,
     FaQuoteLeft,
+    FaBookOpen,
     FaTrash,
 } from "react-icons/fa6";
 import Button from "@/components/UI/Button/Button";
@@ -250,6 +251,15 @@ export default function ProfileHero({
                                 targetId={user.id}
                                 isFollowedByMe={user.isFollowedByMe ?? false}
                             />
+                            {user.isLibraryPublic && (
+                                <Button
+                                    variant="outline"
+                                    to={`/profil/${user.id}/bibliotheque`}
+                                    leftIcon={<FaBookOpen />}
+                                >
+                                    Ses rayons
+                                </Button>
+                            )}
                         </div>
                     )}
                 </div>

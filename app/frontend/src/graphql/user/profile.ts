@@ -8,6 +8,7 @@ export const GET_USER_PROFILE = gql`
             avatar
             banner
             bio
+            isLibraryPublic
             level
             xp
             followerCount
@@ -61,13 +62,17 @@ export const UPDATE_PROFILE = gql`
             id
             userName
             bio
+            isLibraryPublic
         }
     }
 `;
 
 export const CHANGE_PASSWORD = gql`
     mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
-        changePassword(currentPassword: $currentPassword, newPassword: $newPassword)
+        changePassword(
+            currentPassword: $currentPassword
+            newPassword: $newPassword
+        )
     }
 `;
 

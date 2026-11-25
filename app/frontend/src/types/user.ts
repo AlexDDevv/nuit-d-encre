@@ -1,3 +1,5 @@
+import type { ProfileStats } from "@/lib/profileActivity";
+
 // Miroir de l'enum backend (ne pas importer depuis app/backend :
 // cela aspire les entités TypeORM décorées dans la compilation frontend).
 export type UserRole = "user" | "moderator" | "admin";
@@ -24,6 +26,8 @@ export interface User {
     avatar: string | null;
     banner: string | null;
     bio: string | null;
+    /** Bibliothèque partagée sur le profil (privée par défaut). */
+    isLibraryPublic?: boolean;
     title: Title | null;
     followerCount?: number;
     followingCount?: number;
@@ -94,3 +98,13 @@ export type UserSignUpForm = UserSignUp & {
     confirmPassword: string;
     acceptTerms: boolean;
 };
+
+/** Props de la grille de statistiques du profil. */
+export interface ProfileStatsProps {
+    stats: ProfileStats;
+    /**
+     * Compteurs issus de la bibliothèque, affichés « Privé » quand le
+     * visiteur n'y a pas accès (bibliothèque non partagée).
+     */
+    privateKeys?: (keyof ProfileStats)[];
+}
