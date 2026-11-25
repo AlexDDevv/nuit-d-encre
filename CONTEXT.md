@@ -102,6 +102,19 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Coût : un `Dockerfile.prod` ne se construit plus qu'à partir de cette archive.
 - Référence : `d7c4b06`.
 
+### Une seule source pour l'utilisateur courant
+
+- Décision : l'utilisateur de la session est résolu une fois par requête (`context.getUser()`, mémoïsé) et lu par `requireUser` / `getCurrentUser` dans les resolvers, par l'authChecker et par les DataLoaders (`utils/current-user.ts`).
+- Intention : avant, trois mécanismes coexistaient ; le même champ se comportait différemment selon la query qui l'appelait. Une base fiable pour les futurs endpoints.
+- Référence : `a6c89f7`.
+
+### Codes d'erreur plutôt que messages
+
+- Décision : le backend déduit `extensions.code` du statut de l'erreur et masque en production toute erreur inattendue (`middlewares/format-error.ts`). Le front détecte une ressource absente par ce code (`lib/graphqlErrors.ts`).
+- Intention : ne plus lier le comportement du front au libellé d'un message, et ne plus exposer de message technique.
+- Coût : les toasts de formulaire reconnaissent encore les erreurs par leur message.
+- Référence : `f9232d0`, `2f22cfb`.
+
 ## Difficultés rencontrées
 
 ### XP gagnée en boucle
@@ -145,6 +158,11 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 
 - Problème : l'audit des dépendances de production relevait 60 vulnérabilités, dont une critique, principalement via Apollo Server 4 arrivé en fin de vie.
 - Solution : passage à Apollo Server 5, retrait des paquets inutilisés, montées mineures côté front. Il en reste 10, non exploitables dans l'usage du projet et documentées dans l'audit (`39aa1a2`, `96b59f9`, `d5bb2d7`).
+
+### Codes d'erreur toujours génériques
+
+- Problème : le format d'erreur testait `instanceof AppError` sur l'erreur enveloppée par Apollo, test jamais vrai. Toute erreur métier arrivait au client en `INTERNAL_SERVER_ERROR`, et les pages détail affichaient un 404 pour n'importe quelle panne, faute de code fiable.
+- Solution : déballage avec `unwrapResolverError`, code dérivé du statut, détection par code côté front. Découvert en testant l'image de production dans un conteneur (`f9232d0`, `2f22cfb`).
 
 ### Ce que j'en retiens
 
