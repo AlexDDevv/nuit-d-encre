@@ -18,7 +18,7 @@ import {
     parseFullName,
 } from "../../../utils/author-factory";
 import { Author } from "../../../database/entities/author/author";
-import { enforceRateLimit } from "../../../middlewares/rate-limiter";
+import { enforceRateLimit, tryRateLimit } from "../../../middlewares/rate-limiter";
 
 const DB_THRESHOLD = 5;
 const EXTERNAL_LIMIT = 5;
@@ -138,6 +138,10 @@ export class BookSearchResolver {
         // 2. Si DB suffisante, retour immédiat - zéro appel externe
         if (dbResults.length >= DB_THRESHOLD) return dbResults;
 
+        // Quota d'appels externes dépassé : on dégrade en résultats BDD seuls
+        // plutôt que de faire échouer la recherche.
+        if (!tryRateLimit("externalBookLookup", context.ip)) return dbResults;
+
         // 3. OL + Google Books en parallèle avec timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(
@@ -184,6 +188,7 @@ export class BookSearchResolver {
     @Query(() => BookSearchResult, { nullable: true })
     async previewBook(
         @Arg("isbn13") isbn13: string,
+        @Ctx() context: Context,
     ): Promise<BookSearchResult | null> {
         // Vérifier si déjà en DB
         const dbBook = await Book.findOne({
@@ -204,6 +209,8 @@ export class BookSearchResolver {
                 isInDatabase: true,
             };
         }
+
+        enforceRateLimit("externalBookLookup", context.ip);
 
         // Livre externe : interroger OL + Google Books en parallèle et fusionner
         // pour maximiser les champs (OL fournit souvent la couverture, Google

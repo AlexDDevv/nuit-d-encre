@@ -21,6 +21,10 @@ export const RATE_LIMIT_RULES = {
     googleAuth: { limit: 10, windowMs: 5 * 60 * 1000 },
     // Throttle book import spam (hits external APIs + Cloudinary).
     importBook: { limit: 20, windowMs: 5 * 60 * 1000 },
+    // Appels Google Books / Open Library déclenchés par la recherche et
+    // l'aperçu publics : protège le quota des API externes. Large, car la
+    // recherche est déclenchée à la frappe (avec debounce).
+    externalBookLookup: { limit: 60, windowMs: 5 * 60 * 1000 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitAction = keyof typeof RATE_LIMIT_RULES;
@@ -100,4 +104,19 @@ setInterval(() => rateLimiter.prune(), PRUNE_INTERVAL_MS).unref();
  */
 export function enforceRateLimit(action: RateLimitAction, ip: string): void {
     rateLimiter.consume(`${action}:${ip}`, RATE_LIMIT_RULES[action]);
+}
+
+/**
+ * Variante non bloquante : consomme le budget et renvoie `false` une fois la
+ * limite atteinte, pour les endpoints qui préfèrent dégrader le service
+ * plutôt qu'échouer (ex. recherche sans appels externes).
+ */
+export function tryRateLimit(action: RateLimitAction, ip: string): boolean {
+    try {
+        enforceRateLimit(action, ip);
+        return true;
+    } catch (error) {
+        if (error instanceof AppError && error.statusCode === 429) return false;
+        throw error;
+    }
 }

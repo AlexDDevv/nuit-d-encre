@@ -1,5 +1,10 @@
 import { AppError } from "./error-handler";
-import { RateLimiter } from "./rate-limiter";
+import {
+    RATE_LIMIT_RULES,
+    RateLimiter,
+    rateLimiter,
+    tryRateLimit,
+} from "./rate-limiter";
 
 describe("RateLimiter", () => {
     const rule = { limit: 3, windowMs: 1000 };
@@ -64,5 +69,19 @@ describe("RateLimiter", () => {
             limiter.consume("k", rule);
             limiter.consume("k", rule);
         }).not.toThrow();
+    });
+});
+
+describe("tryRateLimit", () => {
+    beforeEach(() => rateLimiter.reset());
+
+    it("renvoie true sous la limite puis false au-delà, sans lever", () => {
+        const { limit } = RATE_LIMIT_RULES.externalBookLookup;
+        for (let i = 0; i < limit; i++) {
+            expect(tryRateLimit("externalBookLookup", "1.1.1.1")).toBe(true);
+        }
+        expect(tryRateLimit("externalBookLookup", "1.1.1.1")).toBe(false);
+        // Budget propre à chaque IP.
+        expect(tryRateLimit("externalBookLookup", "2.2.2.2")).toBe(true);
     });
 });
