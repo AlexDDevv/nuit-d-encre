@@ -31,6 +31,7 @@ import { PrivacyResolver } from "./graphql/resolvers/user/privacy-resolver";
 import { createLoaders } from "./graphql/dataloaders";
 import { whoami } from "./services/auth-service";
 import { User } from "./database/entities/user/user";
+import { getClientIp } from "./utils/client-ip";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -153,15 +154,7 @@ if (!process.env.APP_PORT) {
                     secure: process.env.NODE_ENV === "production",
                 });
 
-                // Client IP for rate limiting. Behind the Vite proxy / a
-                // reverse proxy the real client is in x-forwarded-for.
-                const forwarded = req.headers["x-forwarded-for"];
-                const ip =
-                    (typeof forwarded === "string" && forwarded.length > 0
-                        ? forwarded.split(",")[0]?.trim()
-                        : undefined) ??
-                    req.socket?.remoteAddress ??
-                    "unknown";
+                const ip = getClientIp(req);
 
                 // Résolution paresseuse + mémoïsée de l'utilisateur :
                 // partagée par tous les loaders dépendant de l'utilisateur,
