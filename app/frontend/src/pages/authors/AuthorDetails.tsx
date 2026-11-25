@@ -28,7 +28,11 @@ import { useAuthorMutations } from "@/hooks/author/useAuthorMutations";
 import { useToast } from "@/hooks/toast/useToast";
 import { hasIncompleteInfo } from "@/lib/utils";
 import { getCountryLabel } from "@/lib/filterMaps";
-import { isNotFoundError } from "@/lib/graphqlErrors";
+import {
+    GRAPHQL_ERROR_CODES,
+    hasGraphQLErrorCode,
+    isNotFoundError,
+} from "@/lib/graphqlErrors";
 
 export default function AuthorDetails() {
     const navigate = useNavigate();
@@ -117,11 +121,7 @@ export default function AuthorDetails() {
             navigate("/authors");
         } catch (error) {
             if (error instanceof Error) {
-                if (
-                    error.message.includes(
-                        "Access denied! You don't have permission for this action!",
-                    )
-                ) {
+                if (hasGraphQLErrorCode(error, GRAPHQL_ERROR_CODES.forbidden)) {
                     showToast({
                         type: "error",
                         title: "Échec de la suppression",
