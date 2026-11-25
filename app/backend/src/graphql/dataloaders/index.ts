@@ -7,6 +7,8 @@ import {
     batchRecommendationCount,
 } from "./book-aggregate-loaders";
 import { batchTitles } from "./title-loader";
+import { makeMyReviewBatch, makeMyVoteBatch } from "./viewer-review-loaders";
+import { BookReview } from "../../database/entities/book/bookReview";
 import {
     makeUserFlagBatch,
     reviewedBookIds,
@@ -30,6 +32,8 @@ export type Loaders = {
     followerCount: DataLoader<string, number>;
     followingCount: DataLoader<string, number>;
     isFollowedByMe: DataLoader<string, boolean>;
+    myVote: DataLoader<string, boolean | null>;
+    myReview: DataLoader<string, BookReview | null>;
 };
 
 /**
@@ -57,5 +61,7 @@ export function createLoaders(getUser: () => Promise<User | null>): Loaders {
         followerCount: new DataLoader((ids) => batchFollowerCount(ids)),
         followingCount: new DataLoader((ids) => batchFollowingCount(ids)),
         isFollowedByMe: new DataLoader(makeIsFollowedByMeBatch(getUser)),
+        myVote: new DataLoader(makeMyVoteBatch(getUser)),
+        myReview: new DataLoader(makeMyReviewBatch(getUser)),
     };
 }

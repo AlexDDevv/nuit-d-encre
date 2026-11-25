@@ -224,54 +224,6 @@ export class BookReviewsResolver {
     }
 
     /**
-     * Query to get the current user's review for a specific book.
-     *
-     * @description
-     * Returns the authenticated user's review for a given book, if it exists.
-     * Useful for checking if the user has already reviewed a book and
-     * for pre-filling edit forms.
-     *
-     * @param bookId - The ID of the book.
-     * @param context - GraphQL context containing the authenticated user.
-     *
-     * @returns The user's BookReview if found, null otherwise.
-     *
-     * @example
-     * ```graphql
-     * query {
-     *   myBookReview(bookId: "<uuid>") {
-     *     id
-     *     rating
-     *     reviewText
-     *   }
-     * }
-     * ```
-     *
-     * @throws AppError - If user is not authenticated or query fails.
-     */
-    @Authorized()
-    @Query(() => BookReview, { nullable: true })
-    async myBookReview(
-        @Arg("bookId", () => ID) bookId: string,
-        @Ctx() context: Context,
-    ): Promise<BookReview | null> {
-        const user = await requireUser(context);
-
-        const review = await BookReview.findOne({
-            where: {
-                user: { id: user.id },
-                book: { id: bookId },
-            },
-            relations: {
-                user: true,
-                book: true,
-            },
-        });
-
-        return review;
-    }
-
-    /**
      * Mutation to create a new book review.
      *
      * @description
@@ -577,5 +529,17 @@ export class BookReviewsResolver {
     @FieldResolver(() => Int)
     commentCount(@Root() review: BookReview): number {
         return review.comments?.length ?? 0;
+    }
+
+    /**
+     * Vote de l'utilisateur courant sur cette critique : true (utile), false
+     * (pas utile), null sinon. Évite une requête par critique côté front.
+     */
+    @FieldResolver(() => Boolean, { nullable: true })
+    myVote(
+        @Root() review: BookReview,
+        @Ctx() context: Context,
+    ): Promise<boolean | null> {
+        return context.loaders.myVote.load(review.id);
     }
 }

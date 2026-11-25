@@ -6,15 +6,7 @@
  * It handles voting on reviews (helpful/not helpful) and vote management.
  */
 
-import {
-    Arg,
-    Authorized,
-    Ctx,
-    ID,
-    Mutation,
-    Query,
-    Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, ID, Mutation, Resolver } from "type-graphql";
 import { AppError } from "../../../middlewares/error-handler";
 import { Context, UserActionType } from "../../../types/types";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
@@ -36,53 +28,6 @@ import { requireUser } from "../../../utils/current-user";
  */
 @Resolver(BookReviewVote)
 export class BookReviewVotesResolver {
-    /**
-     * Query to get the current user's vote on a specific review.
-     *
-     * @description
-     * Returns the authenticated user's vote on a given review, if it exists.
-     * Useful for displaying the current vote state in the UI (e.g., highlighting
-     * the "helpful" button if the user voted helpful).
-     *
-     * @param reviewId - The ID of the review to check.
-     * @param context - GraphQL context containing the authenticated user.
-     *
-     * @returns The BookReviewVote object if found, null otherwise.
-     *
-     * @example
-     * ```graphql
-     * query {
-     *   myVoteOnReview(reviewId: "<uuid>") {
-     *     id
-     *     isHelpful
-     *   }
-     * }
-     * ```
-     *
-     * @throws AppError - If user is not authenticated or query fails.
-     */
-    @Authorized()
-    @Query(() => BookReviewVote, { nullable: true })
-    async myVoteOnReview(
-        @Arg("reviewId", () => ID) reviewId: string,
-        @Ctx() context: Context,
-    ): Promise<BookReviewVote | null> {
-        const user = await requireUser(context);
-
-        const vote = await BookReviewVote.findOne({
-            where: {
-                user: { id: user.id },
-                review: { id: reviewId },
-            },
-            relations: {
-                user: true,
-                review: true,
-            },
-        });
-
-        return vote;
-    }
-
     /**
      * Mutation to vote on a review (upsert pattern).
      *

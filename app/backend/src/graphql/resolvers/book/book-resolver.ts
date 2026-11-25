@@ -632,4 +632,13 @@ export class BooksResolver {
             return [];
         }
     }
+
+    /** Critique de l'utilisateur courant sur ce livre (null si aucune ou visiteur). */
+    @FieldResolver(() => BookReview, { nullable: true })
+    myReview(
+        @Root() book: Book,
+        @Ctx() context: Context,
+    ): Promise<BookReview | null> {
+        return context.loaders.myReview.load(book.id);
+    }
 }
