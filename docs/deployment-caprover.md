@@ -25,23 +25,22 @@ saisies dans le dashboard CapRover (App Configs → Environmental Variables).
    Port** sur `8080` (App Configs).
 
 Déploiement d'une app depuis le monorepo (CLI CapRover), **depuis la racine du
-repo** :
+repo**, branche `test` :
 
-    git archive --format tar -o /tmp/back.tar develop:app/backend
-    caprover deploy -a nuit-encre-back -t /tmp/back.tar
+    pnpm deploy:back     # scripts/caprover-archive.sh backend test + caprover deploy
+    pnpm deploy:front    # idem pour le front
+    pnpm deploy          # les deux, back puis front
 
-    git archive --format tar -o /tmp/front.tar develop:app/frontend
-    caprover deploy -a nuit-encre-front -t /tmp/front.tar
-
-> **Pourquoi un tar et pas `caprover deploy -b develop` ?** Le déploiement par
-> branche fait un `git archive <branche>` qui archive **toute la racine du
-> repo** : CapRover n'y trouve pas de `captain-definition` à la racine, et le
-> contexte de build ne serait pas le dossier de l'app (nos `Dockerfile.prod`
-> font `COPY package.json ./`, relatif au dossier de l'app). La syntaxe
-> `develop:app/backend` extrait le sous-dossier **à la racine de l'archive** —
-> `captain-definition` et le contexte de build retombent au bon endroit.
-> Bonus : seuls les fichiers commités sont envoyés (pas de `.env` local, pas de
-> `node_modules`).
+> **Pourquoi une archive construite par script ?** Le déploiement par branche
+> (`caprover deploy -b`) archive **toute la racine du repo** : CapRover n'y
+> trouve pas de `captain-definition`, et le contexte de build ne serait pas le
+> dossier de l'app. `scripts/caprover-archive.sh` place le dossier de l'app
+> (`git archive test:app/<app>`) **à la racine de l'archive** et y ajoute
+> `_workspace/` : le `pnpm-lock.yaml` du monorepo et les manifestes du
+> workspace. `Dockerfile.prod` installe avec `pnpm install --frozen-lockfile` :
+> la prod reçoit exactement les versions vérifiées par la CI. Seuls les fichiers
+> commités sur `test` partent (pas de `.env` local, pas de `node_modules`). Un
+> `Dockerfile.prod` construit sans cette archive échoue (`_workspace/` absent).
 
 Procédure détaillée d'installation du serveur : voir
 [`caprover-setup.md`](./caprover-setup.md).

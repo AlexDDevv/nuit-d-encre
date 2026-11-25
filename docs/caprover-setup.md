@@ -251,20 +251,22 @@ Trois pièges de configuration :
 Depuis la **racine du repo**, sur ta machine :
 
 ```bash
-git archive --format tar -o /tmp/back.tar develop:app/backend
-caprover deploy -a nuit-encre-back -t /tmp/back.tar
+pnpm deploy:back
 ```
 
-> **Pourquoi cette gymnastique plutôt que `caprover deploy -b develop` ?**
-> Le déploiement par branche lance `git archive <branche>`, qui archive **toute
-> la racine du repo** quel que soit le dossier depuis lequel tu la lances.
-> CapRover chercherait alors `captain-definition` à la racine du monorepo (il
-> n'y est pas), et le contexte de build serait la racine — alors que nos
-> `Dockerfile.prod` font `COPY package.json ./`, relatif au dossier de l'app.
-> La syntaxe `develop:app/backend` extrait le sous-dossier **à la racine de
-> l'archive** : `captain-definition` et le contexte retombent au bon endroit.
-> Effet de bord utile : seuls les fichiers commités partent — ton `.env` local
-> et `node_modules` restent chez toi.
+Le script `scripts/caprover-archive.sh backend test /tmp/back.tar` construit
+l'archive, puis `caprover deploy -a nuit-encre-back -t /tmp/back.tar` l'envoie.
+
+> **Pourquoi une archive construite par script ?** Le déploiement par branche
+> (`caprover deploy -b`) archive **toute la racine du repo** : CapRover n'y
+> trouve pas de `captain-definition`, et le contexte de build ne serait pas le
+> dossier de l'app. `scripts/caprover-archive.sh` place le dossier de l'app
+> (`git archive test:app/<app>`) **à la racine de l'archive** et y ajoute
+> `_workspace/` : le `pnpm-lock.yaml` du monorepo et les manifestes du
+> workspace. `Dockerfile.prod` installe avec `pnpm install --frozen-lockfile` :
+> la prod reçoit exactement les versions vérifiées par la CI. Seuls les fichiers
+> commités sur `test` partent (pas de `.env` local, pas de `node_modules`). Un
+> `Dockerfile.prod` construit sans cette archive échoue (`_workspace/` absent).
 
 Le build prend plusieurs minutes la première fois (installation des dépendances
 + compilation TypeScript). La CLI affiche les logs et te signale l'échec, c'est
@@ -316,8 +318,7 @@ clair. Si le login échoue silencieusement, vérifie HTTPS en premier.
 Déploie, depuis la racine du repo :
 
 ```bash
-git archive --format tar -o /tmp/front.tar develop:app/frontend
-caprover deploy -a nuit-encre-front -t /tmp/front.tar
+pnpm deploy:front
 ```
 
 ✅ *Vérification* : `https://nuitdencre.fr` affiche le site avec un cadenas
@@ -347,11 +348,10 @@ Dans l'ordre, du plus bas niveau au plus visible :
 
 ## 11. Redéployer plus tard
 
-C'est la même paire de commandes, à relancer après chaque merge :
+C'est la même commande, à relancer après chaque merge sur `test` :
 
 ```bash
-git archive --format tar -o /tmp/back.tar develop:app/backend
-caprover deploy -a nuit-encre-back -t /tmp/back.tar
+pnpm deploy          # ou deploy:back / deploy:front pour une seule app
 ```
 
 Quelques réflexes :
@@ -376,7 +376,7 @@ autre branche.
 | | Prod | Staging |
 |---|---|---|
 | Apps | `nuit-encre-{front,back,db}` | `staging-nuit-encre-{front,back,db}` |
-| Branche | `master` | `develop` |
+| Branche | `test` | `develop` |
 | Domaine | `nuitdencre.fr` | `staging.nuitdencre.fr` |
 | `BACKEND_URL` | `http://srv-captain--nuit-encre-back:3310` | `http://srv-captain--staging-nuit-encre-back:3310` |
 | `DB_HOST` | `srv-captain--nuit-encre-db` | `srv-captain--staging-nuit-encre-db` |
@@ -404,7 +404,7 @@ Trois points de vigilance :
 | 404 en rechargeant une URL profonde | Le fallback SPA ne s'applique pas — l'image front n'est pas à jour |
 | Login sans effet, déconnecté au rechargement | HTTPS non activé : le cookie `secure` est rejeté |
 | Le back redémarre en boucle | Variable manquante (`COOKIE_SECRET`, `APP_PORT`), identifiants base faux, ou migration en échec — regarde les logs |
-| `captain-definition` introuvable au déploiement | Déploiement par branche au lieu de l'archive `develop:app/<app>` (étape 8) |
+| `captain-definition` introuvable au déploiement | Déploiement par branche au lieu de `pnpm deploy:<app>` (étape 8) |
 | Bouton Google sans effet | `VITE_GOOGLE_CLIENT_ID` absente au build, ou origine non déclarée côté Google Cloud |
 | Build tué sans message (`Killed`) | Mémoire insuffisante — ajoute un swap (étape 1) |
 
