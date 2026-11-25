@@ -22,7 +22,7 @@ export default function FeedTargetLink({ entry }: FeedTargetLinkProps) {
                     className="border-primary/25 text-primary/40 bg-linear-to-br relative grid h-9 w-6 shrink-0 place-items-center overflow-hidden rounded border from-[hsl(34_34%_24%)] to-[hsl(28_30%_13%)]"
                 >
                     <span className="text-xxxs leading-none">◆</span>
-                    <span className="absolute left-0 top-0 h-full w-0.75 bg-black/30" />
+                    <span className="w-0.75 absolute left-0 top-0 h-full bg-black/30" />
                 </span>
             ) : (
                 <span

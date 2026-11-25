@@ -18,7 +18,7 @@ export default function AuthorDetailsSkeleton() {
             {/* héro */}
             <div className="grid gap-10 sm:gap-12 md:grid-cols-[300px_1fr] md:items-start">
                 <div className="md:pt-2">
-                    <Skeleton className="mx-auto aspect-2/3 w-full max-w-75 rounded-md" />
+                    <Skeleton className="aspect-2/3 max-w-75 mx-auto w-full rounded-md" />
                 </div>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-3">

@@ -5,7 +5,11 @@ import { downloadJson } from "./downloadJson";
 describe("downloadJson", () => {
     it("crée un lien de téléchargement et le clique", () => {
         const click = vi.fn();
-        const anchor = { href: "", download: "", click } as unknown as HTMLAnchorElement;
+        const anchor = {
+            href: "",
+            download: "",
+            click,
+        } as unknown as HTMLAnchorElement;
         vi.spyOn(document, "createElement").mockReturnValue(anchor);
         vi.stubGlobal("URL", {
             createObjectURL: vi.fn(() => "blob:x"),

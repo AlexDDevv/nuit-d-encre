@@ -44,8 +44,8 @@ export default function Fil() {
             filter === "all"
                 ? base
                 : base.filter(
-                    (entry) => describeFeedEntry(entry).kind === filter,
-                ),
+                      (entry) => describeFeedEntry(entry).kind === filter,
+                  ),
         [base, filter],
     );
     const shown = filtered.slice(0, visible);
@@ -53,8 +53,8 @@ export default function Fil() {
     const subtitle = forcedEmpty
         ? "À défaut d'abonnements, le fil s'ouvre sur la communauté - un seuil vers d'autres veilleurs."
         : discovery
-            ? "Les dernières traces d'encre de tous les lecteurs de Nuit d'Encre."
-            : "Les dernières traces d'encre des lecteurs que vous suivez.";
+          ? "Les dernières traces d'encre de tous les lecteurs de Nuit d'Encre."
+          : "Les dernières traces d'encre des lecteurs que vous suivez.";
 
     return (
         <section className="mx-auto w-full max-w-3xl px-4 py-7 md:px-6 md:py-9">
@@ -71,7 +71,7 @@ export default function Fil() {
                 <h1 className="text-foreground font-quote text-3xl font-medium leading-none md:text-4xl">
                     Fil d'activité
                 </h1>
-                <p className="text-muted-foreground font-body mx-auto mt-3 max-w-md text-sm leading-relaxed text-pretty">
+                <p className="text-muted-foreground font-body mx-auto mt-3 max-w-md text-pretty text-sm leading-relaxed">
                     {subtitle}
                 </p>
             </div>

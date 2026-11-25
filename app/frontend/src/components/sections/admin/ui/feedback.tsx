@@ -12,15 +12,15 @@ export function EmptyState({
 }) {
     return (
         <div className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
-            <span className="grid h-16 w-16 place-items-center rounded-full border-2 border-border bg-popover/60 text-muted-foreground/60">
+            <span className="border-border bg-popover/60 text-muted-foreground/60 grid h-16 w-16 place-items-center rounded-full border-2">
                 <LuInbox size={26} />
             </span>
             <div className="flex flex-col items-center gap-2">
-                <p className="font-quote text-lg italic text-muted-foreground">
+                <p className="font-quote text-muted-foreground text-lg italic">
                     {message}
                 </p>
                 {hint && (
-                    <p className="font-body text-sm text-muted-foreground/60">
+                    <p className="font-body text-muted-foreground/60 text-sm">
                         {hint}
                     </p>
                 )}
@@ -31,10 +31,16 @@ export function EmptyState({
 }
 
 /** Squelette de lignes pendant le chargement d'un tableau. */
-export function SkeletonRows({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
+export function SkeletonRows({
+    rows = 6,
+    cols = 5,
+}: {
+    rows?: number;
+    cols?: number;
+}) {
     const widths = [28, 20, 14, 18];
     return (
-        <div className="flex flex-col divide-y-2 divide-border/60">
+        <div className="divide-border/60 flex flex-col divide-y-2">
             {Array.from({ length: rows }).map((_, r) => (
                 <div key={r} className="flex items-center gap-4 px-4 py-3.5">
                     <Skeleton className="h-9 w-9 shrink-0 rounded-full" />

@@ -1,11 +1,7 @@
 import type { GlyphName } from "@/components/UI/Icon/Icon";
 
 export type BannerVariant =
-    | "success"
-    | "error"
-    | "warning"
-    | "info"
-    | "completion";
+    "success" | "error" | "warning" | "info" | "completion";
 
 export interface BannerAction {
     label: string;

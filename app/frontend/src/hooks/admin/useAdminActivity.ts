@@ -7,8 +7,9 @@ import { AdminRecentActivityQuery } from "@/types/types";
  * critiques et journal des dernières actions XP.
  */
 export function useAdminActivity() {
-    const { data, loading, error } =
-        useQuery<AdminRecentActivityQuery>(ADMIN_RECENT_ACTIVITY);
+    const { data, loading, error } = useQuery<AdminRecentActivityQuery>(
+        ADMIN_RECENT_ACTIVITY,
+    );
 
     return {
         activity: data?.adminRecentActivity,

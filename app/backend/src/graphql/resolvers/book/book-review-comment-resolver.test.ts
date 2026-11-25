@@ -1,6 +1,10 @@
 import { BookReview } from "../../../database/entities/book/bookReview";
 import { BookReviewComment } from "../../../database/entities/book/bookReviewComment";
-import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
+import {
+    makeContext,
+    makeUser,
+    stubPersistence,
+} from "../../../test/factories";
 import { Roles } from "../../../types/types";
 import { BookReviewCommentsResolver } from "./book-review-comment-resolver";
 
@@ -23,18 +27,20 @@ describe("BookReviewCommentsResolver", () => {
             await expect(
                 resolver.createBookReviewComment(
                     { reviewId: "review-1", content: "   " },
-                    makeContext(author)
-                )
+                    makeContext(author),
+                ),
             ).rejects.toMatchObject({ statusCode: 400 });
             expect(findReview).not.toHaveBeenCalled();
         });
 
         it("enregistre le contenu sans les espaces superflus", async () => {
-            jest.spyOn(BookReview, "findOne").mockResolvedValue(new BookReview());
+            jest.spyOn(BookReview, "findOne").mockResolvedValue(
+                new BookReview(),
+            );
 
             const comment = await resolver.createBookReviewComment(
                 { reviewId: "review-1", content: "  Bien vu !  " },
-                makeContext(author)
+                makeContext(author),
             );
 
             expect(comment.content).toBe("Bien vu !");
@@ -45,13 +51,16 @@ describe("BookReviewCommentsResolver", () => {
     describe("deleteBookReviewComment", () => {
         beforeEach(() => {
             jest.spyOn(BookReviewComment, "findOne").mockResolvedValue(
-                Object.assign(new BookReviewComment(), { id: "c-1", user: author })
+                Object.assign(new BookReviewComment(), {
+                    id: "c-1",
+                    user: author,
+                }),
             );
         });
 
         it("refuse un utilisateur qui n'est pas l'auteur du commentaire", async () => {
             await expect(
-                resolver.deleteBookReviewComment("c-1", makeContext(stranger))
+                resolver.deleteBookReviewComment("c-1", makeContext(stranger)),
             ).rejects.toMatchObject({ statusCode: 403 });
             expect(BookReviewComment.prototype.remove).not.toHaveBeenCalled();
         });
@@ -61,7 +70,7 @@ describe("BookReviewCommentsResolver", () => {
             ["un admin", admin],
         ])("autorise %s", async (_label, user) => {
             await expect(
-                resolver.deleteBookReviewComment("c-1", makeContext(user))
+                resolver.deleteBookReviewComment("c-1", makeContext(user)),
             ).resolves.toBe(true);
         });
     });

@@ -1,11 +1,4 @@
-import {
-    Arg,
-    Authorized,
-    Ctx,
-    Int,
-    Query,
-    Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, Int, Query, Resolver } from "type-graphql";
 import { UserActions } from "../../../database/entities/user/user-actions";
 import { UserFollow } from "../../../database/entities/user/user-follow";
 import { Context } from "../../../types/types";
@@ -54,7 +47,12 @@ export class FeedResolver {
             .take(Math.min(Math.max(limit, 1), 50))
             .skip(Math.max(offset, 0));
 
-        const actions = await onlyVisibleActions(qb, me, "action", "user").getMany();
+        const actions = await onlyVisibleActions(
+            qb,
+            me,
+            "action",
+            "user",
+        ).getMany();
         return actions.map(toFeedEntry);
     }
 
@@ -72,7 +70,12 @@ export class FeedResolver {
             .orderBy("action.createdAt", "DESC")
             .take(Math.min(Math.max(limit, 1), 50));
 
-        const actions = await onlyVisibleActions(qb, me, "action", "user").getMany();
+        const actions = await onlyVisibleActions(
+            qb,
+            me,
+            "action",
+            "user",
+        ).getMany();
         return actions.map(toFeedEntry);
     }
 }

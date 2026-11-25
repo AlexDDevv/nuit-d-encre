@@ -45,7 +45,7 @@ export default function FeedRow({ entry, discovery }: FeedRowProps) {
                         <Icon size={15} />
                     </span>
                     <div className="min-w-0 pt-0.5">
-                        <p className="text-foreground/85 font-body text-base leading-snug text-pretty">
+                        <p className="text-foreground/85 font-body text-pretty text-base leading-snug">
                             {label}
                         </p>
                         <FeedTargetLink entry={entry} />

@@ -16,6 +16,8 @@ export class AddTokenVersionToUser1787000000000 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "tokenVersion"`);
+        await queryRunner.query(
+            `ALTER TABLE "user" DROP COLUMN "tokenVersion"`,
+        );
     }
 }

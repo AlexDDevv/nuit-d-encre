@@ -1,6 +1,14 @@
-import { Length, Matches, IsIn, IsInt, Min, Max, ValidateIf } from "class-validator"
-import { ISBN13_PATTERN } from "../../../../utils/isbn"
-import { Field, ID, InputType, Int } from "type-graphql"
+import {
+    Length,
+    Matches,
+    IsIn,
+    IsInt,
+    Min,
+    Max,
+    ValidateIf,
+} from "class-validator";
+import { ISBN13_PATTERN } from "../../../../utils/isbn";
+import { Field, ID, InputType, Int } from "type-graphql";
 
 /**
  * Represents input data for creating a new book.
@@ -18,7 +26,7 @@ import { Field, ID, InputType, Int } from "type-graphql"
  * - `publisher`: required name of the publishing house, max 255 characters.
  * - `format`: required physical format of the book (must be one of: hardcover, paperback, softcover).
  * - `category`: category ID the book belongs to.
- * 
+ *
  * The class uses the following decorators:
  * - `@Field()`: Exposes the property in the GraphQL schema (via type-graphql).
  * - `@Length()`: Validates string length.
@@ -31,29 +39,33 @@ import { Field, ID, InputType, Int } from "type-graphql"
 export class CreateBookInput {
     @Field()
     @Length(1, 255, { message: "Title must be between 1 and 255 characters" })
-    title!: string
+    title!: string;
 
     @Field()
-    @Length(1, 5000, { message: "Summary must be between 1 and 5000 characters" })
-    summary!: string
+    @Length(1, 5000, {
+        message: "Summary must be between 1 and 5000 characters",
+    })
+    summary!: string;
 
     @Field()
-    @Length(1, 255, { message: "Author name must be between 1 and 255 characters" })
-    author!: string
+    @Length(1, 255, {
+        message: "Author name must be between 1 and 255 characters",
+    })
+    author!: string;
 
     @Field({ nullable: true })
     @ValidateIf((o) => o.isbn10 !== "" && o.isbn10 != null)
     @Length(10, 10, { message: "ISBN-10 must be exactly 10 characters" })
-    isbn10?: string
+    isbn10?: string;
 
     @Field()
     @Matches(ISBN13_PATTERN, { message: "ISBN-13 must be exactly 13 digits" })
-    isbn13!: string
+    isbn13!: string;
 
     @Field(() => Int)
     @IsInt({ message: "Page count must be an integer" })
     @Min(1, { message: "Page count must be at least 1" })
-    pageCount!: number
+    pageCount!: number;
 
     @Field(() => Int)
     @IsInt({ message: "Published year must be a number" })
@@ -63,18 +75,21 @@ export class CreateBookInput {
 
     @Field()
     @Length(1, 5, { message: "Language must be between 1 and 5 characters" })
-    language!: string
+    language!: string;
 
     @Field()
-    @Length(1, 255, { message: "Publisher name must be between 1 and 255 characters" })
-    publisher!: string
+    @Length(1, 255, {
+        message: "Publisher name must be between 1 and 255 characters",
+    })
+    publisher!: string;
 
     @Field()
     @IsIn(["hardcover", "paperback", "softcover", "pocket"], {
-        message: "Format must be one of: hardcover, paperback, softcover or pocket",
+        message:
+            "Format must be one of: hardcover, paperback, softcover or pocket",
     })
-    format!: string
+    format!: string;
 
     @Field(() => ID)
-    category!: string
+    category!: string;
 }

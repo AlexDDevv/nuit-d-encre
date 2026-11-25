@@ -9,7 +9,7 @@ function App() {
             <Toaster richColors position="bottom-center" closeButton />
             <div className="flex min-h-dvh">
                 <Sidebar />
-                <main className="flex min-w-0 flex-1 flex-col gap-20 px-4 pb-10 pt-18 md:p-10">
+                <main className="pt-18 flex min-w-0 flex-1 flex-col gap-20 px-4 pb-10 md:p-10">
                     <SiteBannerHost />
                     <Outlet />
                 </main>

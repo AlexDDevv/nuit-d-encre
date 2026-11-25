@@ -38,7 +38,7 @@ export default function MonogramCover({ first, last }: MonogramCoverProps) {
             />
             {/* cadre en filet doré */}
             <div
-                className="pointer-events-none absolute inset-2.75 rounded-lg"
+                className="inset-2.75 pointer-events-none absolute rounded-lg"
                 style={{ border: "1px solid hsl(43 59% 81% / 0.16)" }}
             />
 

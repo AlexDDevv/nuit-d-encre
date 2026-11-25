@@ -67,7 +67,9 @@ export function useBookRecommendationMutations() {
                 id: cache.identify({ __typename: "Book", id: bookId }),
                 fields: {
                     recommendationCount: (existing = 0) =>
-                        action === "created" ? existing + 1 : Math.max(0, existing - 1),
+                        action === "created"
+                            ? existing + 1
+                            : Math.max(0, existing - 1),
                 },
             });
         },

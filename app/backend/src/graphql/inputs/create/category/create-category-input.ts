@@ -1,5 +1,5 @@
-import { Length } from "class-validator"
-import { Field, InputType } from "type-graphql"
+import { Length } from "class-validator";
+import { Field, InputType } from "type-graphql";
 
 /**
  * Represents input data for creating a new book category.
@@ -14,9 +14,9 @@ import { Field, InputType } from "type-graphql"
  */
 @InputType()
 export class CreateCategoryInput {
-	@Field()
-	@Length(1, 40, {
-		message: "Category name must be between 1 and 40 characters.",
-	})
-	name!: string
+    @Field()
+    @Length(1, 40, {
+        message: "Category name must be between 1 and 40 characters.",
+    })
+    name!: string;
 }

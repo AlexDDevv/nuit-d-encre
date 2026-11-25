@@ -10,14 +10,14 @@ export default function BooksSectionLayout({
 }: BooksSectionLayoutProps) {
     return (
         <section className="flex flex-col gap-10">
-            <div className="bg-card flex items-end gap-6 rounded-md p-5 border-border border-2">
+            <div className="bg-card border-border flex items-end gap-6 rounded-md border-2 p-5">
                 <h3 className="text-muted-foreground font-semibold uppercase tracking-wider">
                     {title}
                 </h3>
                 {seeMoreLink && (
                     <Link
                         to={seeMoreLink.to}
-                        className="text-card-foreground font-semibold italic hover:underline text-sm"
+                        className="text-card-foreground text-sm font-semibold italic hover:underline"
                         aria-label={seeMoreLink.ariaLabel}
                     >
                         Voir plus

@@ -16,13 +16,13 @@ export default function ContactHero() {
 
                 <div className="mt-5 flex flex-col items-center">
                     <Ornament width="w-12" />
-                    <h1 className="text-gradient-gold mt-3 font-title text-4xl font-black leading-[1.04] tracking-tight md:text-6xl">
+                    <h1 className="text-gradient-gold font-title mt-3 text-4xl font-black leading-[1.04] tracking-tight md:text-6xl">
                         Prendre contact
                     </h1>
                     <Ornament className="mt-3" width="w-12" />
                 </div>
 
-                <p className="text-muted-foreground mt-5 max-w-lg font-quote text-lg italic leading-relaxed">
+                <p className="text-muted-foreground font-quote mt-5 max-w-lg text-lg italic leading-relaxed">
                     Une question, une suggestion, un grain de sable dans les
                     rouages ? Écrivez-nous - la bibliothèque ne dort jamais,
                     quelqu'un tient la lampe.

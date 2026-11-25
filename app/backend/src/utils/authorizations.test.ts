@@ -8,13 +8,15 @@ describe("isOwnerOrAdmin", () => {
     });
 
     it("autorise un admin sur la ressource d'un autre", () => {
-        expect(isOwnerOrAdmin("user-1", makeUser("admin", Roles.Admin))).toBe(true);
+        expect(isOwnerOrAdmin("user-1", makeUser("admin", Roles.Admin))).toBe(
+            true,
+        );
     });
 
     it("refuse un autre utilisateur, y compris modérateur", () => {
         expect(isOwnerOrAdmin("user-1", makeUser("user-2"))).toBe(false);
         expect(isOwnerOrAdmin("user-1", makeUser("mod", Roles.Moderator))).toBe(
-            false
+            false,
         );
     });
 

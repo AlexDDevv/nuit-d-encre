@@ -9,7 +9,9 @@ import { Context } from "../types/types";
  * appel et mémoïse le résultat pour toute la requête (authChecker, resolvers
  * et DataLoaders partagent la même résolution). Sans session valide : `null`.
  */
-export function createUserResolver(cookies: Cookies): () => Promise<User | null> {
+export function createUserResolver(
+    cookies: Cookies,
+): () => Promise<User | null> {
     let userPromise: Promise<User | null> | undefined;
     return () => {
         if (!userPromise) {

@@ -17,21 +17,21 @@ import {
     Query,
     Resolver,
     Root,
-} from "type-graphql"
-import { AppError } from "../../../middlewares/error-handler"
-import { Context, Roles, UserActionType } from "../../../types/types"
-import { grantXpService } from "../../../services/grind/grant-xp-service"
-import { xpKeys } from "../../../utils/xp-keys"
-import { Brackets } from "typeorm"
-import { Author } from "../../../database/entities/author/author"
-import { CreateAuthorInput } from "../../inputs/create/author/create-author-input"
-import { UpdateAuthorInput } from "../../inputs/update/author/update-author-input"
-import { clampPagination } from "../../../utils/pagination"
-import { isOwnerOrAdmin } from "../../../utils/authorizations"
-import { AuthorsResult } from "../../../database/filteredResults/authors/authors-result"
-import { AuthorsQueryInput } from "../../queries/authors/authors-query-input"
-import { Book } from "../../../database/entities/book/book"
-import { requireUser } from "../../../utils/current-user"
+} from "type-graphql";
+import { AppError } from "../../../middlewares/error-handler";
+import { Context, Roles, UserActionType } from "../../../types/types";
+import { grantXpService } from "../../../services/grind/grant-xp-service";
+import { xpKeys } from "../../../utils/xp-keys";
+import { Brackets } from "typeorm";
+import { Author } from "../../../database/entities/author/author";
+import { CreateAuthorInput } from "../../inputs/create/author/create-author-input";
+import { UpdateAuthorInput } from "../../inputs/update/author/update-author-input";
+import { clampPagination } from "../../../utils/pagination";
+import { isOwnerOrAdmin } from "../../../utils/authorizations";
+import { AuthorsResult } from "../../../database/filteredResults/authors/authors-result";
+import { AuthorsQueryInput } from "../../queries/authors/authors-query-input";
+import { Book } from "../../../database/entities/book/book";
+import { requireUser } from "../../../utils/current-user";
 
 function isAuthorIncomplete(author: Author): boolean {
     return (
@@ -75,7 +75,7 @@ export class AuthorsResolver {
      */
     @FieldResolver(() => Boolean)
     isIncomplete(@Root() author: Author): boolean {
-        return isAuthorIncomplete(author)
+        return isAuthorIncomplete(author);
     }
 
     /**
@@ -105,11 +105,11 @@ export class AuthorsResolver {
     async bookCount(@Root() author: Author): Promise<number> {
         try {
             return await Book.count({
-                where: { author: { id: author.id } }
-            })
+                where: { author: { id: author.id } },
+            });
         } catch (error) {
-            console.error("Error counting author books:", error)
-            return 0
+            console.error("Error counting author books:", error);
+            return 0;
         }
     }
 
@@ -148,46 +148,49 @@ export class AuthorsResolver {
     @Query(() => AuthorsResult)
     async authors(
         @Arg("filters", () => AuthorsQueryInput, { nullable: true })
-        filters: AuthorsQueryInput
+        filters: AuthorsQueryInput,
     ): Promise<AuthorsResult> {
-        const {
-            search,
-            page = 1,
-            limit = 12,
-        } = filters || {}
+        const { search, page = 1, limit = 12 } = filters || {};
 
         // Retrieve the base query with all authors created
         const baseQuery = Author.createQueryBuilder("author")
             .leftJoinAndSelect("author.user", "user")
             .leftJoinAndSelect("author.books", "books")
-            .leftJoinAndSelect("books.category", "category")
+            .leftJoinAndSelect("books.category", "category");
 
         // Get the total number of unfiltered authors and clone the query to apply filters
         const [totalCountAll, filteredQuery] = await Promise.all([
             baseQuery.getCount(),
             baseQuery.clone(),
-        ])
+        ]);
 
         // Filter firstname and lastname (search)
         if (search?.trim()) {
             const trimmedSearch = `%${search.trim()}%`;
 
-            filteredQuery.andWhere(new Brackets(qb => {
-                qb.where("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
-            }));
+            filteredQuery.andWhere(
+                new Brackets((qb) => {
+                    qb.where(
+                        "unaccent(author.firstname) ILIKE unaccent(:search)",
+                        { search: trimmedSearch },
+                    ).orWhere(
+                        "unaccent(author.lastname) ILIKE unaccent(:search)",
+                        { search: trimmedSearch },
+                    );
+                }),
+            );
         }
 
         // Get the total number of authors matching the filters (for pagination)
-        const totalCount = await filteredQuery.getCount()
+        const totalCount = await filteredQuery.getCount();
 
         // Apply pagination
-        filteredQuery.skip((page - 1) * limit).take(limit)
+        filteredQuery.skip((page - 1) * limit).take(limit);
 
-        const allAuthors = await filteredQuery.getMany()
+        const allAuthors = await filteredQuery.getMany();
 
         if (!allAuthors) {
-            throw new AppError("Authors not found", 404, "NotFoundError")
+            throw new AppError("Authors not found", 404, "NotFoundError");
         }
 
         return {
@@ -196,7 +199,7 @@ export class AuthorsResolver {
             totalCountAll,
             page,
             limit,
-        }
+        };
     }
 
     /**
@@ -220,12 +223,12 @@ export class AuthorsResolver {
                     category: true,
                 },
             },
-        })
+        });
         if (!author) {
-            throw new AppError("Author not found", 404, "NotFoundError")
+            throw new AppError("Author not found", 404, "NotFoundError");
         }
 
-        return author
+        return author;
     }
 
     /**
@@ -245,15 +248,15 @@ export class AuthorsResolver {
     @Mutation(() => Author)
     async createAuthor(
         @Arg("data", () => CreateAuthorInput) data: CreateAuthorInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<Author> {
         const user = await requireUser(context);
 
-        const newAuthor = new Author()
-        Object.assign(newAuthor, data, { user })
+        const newAuthor = new Author();
+        Object.assign(newAuthor, data, { user });
 
-        await newAuthor.save()
-        return newAuthor
+        await newAuthor.save();
+        return newAuthor;
     }
 
     /**
@@ -273,7 +276,7 @@ export class AuthorsResolver {
     @Mutation(() => Author, { nullable: true })
     async updateAuthor(
         @Arg("data", () => UpdateAuthorInput) data: UpdateAuthorInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<Author | null> {
         const user = await requireUser(context);
 
@@ -287,37 +290,40 @@ export class AuthorsResolver {
             relations: {
                 user: true,
             },
-        })
+        });
 
         if (!author) {
-            throw new AppError("Author not found", 404, "NotFoundError")
+            throw new AppError("Author not found", 404, "NotFoundError");
         }
 
         if (!isOwnerOrAdmin(author.user?.id ?? "", user)) {
             throw new AppError(
                 "Not authorized to update this author",
                 403,
-                "ForbiddenError"
-            )
+                "ForbiddenError",
+            );
         }
 
         const wasIncomplete = isAuthorIncomplete(author);
 
-        const { id, ...updateData } = data
+        const { id, ...updateData } = data;
 
-        Object.assign(author, updateData)
+        Object.assign(author, updateData);
 
-        await author.save()
+        await author.save();
 
         if (wasIncomplete && !isAuthorIncomplete(author)) {
             await grantXpService(user, UserActionType.AUTHOR_COMPLETED, {
                 xpKey: xpKeys.author(author.id),
                 targetId: author.id,
-                metadata: { firstname: author.firstname, lastname: author.lastname },
+                metadata: {
+                    firstname: author.firstname,
+                    lastname: author.lastname,
+                },
             });
         }
 
-        return author
+        return author;
     }
 
     /**
@@ -336,38 +342,38 @@ export class AuthorsResolver {
     @Mutation(() => Author, { nullable: true })
     async deleteAuthor(
         @Arg("id", () => ID) id: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<Author | null> {
         const user = await requireUser(context);
 
         const author = await Author.findOne({
             where: { id },
-            relations: { user: true, books: true }
+            relations: { user: true, books: true },
         });
 
         if (!author) {
-            throw new AppError("Author not found", 404, "NotFoundError")
+            throw new AppError("Author not found", 404, "NotFoundError");
         }
 
         if (!isOwnerOrAdmin(author.user?.id ?? "", user)) {
             throw new AppError(
                 "Not authorized to delete this author",
                 403,
-                "ForbiddenError"
-            )
+                "ForbiddenError",
+            );
         }
 
         if (author.books.length > 0) {
             throw new AppError(
                 "Cannot delete author with existing books",
                 400,
-                "BadRequestError"
+                "BadRequestError",
             );
         }
 
-        await author.remove()
-        author.id = id
+        await author.remove();
+        author.id = id;
 
-        return author
+        return author;
     }
 }

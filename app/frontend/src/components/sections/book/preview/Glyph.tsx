@@ -2,13 +2,7 @@ import { CSSProperties, ReactNode } from "react";
 
 // Tracés lucide en SVG inline pour éviter un nouvel import lucide-react.
 export type GlyphName =
-    | "arrowL"
-    | "import"
-    | "external"
-    | "user"
-    | "userPlus"
-    | "globe"
-    | "quote";
+    "arrowL" | "import" | "external" | "user" | "userPlus" | "globe" | "quote";
 
 const GLYPHS: Record<GlyphName, ReactNode> = {
     arrowL: (

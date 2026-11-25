@@ -52,7 +52,7 @@ export function Pill({
     return (
         <span
             className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold tracking-[0.12em] whitespace-nowrap uppercase",
+                "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-[0.12em]",
                 tones[tone],
                 className,
             )}
@@ -76,7 +76,7 @@ export function SectionHeading({
         <div className="mb-4 flex items-end justify-between gap-3">
             <div className="flex items-center gap-2.5">
                 {Icon && <Icon className="text-primary/80" size={18} />}
-                <h2 className="text-foreground/90 font-quote text-xl font-medium tracking-[0.22em] uppercase">
+                <h2 className="text-foreground/90 font-quote text-xl font-medium uppercase tracking-[0.22em]">
                     {children}
                 </h2>
             </div>

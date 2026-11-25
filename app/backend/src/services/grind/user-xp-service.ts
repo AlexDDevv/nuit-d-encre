@@ -4,7 +4,11 @@ export function getXpNeededForLevel(level: number): number {
     return 100 * level;
 }
 
-export function addUserXP(currentXP: number, currentLevel: number, gainedXP: number): XPResultType {
+export function addUserXP(
+    currentXP: number,
+    currentLevel: number,
+    gainedXP: number,
+): XPResultType {
     let newXP = currentXP + gainedXP;
     let newLevel = currentLevel;
     let levelUp = false;

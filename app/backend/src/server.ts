@@ -118,7 +118,12 @@ for (const name of ["COOKIE_SECRET", "JWT_SECRET", "APP_PORT"]) {
                 // par l'authChecker, les resolvers et les DataLoaders.
                 const getUser = createUserResolver(cookies);
 
-                return { cookies, ip, getUser, loaders: createLoaders(getUser) };
+                return {
+                    cookies,
+                    ip,
+                    getUser,
+                    loaders: createLoaders(getUser),
+                };
             },
         });
 

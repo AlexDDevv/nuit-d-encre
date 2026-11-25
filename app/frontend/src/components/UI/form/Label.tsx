@@ -9,7 +9,8 @@ const labelVariants = cva(
 
 interface LabelProps
     // Inherit all props from LabelPrimitive.Root (ex: htmlFor, id, etc.)
-    extends ComponentPropsWithoutRef<typeof LabelPrimitive.Root>,
+    extends
+        ComponentPropsWithoutRef<typeof LabelPrimitive.Root>,
         // Include variant types from labelVariants
         VariantProps<typeof labelVariants> {
     // Add a custom prop

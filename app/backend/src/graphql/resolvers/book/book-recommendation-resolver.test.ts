@@ -1,7 +1,11 @@
 import { Book } from "../../../database/entities/book/book";
 import { BookRecommendation } from "../../../database/entities/book/bookRecommendation";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
-import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
+import {
+    makeContext,
+    makeUser,
+    stubPersistence,
+} from "../../../test/factories";
 import { UserActionType } from "../../../types/types";
 import { BookRecommendationsResolver } from "./book-recommendation-resolver";
 
@@ -18,7 +22,7 @@ describe("BookRecommendationsResolver.toggleBookRecommendation", () => {
         jest.restoreAllMocks();
         stubPersistence(BookRecommendation);
         jest.spyOn(Book, "findOne").mockResolvedValue(
-            Object.assign(new Book(), { id: "book-1", title: "Dune" })
+            Object.assign(new Book(), { id: "book-1", title: "Dune" }),
         );
     });
 
@@ -27,43 +31,43 @@ describe("BookRecommendationsResolver.toggleBookRecommendation", () => {
 
         const result = await resolver.toggleBookRecommendation(
             { bookId: "book-1" },
-            makeContext(user)
+            makeContext(user),
         );
 
         expect(result.action).toBe("created");
         expect(grantXp).toHaveBeenCalledWith(
             user,
             UserActionType.BOOK_RECOMMENDED,
-            expect.objectContaining({ xpKey: "book:book-1" })
+            expect.objectContaining({ xpKey: "book:book-1" }),
         );
     });
 
     it("utilise une clé différente pour chaque livre recommandé", async () => {
         jest.spyOn(BookRecommendation, "findOne").mockResolvedValue(null);
         jest.spyOn(Book, "findOne").mockResolvedValue(
-            Object.assign(new Book(), { id: "book-2", title: "Fondation" })
+            Object.assign(new Book(), { id: "book-2", title: "Fondation" }),
         );
 
         await resolver.toggleBookRecommendation(
             { bookId: "book-2" },
-            makeContext(user)
+            makeContext(user),
         );
 
         expect(grantXp).toHaveBeenCalledWith(
             user,
             UserActionType.BOOK_RECOMMENDED,
-            expect.objectContaining({ xpKey: "book:book-2" })
+            expect.objectContaining({ xpKey: "book:book-2" }),
         );
     });
 
     it("retire une recommandation existante sans toucher à l'XP", async () => {
         jest.spyOn(BookRecommendation, "findOne").mockResolvedValue(
-            new BookRecommendation()
+            new BookRecommendation(),
         );
 
         const result = await resolver.toggleBookRecommendation(
             { bookId: "book-1" },
-            makeContext(user)
+            makeContext(user),
         );
 
         expect(result.action).toBe("removed");

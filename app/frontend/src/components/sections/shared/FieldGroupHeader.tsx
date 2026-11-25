@@ -24,7 +24,7 @@ export default function FieldGroupHeader({
                     {children}
                 </h3>
                 <span
-                    className="from-primary/35 h-px flex-1 bg-linear-to-r to-transparent"
+                    className="from-primary/35 bg-linear-to-r h-px flex-1 to-transparent"
                     aria-hidden="true"
                 />
             </div>

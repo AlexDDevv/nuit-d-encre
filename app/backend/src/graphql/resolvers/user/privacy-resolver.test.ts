@@ -33,7 +33,7 @@ describe("PrivacyResolver.deleteMyAccount", () => {
         await storedUser(await argon2.hash(PASSWORD));
 
         await expect(
-            resolver.deleteMyAccount(makeContext(makeUser("user-1")))
+            resolver.deleteMyAccount(makeContext(makeUser("user-1"))),
         ).rejects.toMatchObject({ statusCode: 400 });
         expect(erase).not.toHaveBeenCalled();
     });
@@ -42,7 +42,10 @@ describe("PrivacyResolver.deleteMyAccount", () => {
         await storedUser(await argon2.hash(PASSWORD));
 
         await expect(
-            resolver.deleteMyAccount(makeContext(makeUser("user-1")), "Mauvais1!")
+            resolver.deleteMyAccount(
+                makeContext(makeUser("user-1")),
+                "Mauvais1!",
+            ),
         ).rejects.toMatchObject({ statusCode: 401 });
         expect(erase).not.toHaveBeenCalled();
     });
@@ -52,7 +55,7 @@ describe("PrivacyResolver.deleteMyAccount", () => {
         const context = makeContext(makeUser("user-1"));
 
         await expect(resolver.deleteMyAccount(context, PASSWORD)).resolves.toBe(
-            true
+            true,
         );
         expect(erase).toHaveBeenCalledWith("user-1");
         expect(deleteImage).toHaveBeenCalledWith("users/user-1/avatar");
@@ -66,7 +69,7 @@ describe("PrivacyResolver.deleteMyAccount", () => {
         await storedUser(null);
 
         await expect(
-            resolver.deleteMyAccount(makeContext(makeUser("user-1")))
+            resolver.deleteMyAccount(makeContext(makeUser("user-1"))),
         ).resolves.toBe(true);
         expect(erase).toHaveBeenCalledWith("user-1");
     });

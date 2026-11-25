@@ -2,7 +2,11 @@ import { Book } from "../../../database/entities/book/book";
 import { User } from "../../../database/entities/user/user";
 import { UserBook } from "../../../database/entities/user/user-book";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
-import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
+import {
+    makeContext,
+    makeUser,
+    stubPersistence,
+} from "../../../test/factories";
 import { ReadingStatus, Roles, UserActionType } from "../../../types/types";
 import { UserBooksResolver } from "./user-books-resolver";
 
@@ -32,7 +36,10 @@ describe("UserBooksResolver", () => {
             jest.spyOn(UserBook, "findOne").mockResolvedValue(new UserBook());
 
             await expect(
-                resolver.createUserBook({ bookId: "book-1" }, makeContext(user))
+                resolver.createUserBook(
+                    { bookId: "book-1" },
+                    makeContext(user),
+                ),
             ).rejects.toMatchObject({ statusCode: 409 });
             expect(grantXp).not.toHaveBeenCalled();
         });
@@ -45,14 +52,14 @@ describe("UserBooksResolver", () => {
 
             await resolver.createUserBook(
                 { bookId: "book-1", status: ReadingStatus.TO_READ },
-                makeContext(user)
+                makeContext(user),
             );
 
             expect(grantXp).toHaveBeenCalledTimes(1);
             expect(grantXp).toHaveBeenCalledWith(
                 user,
                 UserActionType.BOOK_ADDED_TO_LIBRARY,
-                expect.objectContaining({ xpKey: "book:book-1" })
+                expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
 
@@ -64,13 +71,13 @@ describe("UserBooksResolver", () => {
 
             await resolver.createUserBook(
                 { bookId: "book-1", status: ReadingStatus.READ },
-                makeContext(user)
+                makeContext(user),
             );
 
             expect(grantXp).toHaveBeenCalledWith(
                 user,
                 UserActionType.BOOK_FINISHED,
-                expect.objectContaining({ xpKey: "book:book-1" })
+                expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
     });
@@ -92,13 +99,13 @@ describe("UserBooksResolver", () => {
 
             await resolver.updateUserBook(
                 { id: "ub-1", status: ReadingStatus.READ },
-                makeContext(user)
+                makeContext(user),
             );
 
             expect(grantXp).toHaveBeenCalledWith(
                 user,
                 UserActionType.BOOK_FINISHED,
-                expect.objectContaining({ xpKey: "book:book-1" })
+                expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
 
@@ -109,22 +116,24 @@ describe("UserBooksResolver", () => {
 
             await resolver.updateUserBook(
                 { id: "ub-1", status: ReadingStatus.READ },
-                makeContext(user)
+                makeContext(user),
             );
 
             expect(grantXp).not.toHaveBeenCalled();
         });
 
         it("ne cherche que dans la bibliothèque de l'utilisateur connecté", async () => {
-            const findOne = jest.spyOn(UserBook, "findOne").mockResolvedValue(null);
+            const findOne = jest
+                .spyOn(UserBook, "findOne")
+                .mockResolvedValue(null);
 
             await expect(
-                resolver.updateUserBook({ id: "ub-other" }, makeContext(user))
+                resolver.updateUserBook({ id: "ub-other" }, makeContext(user)),
             ).rejects.toMatchObject({ statusCode: 404 });
             expect(findOne).toHaveBeenCalledWith(
                 expect.objectContaining({
                     where: { id: "ub-other", user: { id: "user-1" } },
-                })
+                }),
             );
         });
     });
@@ -138,10 +147,10 @@ describe("UserBooksResolver", () => {
             const query = jest.spyOn(UserBook, "createQueryBuilder");
 
             await expect(
-                resolver.userBooks({}, makeContext(user), "owner")
+                resolver.userBooks({}, makeContext(user), "owner"),
             ).rejects.toMatchObject({ statusCode: 403 });
             await expect(
-                resolver.userBookStatusCounts(makeContext(user), "owner")
+                resolver.userBookStatusCounts(makeContext(user), "owner"),
             ).rejects.toMatchObject({ statusCode: 403 });
             expect(query).not.toHaveBeenCalled();
         });
@@ -150,7 +159,7 @@ describe("UserBooksResolver", () => {
             jest.spyOn(User, "findOne").mockResolvedValue(null);
 
             await expect(
-                resolver.userBookStatusCounts(makeContext(user), "ghost")
+                resolver.userBookStatusCounts(makeContext(user), "ghost"),
             ).rejects.toMatchObject({ statusCode: 404 });
         });
 
@@ -162,12 +171,12 @@ describe("UserBooksResolver", () => {
                 qb[method] = jest.fn(() => qb);
             }
             jest.spyOn(UserBook, "createQueryBuilder").mockReturnValue(
-                qb as never
+                qb as never,
             );
 
             await resolver.userBookStatusCounts(
                 makeContext(makeUser("admin", Roles.Admin)),
-                "owner"
+                "owner",
             );
             expect(qb.where).toHaveBeenCalledWith("ub.userId = :userId", {
                 userId: "owner",

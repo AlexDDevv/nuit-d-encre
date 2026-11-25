@@ -1,7 +1,11 @@
 import { Book } from "../../../database/entities/book/book";
 import { Category } from "../../../database/entities/category/category";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
-import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
+import {
+    makeContext,
+    makeUser,
+    stubPersistence,
+} from "../../../test/factories";
 import { Roles, UserActionType } from "../../../types/types";
 import { BooksResolver } from "./book-resolver";
 
@@ -44,12 +48,12 @@ describe("BooksResolver", () => {
             const findOne = jest.spyOn(Book, "findOne").mockResolvedValue(null);
 
             await expect(
-                resolver.updateBook({ id: "book-1" }, makeContext(stranger))
+                resolver.updateBook({ id: "book-1" }, makeContext(stranger)),
             ).rejects.toMatchObject({ statusCode: 404 });
             expect(findOne).toHaveBeenCalledWith(
                 expect.objectContaining({
                     where: { id: "book-1", user: { id: "stranger" } },
-                })
+                }),
             );
         });
 
@@ -60,40 +64,40 @@ describe("BooksResolver", () => {
 
             const updated = await resolver.updateBook(
                 { id: "book-1", title: "Nouveau titre" },
-                makeContext(admin)
+                makeContext(admin),
             );
 
             expect(findOne).toHaveBeenCalledWith(
-                expect.objectContaining({ where: { id: "book-1" } })
+                expect.objectContaining({ where: { id: "book-1" } }),
             );
             expect(updated?.title).toBe("Nouveau titre");
         });
 
         it("récompense la complétion d'un livre importé avec une clé liée au livre", async () => {
             jest.spyOn(Book, "findOne").mockResolvedValue(
-                makeBook({ isImported: true, pageCount: 0 })
+                makeBook({ isImported: true, pageCount: 0 }),
             );
 
             await resolver.updateBook(
                 { id: "book-1", pageCount: 120 },
-                makeContext(owner)
+                makeContext(owner),
             );
 
             expect(grantXp).toHaveBeenCalledWith(
                 owner,
                 UserActionType.BOOK_COMPLETED,
-                expect.objectContaining({ xpKey: "book:book-1" })
+                expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
 
         it("ne récompense rien si le livre reste incomplet", async () => {
             jest.spyOn(Book, "findOne").mockResolvedValue(
-                makeBook({ isImported: true, pageCount: 0 })
+                makeBook({ isImported: true, pageCount: 0 }),
             );
 
             await resolver.updateBook(
                 { id: "book-1", title: "Autre titre" },
-                makeContext(owner)
+                makeContext(owner),
             );
 
             expect(grantXp).not.toHaveBeenCalled();
@@ -105,7 +109,7 @@ describe("BooksResolver", () => {
             jest.spyOn(Book, "findOne").mockResolvedValue(makeBook());
 
             await expect(
-                resolver.deleteBook("book-1", makeContext(stranger))
+                resolver.deleteBook("book-1", makeContext(stranger)),
             ).rejects.toMatchObject({ statusCode: 403 });
             expect(Book.prototype.remove).not.toHaveBeenCalled();
         });

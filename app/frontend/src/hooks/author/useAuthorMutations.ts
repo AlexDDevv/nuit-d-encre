@@ -79,7 +79,9 @@ export function useAuthorMutations() {
 
     const addAuthor = async (
         author: CreateAuthorInput,
-    ): Promise<{ id: string; firstname: string; lastname: string } | undefined> => {
+    ): Promise<
+        { id: string; firstname: string; lastname: string } | undefined
+    > => {
         const result = await createAuthorMutation({
             variables: { data: author },
         });
@@ -94,9 +96,12 @@ export function useAuthorMutations() {
             error: updateAuthorError,
             reset: resetUpdateAuthorError,
         },
-    ] = useMutation<{ updateAuthor: Author }, { data: UpdateAuthorInput }>(UPDATE_AUTHOR, {
-        refetchQueries: [{ query: GET_AUTHORS }],
-    });
+    ] = useMutation<{ updateAuthor: Author }, { data: UpdateAuthorInput }>(
+        UPDATE_AUTHOR,
+        {
+            refetchQueries: [{ query: GET_AUTHORS }],
+        },
+    );
 
     const updateAuthor = async (
         id: string,

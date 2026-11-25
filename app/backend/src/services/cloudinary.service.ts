@@ -11,7 +11,10 @@ cloudinary.config({
 const MIN_COVER_SIZE_BYTES = 2000;
 
 export class CloudinaryService {
-    async uploadFromUrl(sourceUrl: string, folder: string): Promise<string | null> {
+    async uploadFromUrl(
+        sourceUrl: string,
+        folder: string,
+    ): Promise<string | null> {
         try {
             const headRes = await fetch(sourceUrl, { method: "HEAD" });
             const contentLengthHeader = headRes.headers.get("content-length");
@@ -20,7 +23,9 @@ export class CloudinaryService {
                 if (contentLength < MIN_COVER_SIZE_BYTES) return null;
             }
 
-            const result = await cloudinary.uploader.upload(sourceUrl, { folder });
+            const result = await cloudinary.uploader.upload(sourceUrl, {
+                folder,
+            });
             return result.secure_url;
         } catch {
             return null;
@@ -33,10 +38,14 @@ export class CloudinaryService {
     // fichier et `invalidate` purge le cache CDN. `asset_folder` (parent du
     // public_id) reproduit l'arborescence dans la vue « Folders » des comptes
     // en mode dossiers dynamiques, où elle ne dérive pas du public_id.
-    async uploadImage(source: string, publicId: string): Promise<string | null> {
+    async uploadImage(
+        source: string,
+        publicId: string,
+    ): Promise<string | null> {
         try {
             const slash = publicId.lastIndexOf("/");
-            const assetFolder = slash > 0 ? publicId.slice(0, slash) : undefined;
+            const assetFolder =
+                slash > 0 ? publicId.slice(0, slash) : undefined;
             const result = await cloudinary.uploader.upload(source, {
                 public_id: publicId,
                 asset_folder: assetFolder,

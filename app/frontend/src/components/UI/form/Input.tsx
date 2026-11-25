@@ -9,13 +9,16 @@ type InputProps = ComponentProps<"input"> & {
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-    ({ className, type, errorMessage, hideErrorMessage = false, ...props }, ref) => {
+    (
+        { className, type, errorMessage, hideErrorMessage = false, ...props },
+        ref,
+    ) => {
         const classError = errorMessage
             ? "border-destructive focus-visible:ring-destructive focus-visible:border-none"
             : "";
 
         return (
-            <div className="flex flex-col gap-1 w-full">
+            <div className="flex w-full flex-col gap-1">
                 <input
                     type={type}
                     className={cn(

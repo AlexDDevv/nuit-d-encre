@@ -16,13 +16,13 @@ export default function LegalHeader({ lastUpdate }: { lastUpdate: string }) {
 
                 <div className="mt-5 flex flex-col items-center">
                     <Ornament width="w-12" />
-                    <h1 className="text-gradient-gold mt-3 font-title text-4xl font-black leading-[1.04] tracking-tight md:text-6xl">
+                    <h1 className="text-gradient-gold font-title mt-3 text-4xl font-black leading-[1.04] tracking-tight md:text-6xl">
                         Mentions légales
                     </h1>
                     <Ornament className="mt-3" width="w-12" />
                 </div>
 
-                <p className="text-muted-foreground mt-5 max-w-md font-quote text-lg italic leading-relaxed">
+                <p className="text-muted-foreground font-quote mt-5 max-w-md text-lg italic leading-relaxed">
                     Informations juridiques et politique de confidentialité du
                     site Nuit d'Encre - sa veillée, sa bibliothèque et ses
                     lecteurs.

@@ -67,7 +67,10 @@ export class OpenLibraryService {
                     `[OpenLibrary] search "${query}" avortée (timeout)`,
                 );
             } else {
-                console.error(`[OpenLibrary] search "${query}" échouée:`, error);
+                console.error(
+                    `[OpenLibrary] search "${query}" échouée:`,
+                    error,
+                );
             }
             return [];
         }

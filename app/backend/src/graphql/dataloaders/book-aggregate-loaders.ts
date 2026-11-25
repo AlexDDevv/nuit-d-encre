@@ -30,9 +30,7 @@ export async function batchAverageRating(
             const avg = Number(r.avg);
             return {
                 key: r.bookId,
-                value: Number.isFinite(avg)
-                    ? parseFloat(avg.toFixed(2))
-                    : null,
+                value: Number.isFinite(avg) ? parseFloat(avg.toFixed(2)) : null,
             };
         });
         return mapRowsToKeys<string, number | null>(ids, rows, null);

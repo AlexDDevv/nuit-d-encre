@@ -24,7 +24,7 @@ export function AdminDashboard({
                 {Array.from({ length: 4 }).map((_, i) => (
                     <div
                         key={i}
-                        className="overflow-hidden rounded-xl border-2 border-border bg-card"
+                        className="border-border bg-card overflow-hidden rounded-xl border-2"
                     >
                         <SkeletonRows rows={5} cols={4} />
                     </div>

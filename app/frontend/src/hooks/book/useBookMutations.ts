@@ -95,9 +95,12 @@ export function useBookMutations() {
             error: updateBookError,
             reset: resetUpdateBookError,
         },
-    ] = useMutation<{ updateBook: Book }, { data: UpdateBookInput }>(UPDATE_BOOK, {
-        refetchQueries: [{ query: GET_BOOKS }],
-    });
+    ] = useMutation<{ updateBook: Book }, { data: UpdateBookInput }>(
+        UPDATE_BOOK,
+        {
+            refetchQueries: [{ query: GET_BOOKS }],
+        },
+    );
 
     const updateBook = async (
         id: string,

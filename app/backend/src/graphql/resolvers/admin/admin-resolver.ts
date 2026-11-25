@@ -8,7 +8,15 @@
  * Toutes les opérations sont protégées par `@Authorized(Roles.Admin)`.
  */
 
-import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
+import {
+    Arg,
+    Authorized,
+    Ctx,
+    ID,
+    Mutation,
+    Query,
+    Resolver,
+} from "type-graphql";
 import { User } from "../../../database/entities/user/user";
 import { Book } from "../../../database/entities/book/book";
 import { Author } from "../../../database/entities/author/author";

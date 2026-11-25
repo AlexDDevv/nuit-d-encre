@@ -1,6 +1,10 @@
 import "reflect-metadata";
 import { IsUrl, validate } from "class-validator";
-import { EXTERNAL_URL_OPTIONS, isInternalPath, SkipIfEmpty } from "./validation";
+import {
+    EXTERNAL_URL_OPTIONS,
+    isInternalPath,
+    SkipIfEmpty,
+} from "./validation";
 
 class Sample {
     @SkipIfEmpty()
@@ -18,7 +22,9 @@ describe("SkipIfEmpty + EXTERNAL_URL_OPTIONS", () => {
     });
 
     it("accepte une URL http(s) complète", async () => {
-        expect(await check("https://fr.wikipedia.org/wiki/Victor_Hugo")).toBe(0);
+        expect(await check("https://fr.wikipedia.org/wiki/Victor_Hugo")).toBe(
+            0,
+        );
     });
 
     it.each([

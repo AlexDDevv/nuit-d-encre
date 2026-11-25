@@ -1,6 +1,14 @@
-import { Length, Matches, IsIn, IsOptional, IsInt, Min, Max } from "class-validator"
-import { ISBN13_PATTERN } from "../../../../utils/isbn"
-import { Field, ID, InputType } from "type-graphql"
+import {
+    Length,
+    Matches,
+    IsIn,
+    IsOptional,
+    IsInt,
+    Min,
+    Max,
+} from "class-validator";
+import { ISBN13_PATTERN } from "../../../../utils/isbn";
+import { Field, ID, InputType } from "type-graphql";
 
 /**
  * Represents input data for updating an existing book.
@@ -13,64 +21,71 @@ import { Field, ID, InputType } from "type-graphql"
 @InputType()
 export class UpdateBookInput {
     @Field(() => ID)
-    id!: string
+    id!: string;
 
     @Field({ nullable: true })
     @Length(1, 255, { message: "Title must be between 1 and 255 characters" })
     @IsOptional()
-    title?: string
+    title?: string;
 
     @Field({ nullable: true })
-    @Length(1, 5000, { message: "Summary must be between 1 and 5000 characters" })
+    @Length(1, 5000, {
+        message: "Summary must be between 1 and 5000 characters",
+    })
     @IsOptional()
-    summary?: string
+    summary?: string;
 
     @Field({ nullable: true })
-    @Length(1, 255, { message: "Author name must be between 1 and 255 characters" })
+    @Length(1, 255, {
+        message: "Author name must be between 1 and 255 characters",
+    })
     @IsOptional()
-    author?: string
+    author?: string;
 
     @Field({ nullable: true })
     @Length(10, 10, { message: "ISBN-10 must be exactly 10 characters" })
     @IsOptional()
-    isbn10?: string
+    isbn10?: string;
 
     @Field({ nullable: true })
     @Matches(ISBN13_PATTERN, { message: "ISBN-13 must be exactly 13 digits" })
     @IsOptional()
-    isbn13?: string
+    isbn13?: string;
 
     @Field({ nullable: true })
     @IsInt({ message: "Page count must be an integer" })
     @Min(1, { message: "Page count must be at least 1" })
     @IsOptional()
-    pageCount?: number
+    pageCount?: number;
 
     @Field({ nullable: true })
     @IsInt({ message: "Published year must be a number" })
     @Min(1000)
     @Max(9999)
     @IsOptional()
-    publishedYear?: number
+    publishedYear?: number;
 
     @Field({ nullable: true })
     @Length(1, 5, { message: "Language must be between 1 and 5 characters" })
     @IsOptional()
-    language?: string
+    language?: string;
 
     @Field({ nullable: true })
-    @Length(1, 255, { message: "Publisher name must be between 1 and 255 characters" })
+    @Length(1, 255, {
+        message: "Publisher name must be between 1 and 255 characters",
+    })
     @IsOptional()
-    publisher?: string
+    publisher?: string;
 
     @Field({ nullable: true })
     @IsIn(["hardcover", "paperback", "softcover", "pocket"], {
-        message: "Format must be one of: hardcover, paperback, softcover or pocket",
+        message:
+            "Format must be one of: hardcover, paperback, softcover or pocket",
     })
     @IsOptional()
-    format?: string
+    format?: string;
 
     @Field(() => ID, { nullable: true })
     @IsOptional()
-    category?: string
+    category?: string;
 }

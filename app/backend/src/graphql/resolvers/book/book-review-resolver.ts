@@ -355,18 +355,14 @@ export class BookReviewsResolver {
 
         // Bonus XP for detailed reviews (>200 characters)
         if (data.reviewText && data.reviewText.length > 200) {
-            await grantXpService(
-                user,
-                UserActionType.DETAILED_REVIEW_BONUS,
-                {
-                    xpKey: xpKeys.book(book.id),
-                    targetId: newReview.id,
-                    metadata: {
-                        bookTitle: book.title,
-                        textLength: data.reviewText.length,
-                    },
+            await grantXpService(user, UserActionType.DETAILED_REVIEW_BONUS, {
+                xpKey: xpKeys.book(book.id),
+                targetId: newReview.id,
+                metadata: {
+                    bookTitle: book.title,
+                    textLength: data.reviewText.length,
                 },
-            );
+            });
         }
 
         return newReview;

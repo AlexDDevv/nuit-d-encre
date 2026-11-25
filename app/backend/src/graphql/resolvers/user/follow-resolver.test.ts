@@ -16,7 +16,7 @@ describe("FollowResolver.followUser", () => {
         const insert = jest.spyOn(UserFollow, "insert");
 
         await expect(
-            resolver.followUser("me", makeContext(me))
+            resolver.followUser("me", makeContext(me)),
         ).rejects.toMatchObject({ statusCode: 400 });
         expect(insert).not.toHaveBeenCalled();
     });
@@ -26,7 +26,7 @@ describe("FollowResolver.followUser", () => {
         const insert = jest.spyOn(UserFollow, "insert");
 
         await expect(
-            resolver.followUser("ghost", makeContext(me))
+            resolver.followUser("ghost", makeContext(me)),
         ).rejects.toMatchObject({ statusCode: 404 });
         expect(insert).not.toHaveBeenCalled();
     });
@@ -34,20 +34,22 @@ describe("FollowResolver.followUser", () => {
     it("est idempotent quand l'abonnement existe déjà", async () => {
         jest.spyOn(User, "findOne").mockResolvedValue(makeUser("other"));
         jest.spyOn(UserFollow, "insert").mockRejectedValue(
-            Object.assign(new Error("duplicate key"), { code: "23505" })
+            Object.assign(new Error("duplicate key"), { code: "23505" }),
         );
 
-        await expect(resolver.followUser("other", makeContext(me))).resolves.toBe(
-            true
-        );
+        await expect(
+            resolver.followUser("other", makeContext(me)),
+        ).resolves.toBe(true);
     });
 
     it("propage les autres erreurs d'insertion", async () => {
         jest.spyOn(User, "findOne").mockResolvedValue(makeUser("other"));
-        jest.spyOn(UserFollow, "insert").mockRejectedValue(new Error("db down"));
+        jest.spyOn(UserFollow, "insert").mockRejectedValue(
+            new Error("db down"),
+        );
 
         await expect(
-            resolver.followUser("other", makeContext(me))
+            resolver.followUser("other", makeContext(me)),
         ).rejects.toThrow("db down");
     });
 });

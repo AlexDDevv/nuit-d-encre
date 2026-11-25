@@ -1,7 +1,7 @@
-import { IsOptional, IsArray, IsString, MaxLength } from "class-validator"
-import { Field, ID, InputType } from "type-graphql"
-import { BookFormat } from "../../../types/types"
-import { PaginationInput } from "../shared/pagination-input"
+import { IsOptional, IsArray, IsString, MaxLength } from "class-validator";
+import { Field, ID, InputType } from "type-graphql";
+import { BookFormat } from "../../../types/types";
+import { PaginationInput } from "../shared/pagination-input";
 
 /**
  * Represents the input parameters for querying all books.
@@ -23,25 +23,25 @@ import { PaginationInput } from "../shared/pagination-input"
  */
 @InputType()
 export class BooksQueryInput extends PaginationInput {
-	@Field(() => String, { nullable: true })
-	@IsOptional()
-	@IsString()
-	@MaxLength(200)
-	search?: string
+    @Field(() => String, { nullable: true })
+    @IsOptional()
+    @IsString()
+    @MaxLength(200)
+    search?: string;
 
-	@Field(() => [ID], { nullable: true })
-	@IsOptional()
-	@IsArray()
-	categoryIds?: string[]
+    @Field(() => [ID], { nullable: true })
+    @IsOptional()
+    @IsArray()
+    categoryIds?: string[];
 
-	@Field(() => [String], { nullable: true })
-	@IsOptional()
-	@IsArray()
-	format?: BookFormat[]
+    @Field(() => [String], { nullable: true })
+    @IsOptional()
+    @IsArray()
+    format?: BookFormat[];
 
-	@Field(() => String, { nullable: true })
-	@IsOptional()
-	@IsString()
-	@MaxLength(50)
-	language?: string
+    @Field(() => String, { nullable: true })
+    @IsOptional()
+    @IsString()
+    @MaxLength(50)
+    language?: string;
 }

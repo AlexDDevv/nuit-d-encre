@@ -33,12 +33,14 @@ export function parseFullName(fullName: string): AuthorNameParts {
 export async function getOrCreateAuthorByFullName(
     fullName: string,
     user: User,
-    manager?: EntityManager
+    manager?: EntityManager,
 ): Promise<Author> {
     try {
         const { firstname, lastname } = parseFullName(fullName);
 
-        const repo = manager ? manager.getRepository(Author) : Author.getRepository();
+        const repo = manager
+            ? manager.getRepository(Author)
+            : Author.getRepository();
 
         const existing = await repo.findOne({
             where: { firstname, lastname },
@@ -66,7 +68,7 @@ export async function getOrCreateAuthorByFullName(
         return author;
     } catch (error) {
         throw new Error(
-            `Error finding or creating author "${fullName}": ${error instanceof Error ? error.message : String(error)}`
+            `Error finding or creating author "${fullName}": ${error instanceof Error ? error.message : String(error)}`,
         );
     }
 }

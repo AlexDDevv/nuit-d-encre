@@ -7,20 +7,20 @@
  */
 
 import {
-	Arg,
-	Authorized,
-	Ctx,
-	ID,
-	Mutation,
-	Query,
-	Resolver,
-} from "type-graphql"
-import { Context, Roles } from "../../../types/types"
-import { AppError } from "../../../middlewares/error-handler"
-import { Category } from "../../../database/entities/category/category"
-import { CreateCategoryInput } from "../../inputs/create/category/create-category-input"
-import { UpdateCategoryInput } from "../../inputs/update/category/update-category-input"
-import { requireUser } from "../../../utils/current-user"
+    Arg,
+    Authorized,
+    Ctx,
+    ID,
+    Mutation,
+    Query,
+    Resolver,
+} from "type-graphql";
+import { Context, Roles } from "../../../types/types";
+import { AppError } from "../../../middlewares/error-handler";
+import { Category } from "../../../database/entities/category/category";
+import { CreateCategoryInput } from "../../inputs/create/category/create-category-input";
+import { UpdateCategoryInput } from "../../inputs/update/category/update-category-input";
+import { requireUser } from "../../../utils/current-user";
 
 /**
  * CategoryResolver
@@ -29,127 +29,127 @@ import { requireUser } from "../../../utils/current-user"
  */
 @Resolver(Category)
 export class CategoryResolver {
-	/**
-	 * Query to get all book categories.
-	 *
-	 * @returns A Promise that resolves to an array of Category objects.
-	 *
-	 * This query retrieves all book categories, including their associated books.
-	 */
-	@Query(() => [Category])
-	async categories(): Promise<Category[]> {
-		return await Category.find({
-			relations: {
-				books: true,
-				createdBy: true,
-			},
-		})
-	}
+    /**
+     * Query to get all book categories.
+     *
+     * @returns A Promise that resolves to an array of Category objects.
+     *
+     * This query retrieves all book categories, including their associated books.
+     */
+    @Query(() => [Category])
+    async categories(): Promise<Category[]> {
+        return await Category.find({
+            relations: {
+                books: true,
+                createdBy: true,
+            },
+        });
+    }
 
-	/**
-	 * Query to get a specific book category by ID.
-	 *
-	 * @param id - The ID of the category to fetch.
-	 *
-	 * @returns A Promise that resolves to a Category object if found, or null if no category is found.
-	 *
-	 * This query retrieves a specific book category by its ID, along with its associated books.
-	 */
-	@Query(() => Category, { nullable: true })
-	async category(@Arg("id", () => ID) id: string): Promise<Category | null> {
-		const category = await Category.findOne({
-			where: { id },
-			relations: {
-				books: true,
-				createdBy: true,
-			},
-		})
+    /**
+     * Query to get a specific book category by ID.
+     *
+     * @param id - The ID of the category to fetch.
+     *
+     * @returns A Promise that resolves to a Category object if found, or null if no category is found.
+     *
+     * This query retrieves a specific book category by its ID, along with its associated books.
+     */
+    @Query(() => Category, { nullable: true })
+    async category(@Arg("id", () => ID) id: string): Promise<Category | null> {
+        const category = await Category.findOne({
+            where: { id },
+            relations: {
+                books: true,
+                createdBy: true,
+            },
+        });
 
-		if (!category) {
-			throw new AppError("Category not found", 404, "NotFoundError")
-		}
+        if (!category) {
+            throw new AppError("Category not found", 404, "NotFoundError");
+        }
 
-		return category
-	}
+        return category;
+    }
 
-	/**
-	 * Mutation to create a new book category.
-	 *
-	 * @param data - The input data containing the category name.
-	 * @param context - The context object that contains the currently authenticated user.
-	 *
-	 * @returns A Promise that resolves to the newly created Category object.
-	 *
-	 * This mutation allows an admin user to create a new book category. The category will be associated with the admin user.
-	 */
-	@Authorized(Roles.Admin)
-	@Mutation(() => Category)
-	async createCategory(
-		@Arg("data", () => CreateCategoryInput)
-		data: CreateCategoryInput,
-		@Ctx() context: Context
-	): Promise<Category> {
-		const user = await requireUser(context);
+    /**
+     * Mutation to create a new book category.
+     *
+     * @param data - The input data containing the category name.
+     * @param context - The context object that contains the currently authenticated user.
+     *
+     * @returns A Promise that resolves to the newly created Category object.
+     *
+     * This mutation allows an admin user to create a new book category. The category will be associated with the admin user.
+     */
+    @Authorized(Roles.Admin)
+    @Mutation(() => Category)
+    async createCategory(
+        @Arg("data", () => CreateCategoryInput)
+        data: CreateCategoryInput,
+        @Ctx() context: Context,
+    ): Promise<Category> {
+        const user = await requireUser(context);
 
-		const newCategory = new Category()
-		Object.assign(newCategory, data, { createdBy: user })
+        const newCategory = new Category();
+        Object.assign(newCategory, data, { createdBy: user });
 
-		await newCategory.save()
-		return newCategory
-	}
+        await newCategory.save();
+        return newCategory;
+    }
 
-	/**
-	 * Mutation to update an existing book category.
-	 *
-	 * @param id - The ID of the category to update.
-	 * @param data - The input data containing the updated category name.
-	 *
-	 * @returns A Promise that resolves to the updated Category object, or null if the category could not be found or updated.
-	 *
-	 * This mutation allows an admin user to update an existing book category. Only the admin who created the category can update it.
-	 */
-	@Authorized(Roles.Admin)
-	@Mutation(() => Category, { nullable: true })
-	async updateCategory(
-		@Arg("id", () => ID) id: string,
-		@Arg("data", () => UpdateCategoryInput)
-		data: UpdateCategoryInput,
-	): Promise<Category | null> {
-		const category = await Category.findOneBy({ id })
+    /**
+     * Mutation to update an existing book category.
+     *
+     * @param id - The ID of the category to update.
+     * @param data - The input data containing the updated category name.
+     *
+     * @returns A Promise that resolves to the updated Category object, or null if the category could not be found or updated.
+     *
+     * This mutation allows an admin user to update an existing book category. Only the admin who created the category can update it.
+     */
+    @Authorized(Roles.Admin)
+    @Mutation(() => Category, { nullable: true })
+    async updateCategory(
+        @Arg("id", () => ID) id: string,
+        @Arg("data", () => UpdateCategoryInput)
+        data: UpdateCategoryInput,
+    ): Promise<Category | null> {
+        const category = await Category.findOneBy({ id });
 
-		if (!category) {
-			throw new AppError("Category not found", 404, "NotFoundError")
-		}
+        if (!category) {
+            throw new AppError("Category not found", 404, "NotFoundError");
+        }
 
-		Object.assign(category, data)
-		await category.save()
+        Object.assign(category, data);
+        await category.save();
 
-		return category
-	}
+        return category;
+    }
 
-	/**
-	 * Mutation to delete an existing book category.
-	 *
-	 * @param id - The ID of the category to delete.
-	 *
-	 * @returns A Promise that resolves to the deleted Category object, or null if the category could not be found or deleted.
-	 *
-	 * This mutation allows an admin user to delete an existing book category. Only the admin who created the category can delete it.
-	 */
-	@Authorized(Roles.Admin)
-	@Mutation(() => Category, { nullable: true })
-	async deleteCategory(
-		@Arg("id", () => ID) id: string,
-	): Promise<Category | null> {
-		const category = await Category.findOneBy({ id })
+    /**
+     * Mutation to delete an existing book category.
+     *
+     * @param id - The ID of the category to delete.
+     *
+     * @returns A Promise that resolves to the deleted Category object, or null if the category could not be found or deleted.
+     *
+     * This mutation allows an admin user to delete an existing book category. Only the admin who created the category can delete it.
+     */
+    @Authorized(Roles.Admin)
+    @Mutation(() => Category, { nullable: true })
+    async deleteCategory(
+        @Arg("id", () => ID) id: string,
+    ): Promise<Category | null> {
+        const category = await Category.findOneBy({ id });
 
-		if (!category) {
-			throw new AppError("Category not found", 404, "NotFoundError")
-		}
+        if (!category) {
+            throw new AppError("Category not found", 404, "NotFoundError");
+        }
 
-		await category.remove()
-		category.id = id
+        await category.remove();
+        category.id = id;
 
-		return category
-	}
+        return category;
+    }
 }

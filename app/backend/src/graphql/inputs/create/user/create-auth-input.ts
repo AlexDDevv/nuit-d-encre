@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsStrongPassword, Length, MaxLength } from "class-validator";
+import {
+    IsEmail,
+    IsNotEmpty,
+    IsStrongPassword,
+    Length,
+    MaxLength,
+} from "class-validator";
 import { Field, InputType } from "type-graphql";
 import {
     PASSWORD_MAX_LENGTH,
@@ -33,13 +39,10 @@ export class CreateUserInput {
     @Length(8, PASSWORD_MAX_LENGTH, {
         message: "The password must contain between 8 and 255 characters.",
     })
-    @IsStrongPassword(
-        STRONG_PASSWORD_OPTIONS,
-        {
-            message:
-                "The password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol.",
-        }
-    )
+    @IsStrongPassword(STRONG_PASSWORD_OPTIONS, {
+        message:
+            "The password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol.",
+    })
     password!: string;
 
     @Field()

@@ -4,7 +4,7 @@
  * @description
  * This module defines the Book entity for the database.
  * It represents a book added by a user, including details like title,
- * summary, author, ISBN codes, format, publication data, and its 
+ * summary, author, ISBN codes, format, publication data, and its
  * availability. It maintains relationships with the User and Category entities.
  */
 
@@ -103,18 +103,18 @@ export class Book extends BaseEntity {
      * @description
      * Many-to-one relationship with the Author entity
      */
-    @ManyToOne(() => Author, author => author.books)
+    @ManyToOne(() => Author, (author) => author.books)
     @Field(() => Author)
-    author!: Author
+    author!: Author;
 
     /**
      * Category of the book
      * @description
      * Many-to-one relationship with the Category entity.
      */
-    @ManyToOne(() => Category, category => category.books)
+    @ManyToOne(() => Category, (category) => category.books)
     @Field(() => Category)
-    category!: Category
+    category!: Category;
 
     /**
      * ISBN-10 code
@@ -224,7 +224,10 @@ export class Book extends BaseEntity {
     @Field(() => [BookReview])
     reviews!: BookReview[];
 
-    @OneToMany(() => BookRecommendation, (recommendation) => recommendation.book)
+    @OneToMany(
+        () => BookRecommendation,
+        (recommendation) => recommendation.book,
+    )
     @Field(() => [BookRecommendation])
     recommendations!: BookRecommendation[];
 

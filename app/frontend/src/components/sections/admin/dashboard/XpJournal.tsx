@@ -55,7 +55,7 @@ export default function XpJournal({
             meta="10 dernières actions"
         >
             <div className="relative px-5 py-4">
-                <span className="absolute bottom-5 left-10 top-5 w-px bg-border" />
+                <span className="bg-border absolute bottom-5 left-10 top-5 w-px" />
                 <ul className="flex flex-col gap-4">
                     {actions.map((ev) => {
                         const Icon = XP_ICON[ev.type] ?? LuBookOpen;
@@ -66,12 +66,12 @@ export default function XpJournal({
                                 key={ev.id}
                                 className="relative flex items-start gap-3.5"
                             >
-                                <span className="relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-border bg-popover text-primary/70">
+                                <span className="border-border bg-popover text-primary/70 relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full border-2">
                                     <Icon size={15} />
                                 </span>
                                 <div className="min-w-0 flex-1 pt-1">
-                                    <p className="font-body text-sm leading-snug text-foreground/90">
-                                        <span className="font-bold text-foreground">
+                                    <p className="font-body text-foreground/90 text-sm leading-snug">
+                                        <span className="text-foreground font-bold">
                                             {ev.userName}
                                         </span>{" "}
                                         <span className="text-muted-foreground">
@@ -85,11 +85,11 @@ export default function XpJournal({
                                     </p>
                                     <div className="mt-1 flex items-center gap-2.5">
                                         {ev.xp > 0 && (
-                                            <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 font-title text-xs font-bold text-primary">
+                                            <span className="border-primary/40 bg-primary/10 font-title text-primary inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-bold">
                                                 +{ev.xp} XP
                                             </span>
                                         )}
-                                        <span className="font-body text-xs text-muted-foreground/75">
+                                        <span className="font-body text-muted-foreground/75 text-xs">
                                             {formatRelative(ev.createdAt)}
                                         </span>
                                     </div>

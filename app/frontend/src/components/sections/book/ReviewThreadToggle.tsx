@@ -23,7 +23,7 @@ export default function ReviewThreadToggle({
             type="button"
             onClick={onToggle}
             aria-expanded={open}
-            className="text-muted-foreground hover:text-primary focus-visible:ring-primary/70 focus-visible:ring-offset-card group inline-flex items-center gap-2 self-start rounded-lg px-2 py-1.5 font-body text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="text-muted-foreground hover:text-primary focus-visible:ring-primary/70 focus-visible:ring-offset-card font-body group inline-flex items-center gap-2 self-start rounded-lg px-2 py-1.5 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         >
             <LuQuote className="text-primary/70" size={14} />
             {label}

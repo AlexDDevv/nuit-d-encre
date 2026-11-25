@@ -2,7 +2,10 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import LegalHeader from "@/components/sections/legal/LegalHeader";
 import LegalSection from "@/components/sections/legal/LegalSection";
-import { TocDesktop, TocMobile } from "@/components/sections/legal/LegalSummary";
+import {
+    TocDesktop,
+    TocMobile,
+} from "@/components/sections/legal/LegalSummary";
 import { LegalContent } from "@/components/sections/legal/types";
 import BackToTop from "@/components/sections/shared/BackToTop";
 import { SectionSeparator } from "@/components/sections/shared/ornaments";
@@ -51,7 +54,9 @@ export default function TermsOfUse() {
     return (
         <>
             <Helmet>
-                <title>Mentions légales et confidentialité | Nuit d'Encre</title>
+                <title>
+                    Mentions légales et confidentialité | Nuit d'Encre
+                </title>
                 <meta
                     name="description"
                     content="Mentions légales, politique de confidentialité et informations juridiques concernant Nuit d'Encre, application de bibliothèque en ligne."

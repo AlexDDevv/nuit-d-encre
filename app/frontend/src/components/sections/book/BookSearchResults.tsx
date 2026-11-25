@@ -82,7 +82,7 @@ export default function BookSearchResults({
                 <h2 className="text-foreground font-title text-xl font-bold">
                     Aucun ouvrage trouvé
                 </h2>
-                <p className="text-muted-foreground mt-2 font-quote italic">
+                <p className="text-muted-foreground font-quote mt-2 italic">
                     {query
                         ? `Rien pour « ${query} », ni dans vos rayons ni au-dehors.`
                         : "Aucun résultat, ni dans vos rayons ni au-dehors."}
@@ -92,14 +92,15 @@ export default function BookSearchResults({
     }
 
     return (
-        <div className=" w-full">
+        <div className="w-full">
             {dbResults.length > 0 && (
                 <section className="mb-16">
                     <SearchSectionHeading
                         kicker="Déjà dans vos rayons"
                         title="Dans Nuit d'Encre"
-                        count={`${dbResults.length} ouvrage${dbResults.length > 1 ? "s" : ""
-                            }`}
+                        count={`${dbResults.length} ouvrage${
+                            dbResults.length > 1 ? "s" : ""
+                        }`}
                     />
                     <div className={GRID}>
                         {dbResults.map((result, i) => (

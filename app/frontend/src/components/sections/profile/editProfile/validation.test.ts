@@ -14,7 +14,11 @@ describe("validateSecurity", () => {
 
     it("refuse un nouveau mot de passe faible, comme le backend", () => {
         expect(
-            validateSecurity({ ...valid, newpw: "motdepasse", confirm: "motdepasse" }),
+            validateSecurity({
+                ...valid,
+                newpw: "motdepasse",
+                confirm: "motdepasse",
+            }),
         ).toHaveProperty("newpw");
     });
 

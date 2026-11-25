@@ -40,9 +40,7 @@ export default function EmptyStateCard({
             >
                 {title}
             </p>
-            <p
-                className="text-muted-foreground font-body text-sm"
-            >
+            <p className="text-muted-foreground font-body text-sm">
                 {description}
             </p>
         </div>

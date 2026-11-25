@@ -59,49 +59,49 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  */
 @InputType()
 export class CreateUserBookInput {
-  /**
-   * The identifier of the book to attach to the user's library
-   * @description
-   * Must reference an existing Book.
-   */
-  @Field(() => ID)
-  bookId!: string;
+    /**
+     * The identifier of the book to attach to the user's library
+     * @description
+     * Must reference an existing Book.
+     */
+    @Field(() => ID)
+    bookId!: string;
 
-  /**
-   * Initial reading status
-   * @description
-   * If omitted, defaults to TO_READ at the database level.
-   */
-  @Field(() => ReadingStatus, { nullable: true })
-  @IsOptional()
-  @IsEnum(ReadingStatus)
-  status?: ReadingStatus;
+    /**
+     * Initial reading status
+     * @description
+     * If omitted, defaults to TO_READ at the database level.
+     */
+    @Field(() => ReadingStatus, { nullable: true })
+    @IsOptional()
+    @IsEnum(ReadingStatus)
+    status?: ReadingStatus;
 
-  /**
-   * Visibility of the entry
-   * @description
-   * If omitted, defaults to true (public).
-   */
+    /**
+     * Visibility of the entry
+     * @description
+     * If omitted, defaults to true (public).
+     */
 
-  /**
-   * Reading start date
-   * @description
-   * Optional date when the user started reading the book.
-   */
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsDate()
-  startedAt?: Date;
+    /**
+     * Reading start date
+     * @description
+     * Optional date when the user started reading the book.
+     */
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsDate()
+    startedAt?: Date;
 
-  /**
-   * Reading finish date
-   * @description
-   * Optional date when the user finished reading the book.
-   * Must be >= startedAt when both are provided.
-   */
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsDate()
-  @Validate(EndAfterStart)
-  finishedAt?: Date;
+    /**
+     * Reading finish date
+     * @description
+     * Optional date when the user finished reading the book.
+     * Must be >= startedAt when both are provided.
+     */
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsDate()
+    @Validate(EndAfterStart)
+    finishedAt?: Date;
 }

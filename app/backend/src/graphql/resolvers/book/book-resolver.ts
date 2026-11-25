@@ -18,23 +18,23 @@ import {
     Query,
     Resolver,
     Root,
-} from "type-graphql"
-import { AppError } from "../../../middlewares/error-handler"
-import { Context, Roles, UserActionType } from "../../../types/types"
-import { Book } from "../../../database/entities/book/book"
-import { CreateBookInput } from "../../inputs/create/book/create-book-input"
-import { Category } from "../../../database/entities/category/category"
-import { UpdateBookInput } from "../../inputs/update/book/update-book-input"
-import { BooksResult } from "../../../database/filteredResults/books/books-result"
-import { BooksQueryInput } from "../../queries/books/books-query-input"
-import { Brackets } from "typeorm"
-import { dataSource } from "../../../database/config/datasource"
-import { isOwnerOrAdmin } from "../../../utils/authorizations"
-import { grantXpService } from "../../../services/grind/grant-xp-service"
-import { xpKeys } from "../../../utils/xp-keys"
-import { getOrCreateAuthorByFullName } from "../../../utils/author-factory"
-import { BookReview } from "../../../database/entities/book/bookReview"
-import { requireUser } from "../../../utils/current-user"
+} from "type-graphql";
+import { AppError } from "../../../middlewares/error-handler";
+import { Context, Roles, UserActionType } from "../../../types/types";
+import { Book } from "../../../database/entities/book/book";
+import { CreateBookInput } from "../../inputs/create/book/create-book-input";
+import { Category } from "../../../database/entities/category/category";
+import { UpdateBookInput } from "../../inputs/update/book/update-book-input";
+import { BooksResult } from "../../../database/filteredResults/books/books-result";
+import { BooksQueryInput } from "../../queries/books/books-query-input";
+import { Brackets } from "typeorm";
+import { dataSource } from "../../../database/config/datasource";
+import { isOwnerOrAdmin } from "../../../utils/authorizations";
+import { grantXpService } from "../../../services/grind/grant-xp-service";
+import { xpKeys } from "../../../utils/xp-keys";
+import { getOrCreateAuthorByFullName } from "../../../utils/author-factory";
+import { BookReview } from "../../../database/entities/book/bookReview";
+import { requireUser } from "../../../utils/current-user";
 
 const IMPORTED_SUMMARY_PLACEHOLDER = "Importé depuis une source externe.";
 
@@ -77,7 +77,7 @@ export class BooksResolver {
     @Query(() => BooksResult)
     async books(
         @Arg("filters", () => BooksQueryInput, { nullable: true })
-        filters: BooksQueryInput
+        filters: BooksQueryInput,
     ): Promise<BooksResult> {
         const {
             search,
@@ -86,67 +86,82 @@ export class BooksResolver {
             language,
             page = 1,
             limit = 12,
-        } = filters || {}
+        } = filters || {};
 
         // Retrieve the base query with all books created
         const baseQuery = Book.createQueryBuilder("book")
             .leftJoinAndSelect("book.user", "user")
             .leftJoinAndSelect("book.category", "category")
-            .leftJoinAndSelect("book.author", "author")
+            .leftJoinAndSelect("book.author", "author");
 
         // Get the total number of unfiltered books and clone the query to apply filters
         const [totalCountAll, filteredQuery] = await Promise.all([
             baseQuery.getCount(),
             baseQuery.clone(),
-        ])
+        ]);
 
         // Filter by title, isnb13, authors and publisher (search)
         if (search?.trim()) {
             const trimmedSearch = `%${search.trim()}%`;
 
-            filteredQuery.andWhere(new Brackets((qb) => {
-                qb.where("unaccent(book.title) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("book.isbn13 ILIKE :search", { search: trimmedSearch }) 
-                    .orWhere("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("unaccent(book.publisher) ILIKE unaccent(:search)", { search: trimmedSearch });
-            }));
+            filteredQuery.andWhere(
+                new Brackets((qb) => {
+                    qb.where("unaccent(book.title) ILIKE unaccent(:search)", {
+                        search: trimmedSearch,
+                    })
+                        .orWhere("book.isbn13 ILIKE :search", {
+                            search: trimmedSearch,
+                        })
+                        .orWhere(
+                            "unaccent(author.firstname) ILIKE unaccent(:search)",
+                            { search: trimmedSearch },
+                        )
+                        .orWhere(
+                            "unaccent(author.lastname) ILIKE unaccent(:search)",
+                            { search: trimmedSearch },
+                        )
+                        .orWhere(
+                            "unaccent(book.publisher) ILIKE unaccent(:search)",
+                            { search: trimmedSearch },
+                        );
+                }),
+            );
         }
 
         // Filter by category
         if (categoryIds && categoryIds.length > 0) {
-            filteredQuery.andWhere(
-                "book.category.id IN (:...categoryIds)",
-                {
-                    categoryIds,
-                }
-            )
+            filteredQuery.andWhere("book.category.id IN (:...categoryIds)", {
+                categoryIds,
+            });
         }
 
         // Filter by format
         if (format && format.length > 0) {
             filteredQuery.andWhere("book.format IN (:...format)", {
                 format,
-            })
+            });
         }
 
         // Filter by language
         if (language?.trim()) {
-            filteredQuery.andWhere("unaccent(book.language) ILIKE unaccent(:language)", {
-                language: `%${language.trim()}%`,
-            });
+            filteredQuery.andWhere(
+                "unaccent(book.language) ILIKE unaccent(:language)",
+                {
+                    language: `%${language.trim()}%`,
+                },
+            );
         }
 
         // Get the total number of books matching the filters (for pagination)
-        const totalCount = await filteredQuery.getCount()
+        const totalCount = await filteredQuery.getCount();
 
         // Apply pagination
-        filteredQuery.skip((page - 1) * limit).take(limit)
+        filteredQuery.skip((page - 1) * limit).take(limit);
 
-        const allBooks = await filteredQuery.getMany()
+        const allBooks = await filteredQuery.getMany();
 
         if (!allBooks) {
-            throw new AppError("Books not found", 404, "NotFoundError")
+            throw new AppError("Books not found", 404, "NotFoundError");
         }
 
         return {
@@ -155,7 +170,7 @@ export class BooksResolver {
             totalCountAll,
             page,
             limit,
-        }
+        };
     }
 
     /**
@@ -178,13 +193,13 @@ export class BooksResolver {
                 category: true,
                 author: true,
             },
-        })
+        });
 
         if (!book) {
-            throw new AppError("Book not found", 404, "NotFoundError")
+            throw new AppError("Book not found", 404, "NotFoundError");
         }
 
-        return book
+        return book;
     }
 
     /**
@@ -204,22 +219,26 @@ export class BooksResolver {
     @Mutation(() => Book)
     async createBook(
         @Arg("data", () => CreateBookInput) data: CreateBookInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<Book> {
         const user = await requireUser(context);
 
         const category = await Category.findOne({
             where: { id: data.category },
-        })
+        });
 
         if (!category) {
-            throw new AppError("Category not found", 404, "NotFoundError")
+            throw new AppError("Category not found", 404, "NotFoundError");
         }
 
         const newBook = await dataSource.transaction(async (manager) => {
-            const authorEntity = await getOrCreateAuthorByFullName(data.author, user, manager);
+            const authorEntity = await getOrCreateAuthorByFullName(
+                data.author,
+                user,
+                manager,
+            );
 
-            const book = new Book()
+            const book = new Book();
 
             Object.assign(book, data, {
                 user,
@@ -241,10 +260,10 @@ export class BooksResolver {
         await grantXpService(user, UserActionType.BOOK_ADDED, {
             xpKey: xpKeys.isbn13(newBook.isbn13),
             targetId: newBook.id,
-            metadata: { title: newBook.title }
+            metadata: { title: newBook.title },
         });
 
-        return newBook
+        return newBook;
     }
 
     /**
@@ -264,7 +283,7 @@ export class BooksResolver {
     @Mutation(() => Book, { nullable: true })
     async updateBook(
         @Arg("data", () => UpdateBookInput) data: UpdateBookInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<Book | null> {
         const user = await requireUser(context);
 
@@ -278,44 +297,39 @@ export class BooksResolver {
             relations: {
                 user: true,
                 category: true,
-                author: true
+                author: true,
             },
-        })
+        });
 
         if (!book) {
-            throw new AppError(
-                "Book not found",
-                404,
-                "BookNotFoundError"
-            )
+            throw new AppError("Book not found", 404, "BookNotFoundError");
         }
 
         if (!isOwnerOrAdmin(book.user?.id ?? "", user)) {
             throw new AppError(
                 "Not authorized to update this book",
                 403,
-                "ForbiddenError"
-            )
+                "ForbiddenError",
+            );
         }
 
-        const { id, category, author, ...updateData } = data
+        const { id, category, author, ...updateData } = data;
 
         if (category) {
             const categoryBook = await Category.findOne({
                 where: { id: category },
-            })
+            });
             if (!categoryBook) {
-                throw new AppError(
-                    "Category not found",
-                    404,
-                    "NotFoundError"
-                )
+                throw new AppError("Category not found", 404, "NotFoundError");
             }
-            book.category = categoryBook
+            book.category = categoryBook;
         }
 
         if (author) {
-            const authorEntity = await getOrCreateAuthorByFullName(author, user);
+            const authorEntity = await getOrCreateAuthorByFullName(
+                author,
+                user,
+            );
             book.author = authorEntity;
         }
 
@@ -358,37 +372,33 @@ export class BooksResolver {
     @Mutation(() => Book, { nullable: true })
     async deleteBook(
         @Arg("id", () => ID) id: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<Book | null> {
         const user = await requireUser(context);
 
         const book = await Book.findOne({
             where: { id },
             relations: {
-                user: true
+                user: true,
             },
-        })
+        });
 
         if (!book) {
-            throw new AppError(
-                "Book not found",
-                404,
-                "BookNotFoundError"
-            )
+            throw new AppError("Book not found", 404, "BookNotFoundError");
         }
 
         if (!isOwnerOrAdmin(book.user?.id ?? "", user)) {
             throw new AppError(
                 "Not authorized to delete this book",
                 403,
-                "ForbiddenError"
-            )
+                "ForbiddenError",
+            );
         }
 
-        await book.remove()
-        book.id = id
+        await book.remove();
+        book.id = id;
 
-        return book
+        return book;
     }
 
     /* ========================================================================
@@ -397,15 +407,15 @@ export class BooksResolver {
 
     /**
      * Field Resolver: Average rating for a book
-     * 
+     *
      * @description
      * Calculates the average rating across all reviews for this book.
      * Uses SQL AVG function for optimal performance.
-     * 
+     *
      * @param book - The parent Book object from the query.
-     * 
+     *
      * @returns The average rating as a float (e.g., 4.2), or null if no reviews exist.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -426,14 +436,14 @@ export class BooksResolver {
 
     /**
      * Field Resolver: Total number of reviews for a book
-     * 
+     *
      * @description
      * Counts the total number of reviews written for this book.
-     * 
+     *
      * @param book - The parent Book object from the query.
-     * 
+     *
      * @returns The count of reviews as an integer.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -454,14 +464,14 @@ export class BooksResolver {
 
     /**
      * Field Resolver: Total number of recommendations for a book
-     * 
+     *
      * @description
      * Counts how many users have recommended this book.
-     * 
+     *
      * @param book - The parent Book object from the query.
-     * 
+     *
      * @returns The count of recommendations as an integer.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -482,16 +492,16 @@ export class BooksResolver {
 
     /**
      * Field Resolver: Check if the current user has reviewed this book
-     * 
+     *
      * @description
      * Returns true if the authenticated user has already written a review
      * for this book, false otherwise. Returns false for unauthenticated users.
-     * 
+     *
      * @param book - The parent Book object from the query.
      * @param context - GraphQL context containing the authenticated user.
-     * 
+     *
      * @returns Boolean indicating if the user has reviewed the book.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -512,16 +522,16 @@ export class BooksResolver {
 
     /**
      * Field Resolver: Check if the current user has recommended this book
-     * 
+     *
      * @description
      * Returns true if the authenticated user has recommended this book,
      * false otherwise. Returns false for unauthenticated users.
-     * 
+     *
      * @param book - The parent Book object from the query.
      * @param context - GraphQL context containing the authenticated user.
-     * 
+     *
      * @returns Boolean indicating if the user has recommended the book.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -573,16 +583,16 @@ export class BooksResolver {
 
     /**
      * Field Resolver: Get top reviews sorted by helpfulness
-     * 
+     *
      * @description
      * Returns the most helpful reviews for this book, sorted by the number
      * of "helpful" votes. Useful for displaying featured reviews on the book page.
-     * 
+     *
      * @param book - The parent Book object from the query.
      * @param limit - Maximum number of reviews to return (default: 5).
-     * 
+     *
      * @returns Array of BookReview objects, ordered by helpfulness.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -600,11 +610,10 @@ export class BooksResolver {
     @FieldResolver(() => [BookReview])
     async topReviews(
         @Root() book: Book,
-        @Arg("limit", () => Int, { defaultValue: 5 }) limit: number
+        @Arg("limit", () => Int, { defaultValue: 5 }) limit: number,
     ): Promise<BookReview[]> {
         try {
-            const reviews = await BookReview
-                .createQueryBuilder("review")
+            const reviews = await BookReview.createQueryBuilder("review")
                 .leftJoinAndSelect("review.user", "user")
                 .leftJoinAndSelect("review.votes", "votes")
                 .where("review.bookId = :bookId", { bookId: book.id })

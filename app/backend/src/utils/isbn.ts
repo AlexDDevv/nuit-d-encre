@@ -12,7 +12,11 @@ export const ISBN13_PATTERN = /^\d{13}$/;
 export function normalizeIsbn13(raw: string): string {
     const value = raw.replace(/[-\s]/g, "");
     if (!ISBN13_PATTERN.test(value)) {
-        throw new AppError("ISBN-13 invalide : 13 chiffres attendus", 400, "ValidationError");
+        throw new AppError(
+            "ISBN-13 invalide : 13 chiffres attendus",
+            400,
+            "ValidationError",
+        );
     }
     return value;
 }

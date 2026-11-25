@@ -35,7 +35,7 @@ export default function FeedList({
                 <span
                     aria-hidden="true"
                     className={cn(
-                        "absolute bottom-4 left-5.25 top-4 w-px",
+                        "left-5.25 absolute bottom-4 top-4 w-px",
                         discovery
                             ? "bg-secondary/60"
                             : "from-primary/10 via-primary/35 to-primary/10 bg-linear-to-b",

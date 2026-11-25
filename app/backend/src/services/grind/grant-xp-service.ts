@@ -17,7 +17,7 @@ const UNIQUE_VIOLATION = "23505";
 export async function grantXpService(
     user: User,
     actionType: UserActionType,
-    options: GrantXPOptions
+    options: GrantXPOptions,
 ): Promise<boolean> {
     const xpToAdd = ActionXPMap[actionType];
     const previous = { xp: user.xp, level: user.level };

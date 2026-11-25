@@ -58,7 +58,7 @@ export function Avatar({ name, avatar, size = 38, ring = true }: AvatarProps) {
     return (
         <span
             className={cn(
-                "grid shrink-0 place-items-center rounded-full font-title font-bold text-foreground/95",
+                "font-title text-foreground/95 grid shrink-0 place-items-center rounded-full font-bold",
                 ringClass,
             )}
             style={{

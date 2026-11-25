@@ -1,4 +1,8 @@
-import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
+import {
+    ValidationArguments,
+    ValidatorConstraint,
+    ValidatorConstraintInterface,
+} from "class-validator";
 import { CreateUserBookInput } from "../inputs/create/user/create-user-book-input";
 
 /**
@@ -6,12 +10,12 @@ import { CreateUserBookInput } from "../inputs/create/user/create-user-book-inpu
  */
 @ValidatorConstraint({ name: "endAfterStart", async: false })
 export class EndAfterStart implements ValidatorConstraintInterface {
-  validate(finishedAt: Date | undefined, args: ValidationArguments): boolean {
-    const obj = args.object as CreateUserBookInput;
-    if (!finishedAt || !obj.startedAt) return true; // ok if one is missing
-    return finishedAt.getTime() >= obj.startedAt.getTime();
-  }
-  defaultMessage(): string {
-    return "finishedAt must be greater than or equal to startedAt.";
-  }
+    validate(finishedAt: Date | undefined, args: ValidationArguments): boolean {
+        const obj = args.object as CreateUserBookInput;
+        if (!finishedAt || !obj.startedAt) return true; // ok if one is missing
+        return finishedAt.getTime() >= obj.startedAt.getTime();
+    }
+    defaultMessage(): string {
+        return "finishedAt must be greater than or equal to startedAt.";
+    }
 }

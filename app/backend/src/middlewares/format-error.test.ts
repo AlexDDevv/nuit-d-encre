@@ -70,7 +70,10 @@ describe("formatError", () => {
 
     it("distingue session absente et rôle insuffisant, message conservé", () => {
         const unauth = formatError(formatted, wrap(new AuthenticationError()));
-        const forbidden = formatError(formatted, wrap(new AuthorizationError()));
+        const forbidden = formatError(
+            formatted,
+            wrap(new AuthorizationError()),
+        );
         expect(unauth.extensions?.code).toBe("UNAUTHENTICATED");
         expect(forbidden.extensions?.code).toBe("FORBIDDEN");
         expect(forbidden.message).toContain("Access denied");
@@ -101,11 +104,7 @@ describe("formatError", () => {
     });
 
     it("garde l'erreur brute en développement pour le débogage", () => {
-        const result = formatError(
-            formatted,
-            wrap(new Error("boom")),
-            false,
-        );
+        const result = formatError(formatted, wrap(new Error("boom")), false);
         expect(result).toBe(formatted);
     });
 

@@ -1,4 +1,8 @@
-import { BookReview, CreateBookReviewInput, UpdateBookReviewInput } from "@/types/types";
+import {
+    BookReview,
+    CreateBookReviewInput,
+    UpdateBookReviewInput,
+} from "@/types/types";
 import { useMutation } from "@apollo/client";
 import {
     CREATE_BOOK_REVIEW,
@@ -94,7 +98,10 @@ export function useBookReviewMutations() {
             error: updateReviewError,
             reset: resetUpdateReviewError,
         },
-    ] = useMutation<{ updateBookReview: BookReview }, { data: UpdateBookReviewInput }>(UPDATE_BOOK_REVIEW, {
+    ] = useMutation<
+        { updateBookReview: BookReview },
+        { data: UpdateBookReviewInput }
+    >(UPDATE_BOOK_REVIEW, {
         refetchQueries: ["BookReviews", "MyBookReview"],
     });
 

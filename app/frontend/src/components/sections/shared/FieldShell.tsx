@@ -12,7 +12,7 @@ export function CharCounter({ value, max }: { value: number; max: number }) {
         <span
             aria-live="polite"
             className={cn(
-                "font-mono text-xxs tabular-nums tracking-wide transition-colors duration-200",
+                "text-xxs font-mono tabular-nums tracking-wide transition-colors duration-200",
                 over
                     ? "text-destructive"
                     : near
@@ -58,7 +58,7 @@ export default function FieldShell({
             <div className="flex items-end justify-between gap-3">
                 <label
                     htmlFor={htmlFor}
-                    className="text-primary/65 font-mono text-xxs font-medium uppercase tracking-[0.18em]"
+                    className="text-primary/65 text-xxs font-mono font-medium uppercase tracking-[0.18em]"
                 >
                     {label}
                     {required && <span className="text-primary/40"> *</span>}

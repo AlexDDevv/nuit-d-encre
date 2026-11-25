@@ -26,10 +26,15 @@ export class FollowResolver {
     ): Promise<boolean> {
         const me = await requireUser(context);
         if (userId === me.id) {
-            throw new AppError("Impossible de se suivre soi-même", 400, "BadUserInput");
+            throw new AppError(
+                "Impossible de se suivre soi-même",
+                400,
+                "BadUserInput",
+            );
         }
         const target = await User.findOne({ where: { id: userId } });
-        if (!target) throw new AppError("Utilisateur introuvable", 404, "NotFoundError");
+        if (!target)
+            throw new AppError("Utilisateur introuvable", 404, "NotFoundError");
 
         try {
             await UserFollow.insert({
@@ -83,9 +88,7 @@ export class FollowResolver {
     }
 
     @Query(() => [User])
-    async followers(
-        @Arg("userId", () => ID) userId: string,
-    ): Promise<User[]> {
+    async followers(@Arg("userId", () => ID) userId: string): Promise<User[]> {
         const rows = await UserFollow.find({
             where: { following: { id: userId } },
             relations: { follower: true },
@@ -96,9 +99,7 @@ export class FollowResolver {
     }
 
     @Query(() => [User])
-    async following(
-        @Arg("userId", () => ID) userId: string,
-    ): Promise<User[]> {
+    async following(@Arg("userId", () => ID) userId: string): Promise<User[]> {
         const rows = await UserFollow.find({
             where: { follower: { id: userId } },
             relations: { following: true },

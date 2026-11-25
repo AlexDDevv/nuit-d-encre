@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateBookReviewComment1783000000000
-    implements MigrationInterface
-{
+export class CreateBookReviewComment1783000000000 implements MigrationInterface {
     name = "CreateBookReviewComment1783000000000";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -31,8 +29,12 @@ export class CreateBookReviewComment1783000000000
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "book_review_comment" DROP CONSTRAINT "FK_book_review_comment_review"`);
-        await queryRunner.query(`ALTER TABLE "book_review_comment" DROP CONSTRAINT "FK_book_review_comment_user"`);
+        await queryRunner.query(
+            `ALTER TABLE "book_review_comment" DROP CONSTRAINT "FK_book_review_comment_review"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "book_review_comment" DROP CONSTRAINT "FK_book_review_comment_user"`,
+        );
         await queryRunner.query(`DROP TABLE "book_review_comment"`);
     }
 }

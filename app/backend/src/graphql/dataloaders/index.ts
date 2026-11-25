@@ -39,9 +39,7 @@ export type Loaders = {
  *
  * @param getUser - résolution mémoïsée (lazy) de l'utilisateur courant.
  */
-export function createLoaders(
-    getUser: () => Promise<User | null>,
-): Loaders {
+export function createLoaders(getUser: () => Promise<User | null>): Loaders {
     return {
         averageRating: new DataLoader((ids) => batchAverageRating(ids)),
         reviewCount: new DataLoader((ids) => batchReviewCount(ids)),
@@ -55,9 +53,7 @@ export function createLoaders(
         hasUserRecommended: new DataLoader(
             makeUserFlagBatch(recommendedBookIds, getUser),
         ),
-        isInLibrary: new DataLoader(
-            makeUserFlagBatch(libraryBookIds, getUser),
-        ),
+        isInLibrary: new DataLoader(makeUserFlagBatch(libraryBookIds, getUser)),
         followerCount: new DataLoader((ids) => batchFollowerCount(ids)),
         followingCount: new DataLoader((ids) => batchFollowingCount(ids)),
         isFollowedByMe: new DataLoader(makeIsFollowedByMeBatch(getUser)),

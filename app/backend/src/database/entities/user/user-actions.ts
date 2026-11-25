@@ -1,5 +1,12 @@
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    Index,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./user";
 
 /**
@@ -36,7 +43,7 @@ export class UserActions extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @ManyToOne(() => User, user => user.actions)
+    @ManyToOne(() => User, (user) => user.actions)
     user!: User;
 
     @Field()

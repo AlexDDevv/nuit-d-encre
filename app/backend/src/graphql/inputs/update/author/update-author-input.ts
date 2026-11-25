@@ -34,7 +34,7 @@ import { Field, ID, InputType } from "type-graphql";
 @InputType()
 export class UpdateAuthorInput {
     @Field(() => ID)
-    id!: string
+    id!: string;
 
     @Field({ nullable: true })
     @IsOptional()
@@ -59,23 +59,30 @@ export class UpdateAuthorInput {
 
     @Field({ nullable: true })
     @SkipIfEmpty()
-    @Length(1, 10000, { message: "Biography must be between 1 and 10000 characters" })
-    biography?: string
+    @Length(1, 10000, {
+        message: "Biography must be between 1 and 10000 characters",
+    })
+    biography?: string;
 
     @Field({ nullable: true })
     @SkipIfEmpty()
     @Length(1, 100, {
-        message: "Nationality must be between 1 and 100 characters ('french', 'english').",
+        message:
+            "Nationality must be between 1 and 100 characters ('french', 'english').",
     })
     nationality?: string;
 
     @Field({ nullable: true })
     @SkipIfEmpty()
-    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Wikipedia URL must be a valid http(s) URL." })
+    @IsUrl(EXTERNAL_URL_OPTIONS, {
+        message: "Wikipedia URL must be a valid http(s) URL.",
+    })
     wikipediaUrl?: string;
 
     @Field({ nullable: true })
     @SkipIfEmpty()
-    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Official website URL must be a valid http(s) URL." })
+    @IsUrl(EXTERNAL_URL_OPTIONS, {
+        message: "Official website URL must be a valid http(s) URL.",
+    })
     officialWebsite?: string;
 }

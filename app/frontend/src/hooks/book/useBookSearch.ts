@@ -13,8 +13,8 @@ export function useBookSearch(query: string) {
     const results = data?.searchBooks ?? [];
 
     return {
-        dbResults: results.filter(r => r.isInDatabase),
-        externalResults: results.filter(r => !r.isInDatabase),
+        dbResults: results.filter((r) => r.isInDatabase),
+        externalResults: results.filter((r) => !r.isInDatabase),
         isSearching: loading,
         searchError: error,
     };

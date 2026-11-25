@@ -8,9 +8,15 @@ import { Avatar } from "@/components/sections/admin/ui/Avatar";
 import { RoleChip } from "@/components/sections/admin/ui/chips";
 import { SearchInput } from "@/components/sections/admin/ui/SearchInput";
 import Pagination from "@/components/UI/Pagination";
-import { EmptyState, SkeletonRows } from "@/components/sections/admin/ui/feedback";
+import {
+    EmptyState,
+    SkeletonRows,
+} from "@/components/sections/admin/ui/feedback";
 import { ConfirmDialog } from "@/components/sections/admin/ui/ConfirmDialog";
-import { DataTable, type Column } from "@/components/sections/admin/ui/DataTable";
+import {
+    DataTable,
+    type Column,
+} from "@/components/sections/admin/ui/DataTable";
 
 /** Onglet Utilisateurs : liste recherchable, paginée, avec suppression de compte. */
 export function UsersTab() {
@@ -58,7 +64,7 @@ export function UsersTab() {
                 <div className="flex items-center gap-3">
                     <Avatar name={u.userName} avatar={u.avatar} size={38} />
                     <div className="min-w-0">
-                        <div className="truncate font-body text-sm font-bold text-foreground">
+                        <div className="font-body text-foreground truncate text-sm font-bold">
                             {u.userName}
                         </div>
                     </div>
@@ -69,7 +75,7 @@ export function UsersTab() {
             key: "email",
             header: "Email",
             cell: (u) => (
-                <span className="font-body text-sm text-muted-foreground">
+                <span className="font-body text-muted-foreground text-sm">
                     {u.email}
                 </span>
             ),
@@ -85,7 +91,7 @@ export function UsersTab() {
             thClass: "text-center",
             tdClass: "text-center",
             cell: (u) => (
-                <span className="inline-grid h-7 w-7 place-items-center rounded-full border-2 border-primary/35 bg-primary/10 font-title text-sm font-black text-primary">
+                <span className="border-primary/35 bg-primary/10 font-title text-primary inline-grid h-7 w-7 place-items-center rounded-full border-2 text-sm font-black">
                     {u.level}
                 </span>
             ),
@@ -96,7 +102,7 @@ export function UsersTab() {
             thClass: "text-right",
             tdClass: "text-right",
             cell: (u) => (
-                <span className="font-title text-sm font-bold text-foreground/85">
+                <span className="font-title text-foreground/85 text-sm font-bold">
                     {u.xp.toLocaleString("fr-FR")}
                 </span>
             ),
@@ -105,7 +111,7 @@ export function UsersTab() {
             key: "inscrit",
             header: "Inscrit le",
             cell: (u) => (
-                <span className="whitespace-nowrap font-body text-xs text-muted-foreground">
+                <span className="font-body text-muted-foreground whitespace-nowrap text-xs">
                     {new Date(u.createdAt).toLocaleDateString("fr-FR")}
                 </span>
             ),
@@ -127,11 +133,11 @@ export function UsersTab() {
             </div>
 
             {isLoadingUsers ? (
-                <div className="rounded-xl border-2 border-border bg-card">
+                <div className="border-border bg-card rounded-xl border-2">
                     <SkeletonRows rows={8} cols={6} />
                 </div>
             ) : filtered.length === 0 ? (
-                <div className="rounded-xl border-2 border-border bg-card">
+                <div className="border-border bg-card rounded-xl border-2">
                     <EmptyState
                         message="Aucun utilisateur trouvé"
                         hint="Affinez votre recherche pour retrouver un lecteur."
@@ -168,7 +174,7 @@ export function UsersTab() {
                 {pending && (
                     <>
                         Le compte de{" "}
-                        <span className="font-bold text-foreground">
+                        <span className="text-foreground font-bold">
                             {pending.userName}
                         </span>{" "}
                         sera définitivement supprimé de la bibliothèque.

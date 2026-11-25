@@ -83,7 +83,11 @@ export function formatError(
 
     if (original instanceof AppError) {
         if (original.statusCode >= 500) {
-            console.error("AppError", original.message, original.additionalInfo ?? "");
+            console.error(
+                "AppError",
+                original.message,
+                original.additionalInfo ?? "",
+            );
         }
         return {
             ...base,
@@ -118,11 +122,19 @@ export function formatError(
     }
 
     if (original instanceof AuthenticationError) {
-        return { ...base, message: original.message, extensions: { code: "UNAUTHENTICATED" } };
+        return {
+            ...base,
+            message: original.message,
+            extensions: { code: "UNAUTHENTICATED" },
+        };
     }
 
     if (original instanceof AuthorizationError) {
-        return { ...base, message: original.message, extensions: { code: "FORBIDDEN" } };
+        return {
+            ...base,
+            message: original.message,
+            extensions: { code: "FORBIDDEN" },
+        };
     }
 
     const code = formattedError.extensions?.code;

@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from "type-graphql"
-import { Book } from "../../entities/book/book"
+import { Field, Int, ObjectType } from "type-graphql";
+import { Book } from "../../entities/book/book";
 
 /**
  * Represents the response of the `books` query, containing paginated results of all books.
@@ -18,18 +18,18 @@ import { Book } from "../../entities/book/book"
  */
 @ObjectType()
 export class BooksResult {
-	@Field(() => [Book])
-	allBooks!: Book[]
+    @Field(() => [Book])
+    allBooks!: Book[];
 
-	@Field(() => Int)
-	totalCount!: number
+    @Field(() => Int)
+    totalCount!: number;
 
-	@Field(() => Int)
-	totalCountAll!: number
+    @Field(() => Int)
+    totalCountAll!: number;
 
-	@Field(() => Int, { nullable: true })
-	page?: number
+    @Field(() => Int, { nullable: true })
+    page?: number;
 
-	@Field(() => Int, { nullable: true })
-	limit?: number
+    @Field(() => Int, { nullable: true })
+    limit?: number;
 }

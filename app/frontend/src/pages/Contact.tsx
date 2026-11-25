@@ -115,7 +115,7 @@ export default function Contact() {
                         eyebrow="Au grand jour"
                         title="Suivre la veillée"
                     />
-                    <p className="text-muted-foreground mt-4 max-w-[60ch] font-quote text-base italic">
+                    <p className="text-muted-foreground font-quote mt-4 max-w-[60ch] text-base italic">
                         Retrouvez-nous ailleurs - annonces, coups de cœur et
                         coulisses de la bibliothèque.
                     </p>
@@ -139,7 +139,11 @@ export default function Contact() {
                 </section>
 
                 <SectionSeparator />
-                <section id="liens" data-section="liens" className="scroll-mt-24">
+                <section
+                    id="liens"
+                    data-section="liens"
+                    className="scroll-mt-24"
+                >
                     <UsefulLinks />
                     <SignatureFooter />
                 </section>

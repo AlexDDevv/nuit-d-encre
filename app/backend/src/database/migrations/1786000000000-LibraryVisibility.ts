@@ -12,13 +12,17 @@ export class LibraryVisibility1786000000000 implements MigrationInterface {
         await queryRunner.query(
             `ALTER TABLE "user" ADD COLUMN "isLibraryPublic" boolean NOT NULL DEFAULT false`,
         );
-        await queryRunner.query(`ALTER TABLE "user_book" DROP COLUMN "isPublic"`);
+        await queryRunner.query(
+            `ALTER TABLE "user_book" DROP COLUMN "isPublic"`,
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `ALTER TABLE "user_book" ADD COLUMN "isPublic" boolean NOT NULL DEFAULT true`,
         );
-        await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "isLibraryPublic"`);
+        await queryRunner.query(
+            `ALTER TABLE "user" DROP COLUMN "isLibraryPublic"`,
+        );
     }
 }

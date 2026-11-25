@@ -51,7 +51,9 @@ describe("grantXpService", () => {
         expect(action.xp).toBe(ActionXPMap[UserActionType.BOOK_ADDED]);
         expect(action.xpKey).toBe("isbn13:9782070612758");
         expect(action.targetId).toBe("42");
-        expect(action.metadata).toBe(JSON.stringify({ title: "Le Petit Prince" }));
+        expect(action.metadata).toBe(
+            JSON.stringify({ title: "Le Petit Prince" }),
+        );
     });
 
     it("levels the user up when the XP threshold is crossed", async () => {
@@ -88,23 +90,25 @@ describe("grantXpService", () => {
         transactionMock.mockImplementation(async (cb) =>
             cb({
                 exists: jest.fn(
-                    async (_entity: unknown, options: { where: { xpKey: string } }) =>
-                        rewarded.has(options.where.xpKey)
+                    async (
+                        _entity: unknown,
+                        options: { where: { xpKey: string } },
+                    ) => rewarded.has(options.where.xpKey),
                 ),
                 save: jest.fn(),
-            })
+            }),
         );
 
         const user = makeUser(0, 1);
         const again = await grantXpService(
             user,
             UserActionType.BOOK_RECOMMENDED,
-            { xpKey: "book:b-1" }
+            { xpKey: "book:b-1" },
         );
         const other = await grantXpService(
             user,
             UserActionType.BOOK_RECOMMENDED,
-            { xpKey: "book:b-2" }
+            { xpKey: "book:b-2" },
         );
 
         expect(again).toBe(false);
@@ -119,7 +123,7 @@ describe("grantXpService", () => {
         const granted = await grantXpService(
             user,
             UserActionType.BOOK_RECOMMENDED,
-            { xpKey: "book:b-1" }
+            { xpKey: "book:b-1" },
         );
 
         expect(granted).toBe(false);
@@ -152,7 +156,7 @@ describe("grantXpService", () => {
 
         const user = makeUser(80, 1);
         await expect(
-            grantXpService(user, UserActionType.BOOK_ADDED, { xpKey: "k" })
+            grantXpService(user, UserActionType.BOOK_ADDED, { xpKey: "k" }),
         ).rejects.toThrow("db down");
         expect(user.xp).toBe(80);
         expect(user.level).toBe(1);

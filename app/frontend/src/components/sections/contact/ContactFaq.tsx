@@ -16,7 +16,7 @@ export default function ContactFaq() {
                         <AccordionTrigger className="aria-expanded:text-foreground py-5 text-base font-bold leading-snug md:text-lg">
                             {item.q}
                         </AccordionTrigger>
-                        <AccordionContent className="max-w-[64ch] pr-2 pb-6 font-quote text-sm leading-[1.8] md:text-base">
+                        <AccordionContent className="font-quote max-w-[64ch] pb-6 pr-2 text-sm leading-[1.8] md:text-base">
                             {item.a}
                         </AccordionContent>
                     </AccordionItem>

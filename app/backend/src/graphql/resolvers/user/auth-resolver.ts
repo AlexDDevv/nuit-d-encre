@@ -255,7 +255,11 @@ export class AuthResolver {
             throw new AppError("Invalid image", 400, "ValidationError");
 
         if (data.length > MAX_IMAGE_DATA_URI_LENGTH)
-            throw new AppError("Image trop volumineuse", 400, "ValidationError");
+            throw new AppError(
+                "Image trop volumineuse",
+                400,
+                "ValidationError",
+            );
 
         const url = await this.cloudinaryService.uploadImage(
             data,

@@ -18,14 +18,14 @@ export default function Ornament({
         >
             <span
                 className={cn(
-                    "to-primary/55 h-px bg-linear-to-r from-transparent",
+                    "to-primary/55 bg-linear-to-r h-px from-transparent",
                     width,
                 )}
             />
-            <span className="rotate-45 text-xxxs leading-none">◆</span>
+            <span className="text-xxxs rotate-45 leading-none">◆</span>
             <span
                 className={cn(
-                    "to-primary/55 h-px bg-linear-to-l from-transparent",
+                    "to-primary/55 bg-linear-to-l h-px from-transparent",
                     width,
                 )}
             />

@@ -12,11 +12,11 @@ import { IsBoolean } from "class-validator";
  * CreateBookReviewVoteInput
  * @description
  * Input data required to cast a vote on a book review.
- * 
+ *
  * Users can vote to indicate whether they found a review helpful or not.
  * Each user can vote only once per review. The user is automatically
  * determined from the authentication context.
- * 
+ *
  * @example
  * ```graphql
  * mutation {

@@ -18,7 +18,7 @@ function LinkBody({ link }: { link: UsefulLinkType }) {
             <span className="text-muted-foreground group-hover:text-foreground group-hover:decoration-primary/70 font-body text-sm font-medium underline decoration-transparent underline-offset-4 transition-all duration-200">
                 {link.label}
                 {link.sister && (
-                    <span className="text-primary/45 ml-1.5 align-middle font-mono text-xxs uppercase tracking-[0.16em]">
+                    <span className="text-primary/45 text-xxs ml-1.5 align-middle font-mono uppercase tracking-[0.16em]">
                         page sœur
                     </span>
                 )}
@@ -49,7 +49,7 @@ export default function UsefulLinks() {
         <div className="grain border-border bg-card/55 relative overflow-hidden rounded-2xl border-2 px-6 py-7 md:px-9 md:py-8">
             <div className="flex flex-col items-center gap-1.5 text-center">
                 <Ornament width="w-10" />
-                <span className="text-primary/70 mt-1 font-quote text-xs uppercase tracking-[0.28em]">
+                <span className="text-primary/70 font-quote mt-1 text-xs uppercase tracking-[0.28em]">
                     Liens utiles
                 </span>
             </div>
@@ -59,7 +59,7 @@ export default function UsefulLinks() {
                         {i > 0 && (
                             <span
                                 aria-hidden="true"
-                                className="text-primary/35 rotate-45 px-3 text-xxxs leading-none"
+                                className="text-primary/35 text-xxxs rotate-45 px-3 leading-none"
                             >
                                 ◆
                             </span>

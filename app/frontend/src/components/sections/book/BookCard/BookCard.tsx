@@ -16,11 +16,7 @@ import BookCardRating from "./BookCardRating";
  * superposition, métadonnées et note se révélant au survol/focus. La carte mène
  * à la fiche du livre, le nom de l'auteur à la fiche auteur.
  */
-function BookCard({
-    book,
-    className,
-    isInAuthorPage = false,
-}: BookCardProps) {
+function BookCard({ book, className, isInAuthorPage = false }: BookCardProps) {
     const navigate = useNavigate();
     const author = `${book.author.firstname} ${book.author.lastname}`;
     const bookPath = `/books/${book.id}-${slugify(book.title)}`;
@@ -97,7 +93,7 @@ function BookCard({
                 )}
 
                 {/* méta + note révélées au survol / focus */}
-                <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-hover:grid-rows-[1fr] group-hover:opacity-100 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100">
+                <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100">
                     <div className="overflow-hidden">
                         <div className="flex flex-col gap-1.5 pt-1.5">
                             <BookCardMeta

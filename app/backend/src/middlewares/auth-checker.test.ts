@@ -21,9 +21,9 @@ describe("customAuthChecker", () => {
     });
 
     it("autorise tout utilisateur connecté quand aucun rôle n'est exigé", async () => {
-        await expect(
-            check(makeContext(makeUser("user-1")), []),
-        ).resolves.toBe(true);
+        await expect(check(makeContext(makeUser("user-1")), [])).resolves.toBe(
+            true,
+        );
     });
 
     it("refuse un utilisateur dont le rôle n'est pas exigé", async () => {

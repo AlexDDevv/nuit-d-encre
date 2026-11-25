@@ -1,7 +1,11 @@
 import { BookReview } from "../../../database/entities/book/bookReview";
 import { BookReviewVote } from "../../../database/entities/book/bookReviewVote";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
-import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
+import {
+    makeContext,
+    makeUser,
+    stubPersistence,
+} from "../../../test/factories";
 import { UserActionType } from "../../../types/types";
 import { BookReviewVotesResolver } from "./book-review-vote-resolver";
 
@@ -38,8 +42,8 @@ describe("BookReviewVotesResolver", () => {
             await expect(
                 resolver.voteOnReview(
                     { reviewId: "review-1", isHelpful: true },
-                    makeContext(author)
-                )
+                    makeContext(author),
+                ),
             ).rejects.toMatchObject({ statusCode: 403 });
             expect(grantXp).not.toHaveBeenCalled();
         });
@@ -49,14 +53,14 @@ describe("BookReviewVotesResolver", () => {
 
             const result = await resolver.voteOnReview(
                 { reviewId: "review-1", isHelpful: true },
-                makeContext(voter)
+                makeContext(voter),
             );
 
             expect(result.action).toBe("created");
             expect(grantXp).toHaveBeenCalledWith(
                 author,
                 UserActionType.REVIEW_VOTED_HELPFUL,
-                helpfulVoteXp
+                helpfulVoteXp,
             );
         });
 
@@ -65,7 +69,7 @@ describe("BookReviewVotesResolver", () => {
 
             await resolver.voteOnReview(
                 { reviewId: "review-1", isHelpful: false },
-                makeContext(voter)
+                makeContext(voter),
             );
 
             expect(grantXp).not.toHaveBeenCalled();
@@ -75,18 +79,18 @@ describe("BookReviewVotesResolver", () => {
     describe("toggleHelpfulVote", () => {
         it("interdit de voter sur sa propre critique", async () => {
             await expect(
-                resolver.toggleHelpfulVote("review-1", makeContext(author))
+                resolver.toggleHelpfulVote("review-1", makeContext(author)),
             ).rejects.toMatchObject({ statusCode: 403 });
         });
 
         it("retire un vote utile existant sans toucher à l'XP", async () => {
             jest.spyOn(BookReviewVote, "findOne").mockResolvedValue(
-                makeVote(true)
+                makeVote(true),
             );
 
             const result = await resolver.toggleHelpfulVote(
                 "review-1",
-                makeContext(voter)
+                makeContext(voter),
             );
 
             expect(result.action).toBe("removed");
@@ -96,20 +100,25 @@ describe("BookReviewVotesResolver", () => {
         it.each([
             ["crée un vote utile", null, "created"],
             ["convertit un vote « pas utile »", makeVote(false), "updated"],
-        ])("%s avec la même clé d'XP par votant", async (_label, existing, action) => {
-            jest.spyOn(BookReviewVote, "findOne").mockResolvedValue(existing);
+        ])(
+            "%s avec la même clé d'XP par votant",
+            async (_label, existing, action) => {
+                jest.spyOn(BookReviewVote, "findOne").mockResolvedValue(
+                    existing,
+                );
 
-            const result = await resolver.toggleHelpfulVote(
-                "review-1",
-                makeContext(voter)
-            );
+                const result = await resolver.toggleHelpfulVote(
+                    "review-1",
+                    makeContext(voter),
+                );
 
-            expect(result.action).toBe(action);
-            expect(grantXp).toHaveBeenCalledWith(
-                author,
-                UserActionType.REVIEW_VOTED_HELPFUL,
-                helpfulVoteXp
-            );
-        });
+                expect(result.action).toBe(action);
+                expect(grantXp).toHaveBeenCalledWith(
+                    author,
+                    UserActionType.REVIEW_VOTED_HELPFUL,
+                    helpfulVoteXp,
+                );
+            },
+        );
     });
 });

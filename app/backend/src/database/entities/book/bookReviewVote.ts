@@ -75,7 +75,7 @@ export class BookReviewVote extends BaseEntity {
      * Boolean flag where:
      * - `true` = the user found the review helpful/useful
      * - `false` = the user found the review not helpful/not useful
-     * 
+     *
      * This allows users to provide feedback on review quality
      * and helps surface the most valuable reviews.
      */

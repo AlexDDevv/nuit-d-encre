@@ -11,11 +11,11 @@ import { Field, ID, InputType } from "type-graphql";
  * CreateBookRecommendationInput
  * @description
  * Input data required to create or toggle a recommendation for a book.
- * 
+ *
  * Since recommendations are simple endorsements without additional data,
  * only the book ID is required. The user is automatically determined
  * from the authentication context.
- * 
+ *
  * @example
  * ```graphql
  * mutation {

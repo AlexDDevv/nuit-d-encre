@@ -49,12 +49,13 @@ export function useLocalStorage<T>(
         [key],
     );
 
-    const getServerSnapshot = useCallback(
-        () => defaultValueRef.current,
-        [],
-    );
+    const getServerSnapshot = useCallback(() => defaultValueRef.current, []);
 
-    const value = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+    const value = useSyncExternalStore(
+        subscribe,
+        getSnapshot,
+        getServerSnapshot,
+    );
 
     const setValue = useCallback(
         (newValue: T | ((prev: T) => T)) => {

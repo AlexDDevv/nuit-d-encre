@@ -34,7 +34,7 @@ export default function BookShelf({
                 averageRating={book.averageRating}
                 reviewCount={book.reviewCount}
             />
-            <div className="text-muted-foreground mt-1 flex items-center gap-4 font-mono text-xxs">
+            <div className="text-muted-foreground text-xxs mt-1 flex items-center gap-4 font-mono">
                 <span className="inline-flex items-center gap-1.5">
                     <FaQuoteLeft
                         size={11}
@@ -68,9 +68,9 @@ export default function BookShelf({
                 <Link
                     to={bookPath}
                     aria-label={`${book.title}, ${author} - ${statusConfig?.label ?? ""}`}
-                    className="group focus-visible:ring-ring relative block w-28 rounded-md focus-visible:outline-none focus-visible:ring-2"
+                    className="focus-visible:ring-ring group relative block w-28 rounded-md focus-visible:outline-none focus-visible:ring-2"
                 >
-                    <div className="bg-background border-border group-hover:border-primary/55 relative aspect-4/5 overflow-hidden rounded-md border-2 shadow-lg transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-[0_20px_40px_-14px_rgba(0,0,0,0.8)]">
+                    <div className="bg-background border-border group-hover:border-primary/55 aspect-4/5 relative overflow-hidden rounded-md border-2 shadow-lg transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-[0_20px_40px_-14px_rgba(0,0,0,0.8)]">
                         <BookCover
                             coverUrl={book.coverUrl}
                             title={book.title}
@@ -79,12 +79,12 @@ export default function BookShelf({
                             className="absolute inset-0"
                         />
                         {/* tranche / reliure */}
-                        <span className="pointer-events-none absolute left-0 top-0 h-full w-1.25 bg-[linear-gradient(to_right,hsl(20_3%_6%/0.55),transparent)]" />
+                        <span className="w-1.25 pointer-events-none absolute left-0 top-0 h-full bg-[linear-gradient(to_right,hsl(20_3%_6%/0.55),transparent)]" />
                         {/* voile + statut incrusté */}
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center bg-[linear-gradient(to_top,hsl(20_3%_7%/0.92),transparent)] pb-2 pt-7">
                             <span
                                 className={cn(
-                                    "inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 font-body text-xxs font-bold backdrop-blur-sm",
+                                    "font-body text-xxs inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 font-bold backdrop-blur-sm",
                                     STATUS_COLORS[status].chip,
                                 )}
                             >
@@ -97,7 +97,7 @@ export default function BookShelf({
                         {/* favori */}
                         {isFavorite && (
                             <span
-                                className="bg-primary text-primary-foreground absolute right-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.75 font-mono text-xxs font-medium shadow-sm"
+                                className="bg-primary text-primary-foreground py-0.75 text-xxs absolute right-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full px-1.5 font-mono font-medium shadow-sm"
                                 title={`Favori · rang ${favoriteRank}`}
                             >
                                 <FaStar size={10} aria-hidden="true" />{" "}
@@ -109,7 +109,7 @@ export default function BookShelf({
             </Tooltip>
 
             {/* planche d'étagère - bois sombre */}
-            <div className="relative mt-2 h-2.5 w-28 rounded-xs bg-[linear-gradient(to_bottom,hsl(28_34%_15%),hsl(24_44%_6%))] shadow-[0_7px_14px_-4px_hsl(20_3%_2%/0.9),inset_0_1px_0_hsl(43_45%_55%/0.18)]" />
+            <div className="rounded-xs relative mt-2 h-2.5 w-28 bg-[linear-gradient(to_bottom,hsl(28_34%_15%),hsl(24_44%_6%))] shadow-[0_7px_14px_-4px_hsl(20_3%_2%/0.9),inset_0_1px_0_hsl(43_45%_55%/0.18)]" />
         </div>
     );
 }

@@ -14,6 +14,8 @@ export class AddXpKeyToUserActions1785000000000 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP INDEX "UQ_user_actions_user_type_xpKey"`);
-        await queryRunner.query(`ALTER TABLE "user_actions" DROP COLUMN "xpKey"`);
+        await queryRunner.query(
+            `ALTER TABLE "user_actions" DROP COLUMN "xpKey"`,
+        );
     }
 }

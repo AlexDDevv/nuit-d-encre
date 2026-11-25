@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from "type-graphql"
-import { Author } from "../../entities/author/author"
+import { Field, Int, ObjectType } from "type-graphql";
+import { Author } from "../../entities/author/author";
 
 /**
  * Represents the response of the `authors` query, containing paginated results of all authors.
@@ -18,18 +18,18 @@ import { Author } from "../../entities/author/author"
  */
 @ObjectType()
 export class AuthorsResult {
-	@Field(() => [Author])
-	allAuthors!: Author[]
+    @Field(() => [Author])
+    allAuthors!: Author[];
 
-	@Field(() => Int)
-	totalCount!: number
+    @Field(() => Int)
+    totalCount!: number;
 
-	@Field(() => Int)
-	totalCountAll!: number
+    @Field(() => Int)
+    totalCountAll!: number;
 
-	@Field(() => Int, { nullable: true })
-	page?: number
+    @Field(() => Int, { nullable: true })
+    page?: number;
 
-	@Field(() => Int, { nullable: true })
-	limit?: number
+    @Field(() => Int, { nullable: true })
+    limit?: number;
 }

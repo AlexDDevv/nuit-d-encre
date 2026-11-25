@@ -67,7 +67,7 @@ export class RateLimiter {
             throw new AppError(
                 `Trop de tentatives. Réessayez dans ${retryAfter} seconde(s).`,
                 429,
-                "TooManyRequestsError"
+                "TooManyRequestsError",
             );
         }
     }

@@ -2,17 +2,21 @@ import { ReactNode } from "react";
 import { LuExternalLink } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 
-export function SectionSeparator({ className = "my-12" }: { className?: string }) {
+export function SectionSeparator({
+    className = "my-12",
+}: {
+    className?: string;
+}) {
     return (
         <div
             className={cn("flex items-center justify-center gap-4", className)}
             aria-hidden="true"
         >
-            <span className="via-primary/25 to-primary/40 h-px flex-1 bg-linear-to-r from-transparent" />
-            <span className="text-primary/60 rotate-45 text-xxs leading-none">
+            <span className="via-primary/25 to-primary/40 bg-linear-to-r h-px flex-1 from-transparent" />
+            <span className="text-primary/60 text-xxs rotate-45 leading-none">
                 ◆
             </span>
-            <span className="via-primary/25 to-primary/40 h-px flex-1 bg-linear-to-l from-transparent" />
+            <span className="via-primary/25 to-primary/40 bg-linear-to-l h-px flex-1 from-transparent" />
         </div>
     );
 }

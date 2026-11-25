@@ -80,7 +80,7 @@ export function FormatChip({ format }: { format: string }) {
         <Chipset
             ariaLabel={`Format : ${label}`}
             variant="muted"
-            className="rounded-md bg-popover/70 px-2 py-0.5 text-xs font-bold tracking-wide"
+            className="bg-popover/70 rounded-md px-2 py-0.5 text-xs font-bold tracking-wide"
         >
             {label}
         </Chipset>
@@ -90,9 +90,9 @@ export function FormatChip({ format }: { format: string }) {
 /** Médaillon doré d'une note sur 5. */
 export function NoteBadge({ note }: { note: number }) {
     return (
-        <span className="inline-flex items-baseline gap-0.5 rounded-md border border-primary/35 bg-primary/10 px-2 py-0.5 font-title text-primary">
+        <span className="border-primary/35 bg-primary/10 font-title text-primary inline-flex items-baseline gap-0.5 rounded-md border px-2 py-0.5">
             <span className="text-base font-black leading-none">{note}</span>
-            <span className="text-xxs font-bold text-primary/65">/5</span>
+            <span className="text-xxs text-primary/65 font-bold">/5</span>
         </span>
     );
 }

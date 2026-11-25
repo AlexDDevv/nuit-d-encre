@@ -14,15 +14,15 @@
 
 import { Field, ID, Int, ObjectType, registerEnumType } from "type-graphql";
 import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
+    BaseEntity,
+    Column,
+    CreateDateColumn,
+    Entity,
+    Index,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Unique,
+    UpdateDateColumn,
 } from "typeorm";
 import { User } from "./user";
 import { Book } from "../book/book";
@@ -83,103 +83,102 @@ registerEnumType(ReadingStatus, { name: "ReadingStatus" });
 @Index("IDX_user", ["user"])
 @Index("IDX_book", ["book"])
 export class UserBook extends BaseEntity {
-  /**
-   * Unique identifier for the user-book entry
-   * @description
-   * Auto-generated primary key.
-   */
-  @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
-  id!: string;
+    /**
+     * Unique identifier for the user-book entry
+     * @description
+     * Auto-generated primary key.
+     */
+    @Field(() => ID)
+    @PrimaryGeneratedColumn("uuid")
+    id!: string;
 
-  /**
-   * The user who owns this library entry
-   * @description
-   * Many-to-one relationship with the User entity.
-   * `onDelete: "CASCADE"` removes related entries if the user is deleted.
-   */
-  @ManyToOne(() => User, (user) => user.userBooks, { onDelete: "CASCADE" })
-  @Field(() => User)
-  user!: User;
+    /**
+     * The user who owns this library entry
+     * @description
+     * Many-to-one relationship with the User entity.
+     * `onDelete: "CASCADE"` removes related entries if the user is deleted.
+     */
+    @ManyToOne(() => User, (user) => user.userBooks, { onDelete: "CASCADE" })
+    @Field(() => User)
+    user!: User;
 
-  /**
-   * The referenced book
-   * @description
-   * Many-to-one relationship with the Book entity.
-   * `onDelete: "CASCADE"` removes related entries if the book is deleted.
-   */
-  @ManyToOne(() => Book, (book) => book.userBooks, { onDelete: "CASCADE" })
-  @Field(() => Book)
-  book!: Book;
+    /**
+     * The referenced book
+     * @description
+     * Many-to-one relationship with the Book entity.
+     * `onDelete: "CASCADE"` removes related entries if the book is deleted.
+     */
+    @ManyToOne(() => Book, (book) => book.userBooks, { onDelete: "CASCADE" })
+    @Field(() => Book)
+    book!: Book;
 
-  /**
-   * Reading status for this book
-   * @description
-   * One of the values defined in ReadingStatus.
-   * Defaults to TO_READ.
-   */
-  @Field(() => ReadingStatus)
-  @Column({
-    type: "enum",
-    enum: ReadingStatus,
-    default: ReadingStatus.TO_READ,
-  })
-  status!: ReadingStatus;
+    /**
+     * Reading status for this book
+     * @description
+     * One of the values defined in ReadingStatus.
+     * Defaults to TO_READ.
+     */
+    @Field(() => ReadingStatus)
+    @Column({
+        type: "enum",
+        enum: ReadingStatus,
+        default: ReadingStatus.TO_READ,
+    })
+    status!: ReadingStatus;
 
-  /**
-   * Reading start date
-   * @description
-   * Optional date when the user started reading the book.
-   */
-  @Field(() => Date, { nullable: true })
-  @Column({ type: "date", nullable: true })
-  startedAt?: Date | null;
+    /**
+     * Reading start date
+     * @description
+     * Optional date when the user started reading the book.
+     */
+    @Field(() => Date, { nullable: true })
+    @Column({ type: "date", nullable: true })
+    startedAt?: Date | null;
 
-  /**
-   * Reading finish date
-   * @description
-   * Optional date when the user finished reading the book.
-   */
-  @Field(() => Date, { nullable: true })
-  @Column({ type: "date", nullable: true })
-  finishedAt?: Date | null;
+    /**
+     * Reading finish date
+     * @description
+     * Optional date when the user finished reading the book.
+     */
+    @Field(() => Date, { nullable: true })
+    @Column({ type: "date", nullable: true })
+    finishedAt?: Date | null;
 
+    /**
+     * Indicates whether this book is marked as a favorite
+     * @description
+     * Boolean flag to mark the book as a favorite in the user's library.
+     * Defaults to false.
+     */
+    @Field()
+    @Column({ type: "boolean", default: false })
+    isFavorite!: boolean;
 
-  /**
-   * Indicates whether this book is marked as a favorite
-   * @description
-   * Boolean flag to mark the book as a favorite in the user's library.
-   * Defaults to false.
-   */
-  @Field()
-  @Column({ type: "boolean", default: false })
-  isFavorite!: boolean;
+    /**
+     * Ranking of favorite books
+     * @description
+     * Optional numeric rank for ordering favorite books.
+     * Useful for displaying favorites in a specific order.
+     */
+    @Field(() => Int, { nullable: true })
+    @Column({ type: "int", nullable: true })
+    favoriteRank?: number | null;
 
-  /**
-   * Ranking of favorite books
-   * @description
-   * Optional numeric rank for ordering favorite books.
-   * Useful for displaying favorites in a specific order.
-   */
-  @Field(() => Int, { nullable: true })
-  @Column({ type: "int", nullable: true })
-  favoriteRank?: number | null;
+    /**
+     * Timestamp when the entry was created
+     * @description
+     * Automatically set when the entry is created.
+     */
+    @Field()
+    @CreateDateColumn({ type: "timestamp with time zone" })
+    createdAt!: Date;
 
-  /**
-   * Timestamp when the entry was created
-   * @description
-   * Automatically set when the entry is created.
-   */
-  @Field()
-  @CreateDateColumn({ type: "timestamp with time zone" })
-  createdAt!: Date;
-
-  /**
-   * Timestamp when the entry was last updated
-   * @description
-   * Automatically updated whenever the entry is modified.
-   */
-  @Field()
-  @UpdateDateColumn({ type: "timestamp with time zone" })
-  updatedAt!: Date;
+    /**
+     * Timestamp when the entry was last updated
+     * @description
+     * Automatically updated whenever the entry is modified.
+     */
+    @Field()
+    @UpdateDateColumn({ type: "timestamp with time zone" })
+    updatedAt!: Date;
 }

@@ -1,7 +1,11 @@
 import { Book } from "../../../database/entities/book/book";
 import { BookReview } from "../../../database/entities/book/bookReview";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
-import { makeContext, makeUser, stubPersistence } from "../../../test/factories";
+import {
+    makeContext,
+    makeUser,
+    stubPersistence,
+} from "../../../test/factories";
 import { Roles, UserActionType } from "../../../types/types";
 import { BookReviewsResolver } from "./book-review-resolver";
 
@@ -46,8 +50,8 @@ describe("BookReviewsResolver", () => {
             await expect(
                 resolver.createBookReview(
                     { bookId: "book-1", rating: 5 },
-                    makeContext(author)
-                )
+                    makeContext(author),
+                ),
             ).rejects.toMatchObject({ statusCode: 409 });
             expect(grantXp).not.toHaveBeenCalled();
         });
@@ -57,14 +61,14 @@ describe("BookReviewsResolver", () => {
 
             await resolver.createBookReview(
                 { bookId: "book-1", rating: 5, reviewText: "Court." },
-                makeContext(author)
+                makeContext(author),
             );
 
             expect(grantXp).toHaveBeenCalledTimes(1);
             expect(grantXp).toHaveBeenCalledWith(
                 author,
                 UserActionType.REVIEW_CREATED,
-                expect.objectContaining({ xpKey: "book:book-1" })
+                expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
 
@@ -73,13 +77,13 @@ describe("BookReviewsResolver", () => {
 
             await resolver.createBookReview(
                 { bookId: "book-1", rating: 5, reviewText: "a".repeat(201) },
-                makeContext(author)
+                makeContext(author),
             );
 
             expect(grantXp).toHaveBeenCalledWith(
                 author,
                 UserActionType.DETAILED_REVIEW_BONUS,
-                expect.objectContaining({ xpKey: "book:book-1" })
+                expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
 
@@ -88,13 +92,13 @@ describe("BookReviewsResolver", () => {
 
             await resolver.createBookReview(
                 { bookId: "book-1", rating: 5, reviewText: "a".repeat(200) },
-                makeContext(author)
+                makeContext(author),
             );
 
             expect(grantXp).not.toHaveBeenCalledWith(
                 author,
                 UserActionType.DETAILED_REVIEW_BONUS,
-                expect.anything()
+                expect.anything(),
             );
         });
     });
@@ -105,7 +109,7 @@ describe("BookReviewsResolver", () => {
             (user: ReturnType<typeof makeUser>) =>
                 resolver.updateBookReview(
                     { id: "review-1", rating: 1 },
-                    makeContext(user)
+                    makeContext(user),
                 ),
         ],
         [

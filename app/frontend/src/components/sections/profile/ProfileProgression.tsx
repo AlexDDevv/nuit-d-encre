@@ -14,7 +14,7 @@ function LevelMedallion({ level, pct }: { level: number; pct: number }) {
     }, [pct]);
 
     return (
-        <div className="relative grid h-37 w-37 shrink-0 place-items-center">
+        <div className="h-37 w-37 relative grid shrink-0 place-items-center">
             <svg
                 width="148"
                 height="148"
@@ -52,10 +52,10 @@ function LevelMedallion({ level, pct }: { level: number; pct: number }) {
                 </defs>
             </svg>
             <div className="flex flex-col items-center">
-                <span className="text-primary/70 font-quote text-xs tracking-[0.3em] uppercase">
+                <span className="text-primary/70 font-quote text-xs uppercase tracking-[0.3em]">
                     Niveau
                 </span>
-                <span className="text-foreground font-title text-5xl leading-none font-black">
+                <span className="text-foreground font-title text-5xl font-black leading-none">
                     {level}
                 </span>
             </div>
@@ -73,7 +73,7 @@ function XpBar({ pct }: { pct: number }) {
     return (
         <div className="xp-shimmer border-border bg-muted/70 relative h-3.5 w-full overflow-hidden rounded-full border">
             <div
-                className="h-full rounded-full bg-linear-to-r from-[hsl(38_45%_55%)] via-[hsl(43_60%_78%)] to-[hsl(43_64%_84%)] shadow-[0_0_14px_-1px_hsl(43_59%_70%/0.7)]"
+                className="bg-linear-to-r h-full rounded-full from-[hsl(38_45%_55%)] via-[hsl(43_60%_78%)] to-[hsl(43_64%_84%)] shadow-[0_0_14px_-1px_hsl(43_59%_70%/0.7)]"
                 style={{
                     width: `${w * 100}%`,
                     transition: "width 1.4s cubic-bezier(.2,.8,.2,1)",
@@ -85,21 +85,21 @@ function XpBar({ pct }: { pct: number }) {
 
 function TitleFrieze({ level }: { level: number }) {
     return (
-        <div className="no-scrollbar -mx-1 overflow-x-auto px-1 pt-9 pb-7">
-            <div className="flex w-full min-w-140 items-start">
+        <div className="no-scrollbar -mx-1 overflow-x-auto px-1 pb-7 pt-9">
+            <div className="min-w-140 flex w-full items-start">
                 {TITLES.map((t, i) => {
                     const status =
                         t.level < level
                             ? "past"
                             : t.level === level
-                                ? "current"
-                                : "future";
+                              ? "current"
+                              : "future";
                     const dot =
                         status === "current"
                             ? "h-5 w-5 bg-primary border-primary node-glow"
                             : status === "past"
-                                ? "h-3 w-3 bg-primary border-primary/70"
-                                : "h-3 w-3 bg-card border-border";
+                              ? "h-3 w-3 bg-primary border-primary/70"
+                              : "h-3 w-3 bg-card border-border";
                     return (
                         <div
                             key={t.level}
@@ -108,34 +108,36 @@ function TitleFrieze({ level }: { level: number }) {
                             <div className="relative flex h-5 w-full items-center justify-center">
                                 {i > 0 && (
                                     <span
-                                        className={`absolute top-1/2 right-1/2 h-px w-full -translate-y-1/2 ${t.level <= level
-                                            ? "bg-primary/55"
-                                            : "bg-border"
-                                            }`}
+                                        className={`absolute right-1/2 top-1/2 h-px w-full -translate-y-1/2 ${
+                                            t.level <= level
+                                                ? "bg-primary/55"
+                                                : "bg-border"
+                                        }`}
                                     />
                                 )}
                                 <span
                                     className={`relative z-10 grid place-items-center rounded-full border-2 transition-all ${dot}`}
                                 >
                                     {status === "current" && (
-                                        <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />
+                                        <span className="bg-primary-foreground h-1.5 w-1.5 rounded-full" />
                                     )}
                                 </span>
                             </div>
                             <span
-                                className={`mt-2 text-xs font-bold ${status === "future"
-                                    ? "text-muted-foreground/55"
-                                    : "text-primary/80"
-                                    }`}
+                                className={`mt-2 text-xs font-bold ${
+                                    status === "future"
+                                        ? "text-muted-foreground/55"
+                                        : "text-primary/80"
+                                }`}
                             >
                                 {t.level}
                             </span>
                             {status === "current" && (
-                                <span className="text-foreground/90 mt-0.5 max-w-18.5 text-center font-quote text-xs leading-tight italic">
+                                <span className="text-foreground/90 max-w-18.5 font-quote mt-0.5 text-center text-xs italic leading-tight">
                                     {t.label}
                                 </span>
                             )}
-                            <span className="border-border bg-popover text-foreground pointer-events-none absolute -top-9 z-20 rounded-md border px-2 py-1 text-xs whitespace-nowrap opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                            <span className="border-border bg-popover text-foreground pointer-events-none absolute -top-9 z-20 whitespace-nowrap rounded-md border px-2 py-1 text-xs opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
                                 {t.label}
                             </span>
                         </div>
@@ -155,8 +157,11 @@ export default function ProfileProgression({ user }: { user: User }) {
     const nextTitle = titleAt(user.level + 1);
 
     return (
-        <Card glow={false} className="fade-up relative overflow-hidden p-5 md:p-7">
-            <div className="pointer-events-none absolute -top-16 -right-10 h-64 w-64 rounded-full bg-[radial-gradient(circle,hsl(43_45%_40%/0.22),transparent_70%)]" />
+        <Card
+            glow={false}
+            className="fade-up relative overflow-hidden p-5 md:p-7"
+        >
+            <div className="pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full bg-[radial-gradient(circle,hsl(43_45%_40%/0.22),transparent_70%)]" />
             <SectionHeading icon={FaAward}>Progression</SectionHeading>
 
             <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-8">
@@ -165,10 +170,10 @@ export default function ProfileProgression({ user }: { user: User }) {
                 <div className="w-full flex-1">
                     <div className="mb-3 flex flex-col gap-1 text-center md:flex-row md:items-end md:justify-between md:text-left">
                         <div>
-                            <div className="text-muted-foreground font-quote text-xs tracking-[0.25em] uppercase">
+                            <div className="text-muted-foreground font-quote text-xs uppercase tracking-[0.25em]">
                                 Titre actuel
                             </div>
-                            <div className="text-gradient-gold font-quote text-2xl font-semibold whitespace-nowrap">
+                            <div className="text-gradient-gold font-quote whitespace-nowrap text-2xl font-semibold">
                                 {title}
                             </div>
                         </div>
@@ -186,7 +191,7 @@ export default function ProfileProgression({ user }: { user: User }) {
                     <XpBar pct={pct} />
 
                     <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
-                        <span className="text-foreground/90 font-body font-bold whitespace-nowrap">
+                        <span className="text-foreground/90 font-body whitespace-nowrap font-bold">
                             {user.xp.toLocaleString("fr-FR")}{" "}
                             <span className="text-muted-foreground">
                                 / {need.toLocaleString("fr-FR")} XP
@@ -226,7 +231,7 @@ export default function ProfileProgression({ user }: { user: User }) {
             </div>
 
             <div className="border-border/70 mt-7 border-t-2 pt-5">
-                <div className="text-muted-foreground mb-3 flex items-center gap-2 font-quote text-xs tracking-[0.22em] uppercase">
+                <div className="text-muted-foreground font-quote mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.22em]">
                     L'échelle des dix titres
                 </div>
                 <TitleFrieze level={user.level} />

@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm"
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateSiteBanner1781000000000 implements MigrationInterface {
-    name = "CreateSiteBanner1781000000000"
+    name = "CreateSiteBanner1781000000000";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -20,19 +20,19 @@ export class CreateSiteBanner1781000000000 implements MigrationInterface {
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "PK_site_banner_id" PRIMARY KEY ("id")
             )
-        `)
+        `);
         await queryRunner.query(`
             ALTER TABLE "site_banner"
             ADD CONSTRAINT "FK_site_banner_createdBy"
             FOREIGN KEY ("createdById") REFERENCES "user"("id")
             ON DELETE SET NULL ON UPDATE NO ACTION
-        `)
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `ALTER TABLE "site_banner" DROP CONSTRAINT "FK_site_banner_createdBy"`,
-        )
-        await queryRunner.query(`DROP TABLE "site_banner"`)
+        );
+        await queryRunner.query(`DROP TABLE "site_banner"`);
     }
 }

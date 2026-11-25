@@ -44,7 +44,7 @@ export default function NocturneLoader({
                     )}
                 >
                     <p
-                        className="text-center font-serif italic text-balance"
+                        className="text-balance text-center font-serif italic"
                         style={{
                             color: "hsl(43 30% 72%)",
                             fontSize: dense ? 14 : 17,

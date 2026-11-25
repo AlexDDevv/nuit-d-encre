@@ -8,9 +8,15 @@ import { slugify } from "@/lib/utils";
 import type { AdminAuthorRow } from "@/types/types";
 import { SearchInput } from "@/components/sections/admin/ui/SearchInput";
 import Pagination from "@/components/UI/Pagination";
-import { EmptyState, SkeletonRows } from "@/components/sections/admin/ui/feedback";
+import {
+    EmptyState,
+    SkeletonRows,
+} from "@/components/sections/admin/ui/feedback";
 import { ConfirmDialog } from "@/components/sections/admin/ui/ConfirmDialog";
-import { DataTable, type Column } from "@/components/sections/admin/ui/DataTable";
+import {
+    DataTable,
+    type Column,
+} from "@/components/sections/admin/ui/DataTable";
 
 /** Onglet Auteurs : recherche par nom, suppression (refusée si livres associés). */
 export function AuthorsTab() {
@@ -56,10 +62,10 @@ export function AuthorsTab() {
             primary: true,
             cell: (a) => (
                 <div className="flex items-center gap-3">
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-border bg-popover text-primary/70">
+                    <span className="border-border bg-popover text-primary/70 grid h-9 w-9 shrink-0 place-items-center rounded-full border-2">
                         <LuFeather size={16} />
                     </span>
-                    <span className="font-quote text-base text-foreground">
+                    <span className="font-quote text-foreground text-base">
                         {a.firstname}{" "}
                         <span className="font-medium">{a.lastname}</span>
                     </span>
@@ -71,7 +77,7 @@ export function AuthorsTab() {
             header: "Prénom",
             hideOnMobile: true,
             cell: (a) => (
-                <span className="font-body text-sm text-foreground/85">
+                <span className="font-body text-foreground/85 text-sm">
                     {a.firstname}
                 </span>
             ),
@@ -81,7 +87,7 @@ export function AuthorsTab() {
             header: "Nom",
             hideOnMobile: true,
             cell: (a) => (
-                <span className="font-body text-sm font-bold text-foreground/90">
+                <span className="font-body text-foreground/90 text-sm font-bold">
                     {a.lastname}
                 </span>
             ),
@@ -90,7 +96,7 @@ export function AuthorsTab() {
             key: "nat",
             header: "Nationalité",
             cell: (a) => (
-                <span className="inline-flex items-center gap-1.5 font-body text-sm text-muted-foreground">
+                <span className="font-body text-muted-foreground inline-flex items-center gap-1.5 text-sm">
                     <LuGlobe size={13} className="text-primary/55" />
                     {a.nationality || "-"}
                 </span>
@@ -102,7 +108,7 @@ export function AuthorsTab() {
             thClass: "text-center",
             tdClass: "text-center",
             cell: (a) => (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary/60 bg-secondary/35 px-2.5 py-0.5 font-title text-xs font-bold text-secondary-foreground">
+                <span className="border-secondary/60 bg-secondary/35 font-title text-secondary-foreground inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold">
                     <LuBookOpen size={12} /> {a.bookCount}
                 </span>
             ),
@@ -111,7 +117,7 @@ export function AuthorsTab() {
             key: "par",
             header: "Ajouté par",
             cell: (a) => (
-                <span className="font-body text-xs text-muted-foreground">
+                <span className="font-body text-muted-foreground text-xs">
                     {a.user?.userName ?? "-"}
                 </span>
             ),
@@ -120,7 +126,7 @@ export function AuthorsTab() {
             key: "le",
             header: "Ajouté le",
             cell: (a) => (
-                <span className="whitespace-nowrap font-body text-xs text-muted-foreground">
+                <span className="font-body text-muted-foreground whitespace-nowrap text-xs">
                     {new Date(a.createdAt).toLocaleDateString("fr-FR")}
                 </span>
             ),
@@ -142,11 +148,11 @@ export function AuthorsTab() {
             </div>
 
             {isLoadingAuthors ? (
-                <div className="rounded-xl border-2 border-border bg-card">
+                <div className="border-border bg-card rounded-xl border-2">
                     <SkeletonRows rows={8} cols={6} />
                 </div>
             ) : filtered.length === 0 ? (
-                <div className="rounded-xl border-2 border-border bg-card">
+                <div className="border-border bg-card rounded-xl border-2">
                     <EmptyState
                         message="Aucun auteur trouvé"
                         hint="Essayez un autre prénom ou nom de famille."

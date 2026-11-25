@@ -1,6 +1,6 @@
-import { forwardRef, Ref } from 'react'
-import { Link } from 'react-router-dom'
-import { cn } from '@/lib/utils'
+import { forwardRef, Ref } from "react";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import {
     IconClasses,
     baseClasses,
@@ -8,8 +8,11 @@ import {
     navSelectedClasses,
     sizeClasses,
     variantClasses,
-} from '@/components/UI/Button/Button.styles'
-import type { ButtonProps, ButtonVariant } from '@/components/UI/Button/Button.types'
+} from "@/components/UI/Button/Button.styles";
+import type {
+    ButtonProps,
+    ButtonVariant,
+} from "@/components/UI/Button/Button.types";
 
 /**
  * Button component
@@ -34,8 +37,8 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
         {
             children,
             className,
-            variant = 'primary',
-            size = 'md',
+            variant = "primary",
+            size = "md",
             fullWidth = false,
             disabled = false,
             handleCheck,
@@ -49,7 +52,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
             icon,
             rightIcon,
             checkedRightIcon,
-            type = 'button',
+            type = "button",
             onClick,
             ...props
         },
@@ -59,27 +62,37 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
             baseClasses,
             variantClasses[variant],
             sizeClasses[size],
-            fullWidth ? 'w-full' : '',
+            fullWidth ? "w-full" : "",
             isNavBtnSelected && navSelectedClasses[variant],
-            variant === 'checkable' && isChecked && checkedClasses,
+            variant === "checkable" && isChecked && checkedClasses,
             className,
-        )
+        );
 
         const childrenContent = (
             <>
                 {loading && (
-                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
+                    <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 )}
 
-                {!loading && leftIcon && <span className="mr-3">{leftIcon}</span>}
+                {!loading && leftIcon && (
+                    <span className="mr-3">{leftIcon}</span>
+                )}
 
                 <div
-                    className={cn('min-w-0 overflow-hidden', variant === 'checkable' && 'w-4/6 flex justify-start', (['bookCard', 'searchResultCard', 'authorCard'] as ButtonVariant[]).includes(variant) && 'contents')}
+                    className={cn(
+                        "min-w-0 overflow-hidden",
+                        variant === "checkable" && "flex w-4/6 justify-start",
+                        (
+                            [
+                                "bookCard",
+                                "searchResultCard",
+                                "authorCard",
+                            ] as ButtonVariant[]
+                        ).includes(variant) && "contents",
+                    )}
                 >
                     {!loading && icon && (
-                        <span className={IconClasses[variant]}>
-                            {icon}
-                        </span>
+                        <span className={IconClasses[variant]}>{icon}</span>
                     )}
                     {children}
                 </div>
@@ -88,27 +101,29 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
                     <span
                         onClick={handleCheck}
                         className={cn(
-                            'ml-3',
-                            checkedRightIcon && 'text-muted-foreground hover:text-foreground',
-                            isChecked && 'text-foreground',
+                            "ml-3",
+                            checkedRightIcon &&
+                                "text-muted-foreground hover:text-foreground",
+                            isChecked && "text-foreground",
                         )}
                     >
                         {isChecked ? checkedRightIcon : rightIcon}
                     </span>
                 )}
             </>
-        )
+        );
 
         if (to) {
-            const isExternal = to.startsWith('http')
+            const isExternal = to.startsWith("http");
 
-            if (isExternal && !to.startsWith('https://')) {
-                console.warn('Warning: Non-HTTPS external link detected')
+            if (isExternal && !to.startsWith("https://")) {
+                console.warn("Warning: Non-HTTPS external link detected");
             }
 
-            const finalAriaLabel = isExternal && ariaLabel
-                ? `${ariaLabel} (s'ouvre dans un nouvel onglet)`
-                : ariaLabel
+            const finalAriaLabel =
+                isExternal && ariaLabel
+                    ? `${ariaLabel} (s'ouvre dans un nouvel onglet)`
+                    : ariaLabel;
 
             return (
                 <Link
@@ -116,15 +131,17 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
                     ref={ref as Ref<HTMLAnchorElement>}
                     aria-label={finalAriaLabel}
                     className={classNameContent}
-                    rel={isExternal ? 'noopener noreferrer' : undefined}
-                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    target={isExternal ? "_blank" : undefined}
                     data-category={category}
-                    onClick={onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>}
+                    onClick={
+                        onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>
+                    }
                     {...(props as React.HTMLAttributes<HTMLAnchorElement>)}
                 >
                     {childrenContent}
                 </Link>
-            )
+            );
         }
 
         return (
@@ -139,10 +156,10 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
             >
                 {childrenContent}
             </button>
-        )
+        );
     },
-)
+);
 
-Button.displayName = 'Button'
+Button.displayName = "Button";
 
-export default Button
+export default Button;

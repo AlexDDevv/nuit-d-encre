@@ -1,7 +1,11 @@
 import Cookies from "cookies";
 import { whoami } from "../services/auth-service";
 import { makeContext, makeUser } from "../test/factories";
-import { createUserResolver, getCurrentUser, requireUser } from "./current-user";
+import {
+    createUserResolver,
+    getCurrentUser,
+    requireUser,
+} from "./current-user";
 import { AppError } from "../middlewares/error-handler";
 
 jest.mock("../services/auth-service");

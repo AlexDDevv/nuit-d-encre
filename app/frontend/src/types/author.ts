@@ -21,10 +21,7 @@ export type CreateAuthorInput = Author;
 export type UpdateAuthorInput = Partial<CreateAuthorInput> & { id: string };
 
 export type RequiredAuthorFields =
-    | "birthDate"
-    | "nationality"
-    | "wikipediaUrl"
-    | "biography";
+    "birthDate" | "nationality" | "wikipediaUrl" | "biography";
 
 export type UseAuthorsMode = UseBooksMode;
 

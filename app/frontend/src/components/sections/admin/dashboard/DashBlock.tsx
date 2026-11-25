@@ -12,17 +12,17 @@ function BlockHead({
     meta?: string;
 }) {
     return (
-        <div className="flex items-center justify-between gap-3 border-b-2 border-border px-5 py-3.5">
+        <div className="border-border flex items-center justify-between gap-3 border-b-2 px-5 py-3.5">
             <div className="flex items-center gap-2.5">
-                <span className="grid h-8 w-8 place-items-center rounded-lg border-2 border-border bg-popover text-primary/80">
+                <span className="border-border bg-popover text-primary/80 grid h-8 w-8 place-items-center rounded-lg border-2">
                     <Icon size={16} />
                 </span>
-                <h3 className="font-quote text-base font-medium uppercase tracking-[0.16em] text-foreground/90">
+                <h3 className="font-quote text-foreground/90 text-base font-medium uppercase tracking-[0.16em]">
                     {title}
                 </h3>
             </div>
             {meta && (
-                <span className="font-body text-xs uppercase tracking-[0.14em] text-muted-foreground/70">
+                <span className="font-body text-muted-foreground/70 text-xs uppercase tracking-[0.14em]">
                     {meta}
                 </span>
             )}
@@ -43,7 +43,7 @@ export default function DashBlock({
     children: ReactNode;
 }) {
     return (
-        <div className="overflow-hidden rounded-xl border-2 border-border bg-card">
+        <div className="border-border bg-card overflow-hidden rounded-xl border-2">
             <BlockHead icon={icon} title={title} meta={meta} />
             {children}
         </div>

@@ -20,8 +20,9 @@ export default function ImportCard({ result }: ImportCardProps) {
     const to = `/books/preview/${result.isbn13}`;
     const author = result.author ?? "";
     const source = getSourceLabel(result.source);
-    const ariaLabel = `Importer ${result.title}${author ? ` par ${author}` : ""
-        } - résultat externe via ${source}`;
+    const ariaLabel = `Importer ${result.title}${
+        author ? ` par ${author}` : ""
+    } - résultat externe via ${source}`;
 
     return (
         <Link
@@ -29,7 +30,7 @@ export default function ImportCard({ result }: ImportCardProps) {
             aria-label={ariaLabel}
             className={cn(
                 interactiveCardShell,
-                "border-primary/35 block aspect-2/3 border-dashed",
+                "border-primary/35 aspect-2/3 block border-dashed",
             )}
         >
             {/* couverture désaturée plein cadre (pas encore à nous) */}
@@ -55,7 +56,7 @@ export default function ImportCard({ result }: ImportCardProps) {
             )}
 
             {/* chip source */}
-            <span className="text-primary/90 border-primary/30 absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border bg-[hsl(20_3%_9%/0.82)] px-2 py-0.75 font-body text-xxs font-bold tracking-wide whitespace-nowrap backdrop-blur-sm">
+            <span className="text-primary/90 border-primary/30 py-0.75 font-body text-xxs absolute left-2 top-2 z-10 inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-[hsl(20_3%_9%/0.82)] px-2 font-bold tracking-wide backdrop-blur-sm">
                 <FaArrowUpRightFromSquare size={9} aria-hidden="true" />
                 {source}
             </span>
@@ -75,7 +76,7 @@ export default function ImportCard({ result }: ImportCardProps) {
                 )}
                 {/* méta révélée au survol / focus */}
                 {result.year != null && (
-                    <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-hover:grid-rows-[1fr] group-hover:opacity-100 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100">
+                    <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100">
                         <div className="overflow-hidden">
                             <p className="text-foreground/60 font-body pt-1.5 text-xs">
                                 {result.year}

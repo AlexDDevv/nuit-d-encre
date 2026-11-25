@@ -21,6 +21,5 @@ export const dataSource = new DataSource({
     migrationsRun: shouldRunMigrations(process.env.DB_MIGRATIONS_RUN),
     // En production, ne journalise que les erreurs/avertissements pour éviter
     // d'écrire des données personnelles (emails, etc.) en clair dans les logs.
-    logging:
-        process.env.NODE_ENV === "production" ? ["error", "warn"] : true,
+    logging: process.env.NODE_ENV === "production" ? ["error", "warn"] : true,
 });

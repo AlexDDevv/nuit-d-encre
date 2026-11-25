@@ -18,7 +18,7 @@ export class AppError extends Error implements IAppError {
         statusCode: number = 500,
         errorType?: string,
         additionalInfo?: string,
-        isOperational: boolean = true
+        isOperational: boolean = true,
     ) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);

@@ -75,10 +75,7 @@ export class GoogleBooksService {
             if (!volume) return null;
             return normalize(volume);
         } catch (error) {
-            console.error(
-                `[GoogleBooks] findByIsbn ${isbn13} échouée:`,
-                error,
-            );
+            console.error(`[GoogleBooks] findByIsbn ${isbn13} échouée:`, error);
             return null;
         }
     }

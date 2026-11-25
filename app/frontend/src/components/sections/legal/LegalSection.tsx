@@ -48,13 +48,15 @@ export default function LegalSection({
                     />
                 )}
 
-                {section.paras?.map((p, i) => <p key={i}>{p}</p>)}
+                {section.paras?.map((p, i) => (
+                    <p key={i}>{p}</p>
+                ))}
 
                 {/* Section finale : bloc contact + email doré */}
                 {section.contact && (
                     <div className="border-primary/25 bg-primary/[0.05] mt-6 flex flex-col gap-3 rounded-xl border-2 px-5 py-5">
                         <div className="flex items-center gap-2">
-                            <span className="text-primary/60 rotate-45 text-xxxs leading-none">
+                            <span className="text-primary/60 text-xxxs rotate-45 leading-none">
                                 ◆
                             </span>
                             <span className="text-primary/75 font-quote text-sm uppercase tracking-[0.2em]">
@@ -68,7 +70,9 @@ export default function LegalSection({
                         </p>
                         <p className="text-muted-foreground/70 font-mono text-xs uppercase tracking-[0.2em]">
                             Dernière mise à jour :{" "}
-                            <span className="text-primary/75">{lastUpdate}</span>
+                            <span className="text-primary/75">
+                                {lastUpdate}
+                            </span>
                         </p>
                     </div>
                 )}

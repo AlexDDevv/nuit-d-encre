@@ -129,7 +129,10 @@ export class User extends BaseEntity {
     @OneToMany(() => BookReview, (review) => review.user)
     bookReviews!: BookReview[];
 
-    @OneToMany(() => BookRecommendation, (recommendation) => recommendation.user)
+    @OneToMany(
+        () => BookRecommendation,
+        (recommendation) => recommendation.user,
+    )
     bookRecommendations!: BookRecommendation[];
 
     @OneToMany(() => BookReviewVote, (vote) => vote.user)

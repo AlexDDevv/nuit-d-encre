@@ -45,7 +45,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             <div className="flex flex-col gap-1">
                 <textarea
                     className={cn(
-                        "bg-input ring-offset-input text-accent-foreground focus-visible:ring-ring border-border flex h-20 w-full rounded-lg border px-3 py-2 text-sm placeholder:italic placeholder:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none",
+                        "bg-input ring-offset-input text-accent-foreground focus-visible:ring-ring border-border flex h-20 w-full resize-none rounded-lg border px-3 py-2 text-sm placeholder:italic placeholder:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
                         classError,
                         className,
                     )}

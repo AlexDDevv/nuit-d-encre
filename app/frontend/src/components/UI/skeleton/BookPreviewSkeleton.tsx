@@ -25,7 +25,7 @@ export default function BookPreviewSkeleton() {
             {/* héro */}
             <div className="grid gap-10 sm:gap-12 md:grid-cols-[300px_1fr] md:items-start">
                 <div className="md:pt-2">
-                    <Skeleton className="mx-auto aspect-2/3 w-full max-w-75 rounded-md" />
+                    <Skeleton className="aspect-2/3 max-w-75 mx-auto w-full rounded-md" />
                     <Skeleton className="mx-auto mt-4 h-3 w-40 rounded-sm" />
                 </div>
 
@@ -39,7 +39,7 @@ export default function BookPreviewSkeleton() {
                         <Skeleton className="h-6 w-44 rounded-full" />
                     </div>
 
-                    <div className="mt-6 flex max-w-125 flex-col gap-2 pl-7">
+                    <div className="max-w-125 mt-6 flex flex-col gap-2 pl-7">
                         <Skeleton className="h-4 w-full rounded-sm" />
                         <Skeleton className="h-4 w-full rounded-sm" />
                         <Skeleton className="h-4 w-2/3 rounded-sm" />

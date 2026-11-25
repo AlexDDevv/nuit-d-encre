@@ -45,7 +45,7 @@ beforeEach(() => {
     jest.restoreAllMocks();
     (dataSource.getRepository as jest.Mock).mockReturnValue(repository);
     jest.spyOn(User.prototype, "save").mockImplementation(async function (
-        this: User
+        this: User,
     ) {
         return this;
     });
@@ -74,7 +74,7 @@ describe("login", () => {
         const cookies = makeCookies();
 
         await expect(
-            login("reader@example.com", "Mauvais1!", cookies)
+            login("reader@example.com", "Mauvais1!", cookies),
         ).rejects.toMatchObject({ statusCode: 401 });
         expect(cookies.set).not.toHaveBeenCalled();
     });
@@ -83,8 +83,11 @@ describe("login", () => {
         repository.findOne.mockResolvedValue(null);
 
         await expect(
-            login("inconnu@example.com", PASSWORD, makeCookies())
-        ).rejects.toMatchObject({ statusCode: 401, message: "Invalid identifiers" });
+            login("inconnu@example.com", PASSWORD, makeCookies()),
+        ).rejects.toMatchObject({
+            statusCode: 401,
+            message: "Invalid identifiers",
+        });
     });
 
     it("refuse la connexion par mot de passe d'un compte Google sans mot de passe", async () => {
@@ -93,7 +96,7 @@ describe("login", () => {
         repository.findOne.mockResolvedValue(googleUser);
 
         await expect(
-            login("reader@example.com", PASSWORD, makeCookies())
+            login("reader@example.com", PASSWORD, makeCookies()),
         ).rejects.toMatchObject({ statusCode: 401 });
     });
 });
@@ -135,7 +138,7 @@ describe("whoami", () => {
     it("rejette un jeton expiré", async () => {
         const expired = jwt.sign(
             { id: "user-1", exp: Math.floor(Date.now() / 1000) - 60 },
-            JWT_SECRET
+            JWT_SECRET,
         );
 
         await expect(whoami(makeCookies(expired))).rejects.toMatchObject({
@@ -174,7 +177,10 @@ describe("changePassword", () => {
 
         expect(user.tokenVersion).toBe(4);
         const token = (cookies.set as jest.Mock).mock.calls[0][1];
-        expect(jwt.verify(token, JWT_SECRET)).toMatchObject({ id: "user-1", v: 4 });
+        expect(jwt.verify(token, JWT_SECRET)).toMatchObject({
+            id: "user-1",
+            v: 4,
+        });
     });
 
     it("remplace le hash quand le mot de passe actuel est correct", async () => {
@@ -182,18 +188,28 @@ describe("changePassword", () => {
         repository.findOne.mockResolvedValue(user);
 
         await expect(
-            changePassword("user-1", PASSWORD, "Nouveau2?", makeCookies(undefined))
+            changePassword(
+                "user-1",
+                PASSWORD,
+                "Nouveau2?",
+                makeCookies(undefined),
+            ),
         ).resolves.toBe(true);
-        await expect(argon2.verify(user.hashedPassword!, "Nouveau2?")).resolves.toBe(
-            true
-        );
+        await expect(
+            argon2.verify(user.hashedPassword!, "Nouveau2?"),
+        ).resolves.toBe(true);
     });
 
     it("refuse si le mot de passe actuel est incorrect", async () => {
         repository.findOne.mockResolvedValue(await userWithPassword());
 
         await expect(
-            changePassword("user-1", "Mauvais1!", "Nouveau2?", makeCookies(undefined))
+            changePassword(
+                "user-1",
+                "Mauvais1!",
+                "Nouveau2?",
+                makeCookies(undefined),
+            ),
         ).rejects.toMatchObject({ statusCode: 401 });
         expect(User.prototype.save).not.toHaveBeenCalled();
     });
@@ -209,7 +225,12 @@ describe("changePassword", () => {
         repository.findOne.mockResolvedValue(await userWithPassword());
 
         await expect(
-            changePassword("user-1", PASSWORD, newPassword, makeCookies(undefined))
+            changePassword(
+                "user-1",
+                PASSWORD,
+                newPassword,
+                makeCookies(undefined),
+            ),
         ).rejects.toMatchObject({ statusCode: 400 });
         expect(User.prototype.save).not.toHaveBeenCalled();
     });
@@ -220,7 +241,12 @@ describe("changePassword", () => {
         repository.findOne.mockResolvedValue(googleUser);
 
         await expect(
-            changePassword("google-user", PASSWORD, "Nouveau2?", makeCookies(undefined))
+            changePassword(
+                "google-user",
+                PASSWORD,
+                "Nouveau2?",
+                makeCookies(undefined),
+            ),
         ).rejects.toMatchObject({ statusCode: 400 });
     });
 });
@@ -232,7 +258,7 @@ describe("setProfileImage", () => {
         ["invalide", "pas une url"],
     ])("refuse une URL %s", async (_label, url) => {
         await expect(
-            setProfileImage("user-1", "avatar", url)
+            setProfileImage("user-1", "avatar", url),
         ).rejects.toMatchObject({
             statusCode: 400,
         });
@@ -246,7 +272,7 @@ describe("setProfileImage", () => {
         const updated = await setProfileImage(
             "user-1",
             "avatar",
-            "https://res.cloudinary.com/avatar.png"
+            "https://res.cloudinary.com/avatar.png",
         );
 
         expect(updated.avatar).toBe("https://res.cloudinary.com/avatar.png");
@@ -314,7 +340,7 @@ describe("resolveOrCreateGoogleUser", () => {
                 userName: "Reader-1",
                 hashedPassword: null,
                 role: "user",
-            })
+            }),
         );
         expect(user.avatar).toBeNull();
     });

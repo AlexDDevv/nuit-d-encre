@@ -20,7 +20,9 @@ describe("queryLimitsRule", () => {
 
     it("refuse une requête trop profonde", () => {
         expect(
-            errors("{ books { author { books { author { books { id } } } } } }"),
+            errors(
+                "{ books { author { books { author { books { id } } } } } }",
+            ),
         ).toEqual([expect.stringContaining("trop profonde : 6 niveaux")]);
     });
 
@@ -35,7 +37,10 @@ describe("queryLimitsRule", () => {
     });
 
     it("compte les alias pour bloquer les requêtes trop larges", () => {
-        const aliases = Array.from({ length: 30 }, (_, i) => `a${i}: books { id }`);
+        const aliases = Array.from(
+            { length: 30 },
+            (_, i) => `a${i}: books { id }`,
+        );
         expect(errors(`{ ${aliases.join(" ")} }`, 4, 50)).toEqual([
             expect.stringContaining("trop large : 60 champs"),
         ]);
@@ -43,7 +48,10 @@ describe("queryLimitsRule", () => {
 
     it("ne compte pas l'introspection", () => {
         expect(
-            errors("{ __schema { types { fields { type { ofType { name } } } } } }", 2),
+            errors(
+                "{ __schema { types { fields { type { ofType { name } } } } } }",
+                2,
+            ),
         ).toEqual([]);
     });
 

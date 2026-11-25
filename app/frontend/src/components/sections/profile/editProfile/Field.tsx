@@ -24,7 +24,7 @@ export default function Field({
                     {label}
                 </span>
                 {hint && (
-                    <span className="text-muted-foreground/70 font-body text-xs tracking-wider uppercase">
+                    <span className="text-muted-foreground/70 font-body text-xs uppercase tracking-wider">
                         {hint}
                     </span>
                 )}
@@ -33,7 +33,7 @@ export default function Field({
             {error && (
                 <p
                     role="alert"
-                    className="text-destructive flex items-center gap-1.5 font-body text-xs font-bold"
+                    className="text-destructive font-body flex items-center gap-1.5 text-xs font-bold"
                 >
                     <FaCircleExclamation size={13} /> {error}
                 </p>

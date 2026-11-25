@@ -59,12 +59,7 @@ export interface UserAction {
  * affichés dans le journal de profil et le fil d'activité.
  */
 export type ActivityKind =
-    | "added"
-    | "finished"
-    | "review"
-    | "author"
-    | "reco"
-    | "complete";
+    "added" | "finished" | "review" | "author" | "reco" | "complete";
 
 export interface FeedActor {
     id: string;

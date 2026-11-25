@@ -4,13 +4,13 @@
  * @description
  * GraphQL resolvers for operations related to `UserBook` (the link between a user
  * and a book in their personal library).  
- * 
+ *
  * This module provides:
  * - searching, filtering, sorting, and paginating user books,
  * - fetching a single user book by ID,
  * - adding a book to a user’s library,
  * - removing a book from a user’s library (with proper authorization).
- * 
+ *
  * Note: This resolver does **not** create or edit `Book` entities themselves;
  * it only manages `UserBook` entries referencing existing books.
  */
@@ -23,22 +23,22 @@ import {
     Mutation,
     Query,
     Resolver,
-} from "type-graphql"
-import { AppError } from "../../../middlewares/error-handler"
-import { Context, ReadingStatus, UserActionType } from "../../../types/types"
-import { Book } from "../../../database/entities/book/book"
-import { Brackets } from "typeorm"
-import { grantXpService } from "../../../services/grind/grant-xp-service"
-import { xpKeys } from "../../../utils/xp-keys"
-import { UserBooksResult } from "../../../database/filteredResults/user/user-books-result"
-import { UserBookStatusCounts } from "../../../database/filteredResults/user/user-book-status-counts"
-import { UserBooksQueryInput } from "../../queries/user/user-books-input"
-import { UserBook } from "../../../database/entities/user/user-book"
-import { CreateUserBookInput } from "../../inputs/create/user/create-user-book-input"
-import { UpdateUserBookInput } from "../../inputs/update/user/update-user-book-input"
-import { requireUser } from "../../../utils/current-user"
-import { canViewLibrary } from "../../../utils/visibility"
-import { User } from "../../../database/entities/user/user"
+} from "type-graphql";
+import { AppError } from "../../../middlewares/error-handler";
+import { Context, ReadingStatus, UserActionType } from "../../../types/types";
+import { Book } from "../../../database/entities/book/book";
+import { Brackets } from "typeorm";
+import { grantXpService } from "../../../services/grind/grant-xp-service";
+import { xpKeys } from "../../../utils/xp-keys";
+import { UserBooksResult } from "../../../database/filteredResults/user/user-books-result";
+import { UserBookStatusCounts } from "../../../database/filteredResults/user/user-book-status-counts";
+import { UserBooksQueryInput } from "../../queries/user/user-books-input";
+import { UserBook } from "../../../database/entities/user/user-book";
+import { CreateUserBookInput } from "../../inputs/create/user/create-user-book-input";
+import { UpdateUserBookInput } from "../../inputs/update/user/update-user-book-input";
+import { requireUser } from "../../../utils/current-user";
+import { canViewLibrary } from "../../../utils/visibility";
+import { User } from "../../../database/entities/user/user";
 
 /**
  * Bibliothèque consultée : celle de l'utilisateur connecté par défaut, ou
@@ -49,18 +49,22 @@ async function resolveLibraryOwnerId(
     context: Context,
     userId?: string | null,
 ): Promise<string> {
-    const viewer = await requireUser(context)
-    if (!userId || userId === viewer.id) return viewer.id
+    const viewer = await requireUser(context);
+    if (!userId || userId === viewer.id) return viewer.id;
 
     const owner = await User.findOne({
         where: { id: userId },
         select: { id: true, isLibraryPublic: true },
-    })
-    if (!owner) throw new AppError("User not found", 404, "NotFoundError")
+    });
+    if (!owner) throw new AppError("User not found", 404, "NotFoundError");
     if (!canViewLibrary(viewer, owner)) {
-        throw new AppError("Cette bibliothèque est privée", 403, "ForbiddenError")
+        throw new AppError(
+            "Cette bibliothèque est privée",
+            403,
+            "ForbiddenError",
+        );
     }
-    return owner.id
+    return owner.id;
 }
 
 /**
@@ -72,26 +76,26 @@ async function resolveLibraryOwnerId(
 @Resolver(UserBook)
 export class UserBooksResolver {
     /**
-    * GraphQL Query to fetch all user books.
-    *
-    * This query supports:
-    * - search by title,
-    * - filtering by category,
-    * - sorting (by title, publication date, or page count),
-    * - pagination,
-    * - as well as counting total user books before and after filters are applied.
-    *
-    * @param filters - Search filters and options for sorting/pagination.
-    * @param userId - Bibliothèque d'un autre utilisateur (si partagée) ; défaut : la sienne.
-    *
-    * @returns An object containing:
-    * - `books`: Paginated list of user books after applying filters.
-    * - `totalCount`: Total number of user books matching the filters.
-    * - `totalCountAll`: Total number of user books without filters.
-    * - `page` and `limit`: Pagination metadata.
-    *
-    * @throws AppError - If no user books are found or in case of a server error.
-    */
+     * GraphQL Query to fetch all user books.
+     *
+     * This query supports:
+     * - search by title,
+     * - filtering by category,
+     * - sorting (by title, publication date, or page count),
+     * - pagination,
+     * - as well as counting total user books before and after filters are applied.
+     *
+     * @param filters - Search filters and options for sorting/pagination.
+     * @param userId - Bibliothèque d'un autre utilisateur (si partagée) ; défaut : la sienne.
+     *
+     * @returns An object containing:
+     * - `books`: Paginated list of user books after applying filters.
+     * - `totalCount`: Total number of user books matching the filters.
+     * - `totalCountAll`: Total number of user books without filters.
+     * - `page` and `limit`: Pagination metadata.
+     *
+     * @throws AppError - If no user books are found or in case of a server error.
+     */
     @Authorized()
     @Query(() => UserBooksResult)
     async userBooks(
@@ -110,7 +114,7 @@ export class UserBooksResolver {
             language,
             page = 1,
             limit = 12,
-        } = filters || {}
+        } = filters || {};
 
         // Retrieve the base query filtered by the authenticated user
         const baseQuery = UserBook.createQueryBuilder("userBook")
@@ -118,66 +122,83 @@ export class UserBooksResolver {
             .leftJoinAndSelect("userBook.book", "book")
             .leftJoinAndSelect("book.category", "category")
             .leftJoinAndSelect("book.author", "author")
-            .where("user.id = :userId", { userId: ownerId })
+            .where("user.id = :userId", { userId: ownerId });
 
         // Get the total number of unfiltered books and clone the query to apply filters
         const [totalCountAll, filteredQuery] = await Promise.all([
             baseQuery.getCount(),
             baseQuery.clone(),
-        ])
+        ]);
 
         // Filter by status
         if (status && status.length > 0) {
-            filteredQuery.andWhere("userBook.status IN (:...status)", { status });
+            filteredQuery.andWhere("userBook.status IN (:...status)", {
+                status,
+            });
         }
 
         // Filter by title, isnb13, authors and publisher (search)
         if (search?.trim()) {
             const trimmedSearch = `%${search.trim()}%`;
 
-            filteredQuery.andWhere(new Brackets((qb) => {
-                qb.where("unaccent(book.title) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("book.isbn13 ILIKE :search", { search: trimmedSearch })
-                    .orWhere("unaccent(author.firstname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("unaccent(author.lastname) ILIKE unaccent(:search)", { search: trimmedSearch })
-                    .orWhere("unaccent(book.publisher) ILIKE unaccent(:search)", { search: trimmedSearch });
-            }));
+            filteredQuery.andWhere(
+                new Brackets((qb) => {
+                    qb.where("unaccent(book.title) ILIKE unaccent(:search)", {
+                        search: trimmedSearch,
+                    })
+                        .orWhere("book.isbn13 ILIKE :search", {
+                            search: trimmedSearch,
+                        })
+                        .orWhere(
+                            "unaccent(author.firstname) ILIKE unaccent(:search)",
+                            { search: trimmedSearch },
+                        )
+                        .orWhere(
+                            "unaccent(author.lastname) ILIKE unaccent(:search)",
+                            { search: trimmedSearch },
+                        )
+                        .orWhere(
+                            "unaccent(book.publisher) ILIKE unaccent(:search)",
+                            { search: trimmedSearch },
+                        );
+                }),
+            );
         }
 
         // Filter by category
         if (categoryIds && categoryIds.length > 0) {
-            filteredQuery.andWhere(
-                "book.category.id IN (:...categoryIds)",
-                {
-                    categoryIds,
-                }
-            )
+            filteredQuery.andWhere("book.category.id IN (:...categoryIds)", {
+                categoryIds,
+            });
         }
 
         // Filter by format
         if (format && format.length > 0) {
             filteredQuery.andWhere("book.format IN (:...format)", {
                 format,
-            })
+            });
         }
 
         // Filter by language
         if (language?.trim()) {
-            filteredQuery.andWhere("unaccent(book.language) ILIKE unaccent(:language)", {
-                language: `%${language.trim()}%`,
-            });
+            filteredQuery.andWhere(
+                "unaccent(book.language) ILIKE unaccent(:language)",
+                {
+                    language: `%${language.trim()}%`,
+                },
+            );
         }
 
         // Get the total number of user's books matching the filters (for pagination)
-        const totalCount = await filteredQuery.getCount()
+        const totalCount = await filteredQuery.getCount();
 
         // Apply pagination
-        filteredQuery.skip((page - 1) * limit).take(limit)
+        filteredQuery.skip((page - 1) * limit).take(limit);
 
-        const userBooks = await filteredQuery.getMany()
+        const userBooks = await filteredQuery.getMany();
 
         if (!userBooks) {
-            throw new AppError("Books not found", 404, "NotFoundError")
+            throw new AppError("Books not found", 404, "NotFoundError");
         }
 
         return {
@@ -186,7 +207,7 @@ export class UserBooksResolver {
             totalCountAll,
             page,
             limit,
-        }
+        };
     }
 
     /**
@@ -207,7 +228,7 @@ export class UserBooksResolver {
             .addSelect("COUNT(*)", "count")
             .where("ub.userId = :userId", { userId: ownerId })
             .groupBy("ub.status")
-            .getRawMany()
+            .getRawMany();
 
         const counts: UserBookStatusCounts = {
             total: 0,
@@ -215,16 +236,16 @@ export class UserBooksResolver {
             reading: 0,
             read: 0,
             paused: 0,
-        }
+        };
         for (const row of rows) {
-            const n = Number(row.count)
-            counts.total += n
-            if (row.status === ReadingStatus.TO_READ) counts.toRead = n
-            else if (row.status === ReadingStatus.READING) counts.reading = n
-            else if (row.status === ReadingStatus.READ) counts.read = n
-            else if (row.status === ReadingStatus.PAUSED) counts.paused = n
+            const n = Number(row.count);
+            counts.total += n;
+            if (row.status === ReadingStatus.TO_READ) counts.toRead = n;
+            else if (row.status === ReadingStatus.READING) counts.reading = n;
+            else if (row.status === ReadingStatus.READ) counts.read = n;
+            else if (row.status === ReadingStatus.PAUSED) counts.paused = n;
         }
-        return counts
+        return counts;
     }
 
     /**
@@ -242,7 +263,7 @@ export class UserBooksResolver {
     @Query(() => UserBook, { nullable: true })
     async userBook(
         @Arg("id", () => ID) id: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<UserBook | null> {
         const user = await requireUser(context);
 
@@ -278,7 +299,7 @@ export class UserBooksResolver {
     @Mutation(() => UserBook)
     async createUserBook(
         @Arg("data", () => CreateUserBookInput) data: CreateUserBookInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<UserBook> {
         const user = await requireUser(context);
 
@@ -295,10 +316,14 @@ export class UserBooksResolver {
         });
 
         if (existing) {
-            throw new AppError("Book already in user's library", 409, "ConflictError");
+            throw new AppError(
+                "Book already in user's library",
+                409,
+                "ConflictError",
+            );
         }
 
-        const newUserBook = new UserBook()
+        const newUserBook = new UserBook();
 
         Object.assign(newUserBook, rest, { user, book });
 
@@ -324,12 +349,12 @@ export class UserBooksResolver {
                 user: true,
                 book: {
                     author: true,
-                    category: true
-                }
+                    category: true,
+                },
             },
         });
 
-        return userBookWithRelations!
+        return userBookWithRelations!;
     }
 
     /**
@@ -349,23 +374,23 @@ export class UserBooksResolver {
     @Mutation(() => UserBook, { nullable: true })
     async updateUserBook(
         @Arg("data", () => UpdateUserBookInput) data: UpdateUserBookInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<UserBook> {
         const user = await requireUser(context);
 
         const userBook = await UserBook.findOne({
             where: {
                 id: data.id,
-                user: { id: user.id }
+                user: { id: user.id },
             },
             relations: {
                 user: true,
                 book: {
                     author: true,
-                    category: true
-                }
+                    category: true,
+                },
             },
-        })
+        });
 
         if (!userBook) {
             throw new AppError("User book not found", 404, "NotFoundError");
@@ -374,7 +399,7 @@ export class UserBooksResolver {
         // Track if status changed to READ
         const wasRead = userBook.status === ReadingStatus.READ;
 
-        const { id, ...updateData } = data
+        const { id, ...updateData } = data;
 
         // Apply updates
         Object.assign(userBook, updateData);
@@ -397,56 +422,52 @@ export class UserBooksResolver {
                 user: true,
                 book: {
                     author: true,
-                    category: true
-                }
+                    category: true,
+                },
             },
         });
 
-        return updatedUserBook!
+        return updatedUserBook!;
     }
 
     /**
-    * Mutation to delete an existing user book.
-    *
-    * @param id - The ID of the user book to delete.
-    * @param context - GraphQL context containing the authenticated user.
-    *
-    * @returns The deleted UserBook object (with ID), or null if not found.
-    *
-    * Only the owner can perform this action: the lookup is scoped to the
-    * authenticated user, so another user's entry is simply not found.
-    *
-    * @throws AppError - If the user book is not found, user is unauthorized, or deletion fails.
-    */
+     * Mutation to delete an existing user book.
+     *
+     * @param id - The ID of the user book to delete.
+     * @param context - GraphQL context containing the authenticated user.
+     *
+     * @returns The deleted UserBook object (with ID), or null if not found.
+     *
+     * Only the owner can perform this action: the lookup is scoped to the
+     * authenticated user, so another user's entry is simply not found.
+     *
+     * @throws AppError - If the user book is not found, user is unauthorized, or deletion fails.
+     */
     @Authorized()
     @Mutation(() => UserBook, { nullable: true })
     async deleteUserBook(
         @Arg("id", () => ID) id: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<UserBook | null> {
         const user = await requireUser(context);
-        
+
         const userBook = await UserBook.findOne({
             where: {
                 id,
                 user: { id: user.id },
             },
             relations: {
-                user: true
+                user: true,
             },
-        })
+        });
 
         if (!userBook) {
-            throw new AppError(
-                "Book not found",
-                404,
-                "BookNotFoundError"
-            )
+            throw new AppError("Book not found", 404, "BookNotFoundError");
         }
 
-        await userBook.remove()
-        userBook.id = id
+        await userBook.remove();
+        userBook.id = id;
 
-        return userBook
+        return userBook;
     }
 }

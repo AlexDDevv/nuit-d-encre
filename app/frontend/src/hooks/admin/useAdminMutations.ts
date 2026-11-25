@@ -63,8 +63,7 @@ export function useAdminMutations() {
         });
 
     return {
-        deleteUser: (id: string) =>
-            deleteUserMutation({ variables: { id } }),
+        deleteUser: (id: string) => deleteUserMutation({ variables: { id } }),
         deleteBook: (bookId: string) =>
             deleteBookMutation({ variables: { bookId } }),
         deleteAuthor: (authorId: string) =>

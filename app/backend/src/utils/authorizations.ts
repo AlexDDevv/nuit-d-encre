@@ -1,5 +1,5 @@
-import { User } from "../database/entities/user/user"
-import { Roles } from "../types/types"
+import { User } from "../database/entities/user/user";
+import { Roles } from "../types/types";
 
 /**
  * Checks if the current user is either the owner of the resource or has admin role.
@@ -18,9 +18,9 @@ import { Roles } from "../types/types"
  * ```
  */
 export function isOwnerOrAdmin(
-	ownerId: string,
-	currentUser: User | null | undefined
+    ownerId: string,
+    currentUser: User | null | undefined,
 ): boolean {
-	if (!currentUser) return false
-	return ownerId === currentUser.id || currentUser.role === Roles.Admin
+    if (!currentUser) return false;
+    return ownerId === currentUser.id || currentUser.role === Roles.Admin;
 }

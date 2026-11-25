@@ -18,7 +18,10 @@ const LANG_LABELS: Record<string, string> = {
 };
 
 export const sourceInfo = (source?: string) =>
-    (source && SOURCE_LABELS[source]) || { label: "Source externe", short: "EXTERNE" };
+    (source && SOURCE_LABELS[source]) || {
+        label: "Source externe",
+        short: "EXTERNE",
+    };
 
 export const langLabel = (lang?: string) =>
     lang ? (LANG_LABELS[lang.toLowerCase()] ?? lang.toUpperCase()) : null;

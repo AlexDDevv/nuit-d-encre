@@ -6,7 +6,8 @@ export const validateInfos = ({ name, bio }: { name: string; bio: string }) => {
     const n = name.trim();
     const e: { name?: string; bio?: string } = {};
     if (n.length === 0) e.name = "Le nom d'utilisateur est requis.";
-    else if (n.length < 2) e.name = "Le nom doit comporter au moins 2 caractères.";
+    else if (n.length < 2)
+        e.name = "Le nom doit comporter au moins 2 caractères.";
     else if (n.length > 100) e.name = "100 caractères maximum.";
     if (bio.length > 300) e.bio = "La bio ne doit pas dépasser 300 caractères.";
     return e;
@@ -27,6 +28,7 @@ export const validateSecurity = ({
     else if (!isPasswordStrong(newpw))
         e.newpw =
             "Ajoutez une majuscule, une minuscule, un chiffre et un symbole (255 caractères max).";
-    if (confirm !== newpw) e.confirm = "Les mots de passe ne correspondent pas.";
+    if (confirm !== newpw)
+        e.confirm = "Les mots de passe ne correspondent pas.";
     return e;
 };

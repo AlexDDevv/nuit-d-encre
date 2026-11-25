@@ -13,7 +13,7 @@ export const register = async (
     email: string,
     password: string,
     userName: string,
-    role: UserRole
+    role: UserRole,
 ): Promise<User> => {
     const userRepository = dataSource.getRepository(User);
 
@@ -25,7 +25,7 @@ export const register = async (
         throw new AppError(
             "Email already exists",
             400,
-            "EmailAlreadyUsedError"
+            "EmailAlreadyUsedError",
         );
     }
 
@@ -40,7 +40,7 @@ export const register = async (
             userName,
             role,
             level: 1,
-            xp: 0
+            xp: 0,
         });
 
         await user.save();
@@ -51,7 +51,7 @@ export const register = async (
             "Failed to create user",
             500,
             "DatabaseError",
-            error instanceof Error ? error.message : undefined
+            error instanceof Error ? error.message : undefined,
         );
     }
 };
@@ -63,7 +63,7 @@ const setAuthCookie = (user: User, cookies: Cookies): void => {
         throw new AppError(
             "JWT_SECRET is not defined in environment variables.",
             500,
-            "InternalServerError"
+            "InternalServerError",
         );
     }
 
@@ -72,7 +72,7 @@ const setAuthCookie = (user: User, cookies: Cookies): void => {
         process.env.JWT_SECRET,
         {
             expiresIn: "1d",
-        }
+        },
     );
 
     cookies.set("token", token, {
@@ -87,9 +87,7 @@ const setAuthCookie = (user: User, cookies: Cookies): void => {
 // numérique tant que le nom est déjà pris. Vérification best-effort au
 // niveau applicatif (non atomique) : il n'existe aucune contrainte
 // d'unicité BDD sur User.userName pour servir de filet de sécurité.
-const generateUniqueUserName = async (
-    base: string
-): Promise<string> => {
+const generateUniqueUserName = async (base: string): Promise<string> => {
     const userRepository = dataSource.getRepository(User);
     const cleaned = base.trim().slice(0, 90) || "lecteur";
     let candidate = cleaned;
@@ -117,13 +115,13 @@ const cloudinaryService = new CloudinaryService();
 // (le profil affiche alors le monogramme d'initiales) et la connexion aboutit.
 const syncGoogleAvatar = async (
     user: User,
-    pictureUrl?: string | null
+    pictureUrl?: string | null,
 ): Promise<void> => {
     if (!pictureUrl) return;
 
     const url = await cloudinaryService.uploadImage(
         pictureUrl,
-        `users/${user.id}/avatar`
+        `users/${user.id}/avatar`,
     );
 
     if (url) user.avatar = url;
@@ -132,7 +130,7 @@ const syncGoogleAvatar = async (
 // Résout l'utilisateur associé à un profil Google vérifié : par googleId,
 // sinon liaison par email, sinon création d'un nouveau compte.
 export const resolveOrCreateGoogleUser = async (
-    profile: GoogleProfile
+    profile: GoogleProfile,
 ): Promise<User> => {
     const userRepository = dataSource.getRepository(User);
 
@@ -157,7 +155,7 @@ export const resolveOrCreateGoogleUser = async (
 
     // 3. Nouveau compte.
     const userName = await generateUniqueUserName(
-        profile.name ?? profile.email.split("@")[0]
+        profile.name ?? profile.email.split("@")[0],
     );
 
     const user = User.create({
@@ -185,12 +183,12 @@ export const resolveOrCreateGoogleUser = async (
 // résout/crée l'utilisateur et pose le cookie de session.
 export const googleAuth = async (
     code: string,
-    cookies: Cookies
+    cookies: Cookies,
 ): Promise<LogInResponse> => {
     const client = new OAuth2Client(
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET,
-        "postmessage"
+        "postmessage",
     );
 
     const { tokens } = await client.getToken(code);
@@ -229,7 +227,7 @@ export const googleAuth = async (
 export const login = async (
     email: string,
     password: string,
-    cookies: Cookies
+    cookies: Cookies,
 ): Promise<LogInResponse> => {
     const userRepository = dataSource.getRepository(User);
 
@@ -251,7 +249,7 @@ export const login = async (
         // Check if the password is correct
         const isPasswordValid = await argon2.verify(
             user.hashedPassword,
-            password
+            password,
         );
 
         if (!isPasswordValid) {
@@ -271,7 +269,7 @@ export const login = async (
             "Failed to log in the user.",
             500,
             "InternalServerError",
-            error instanceof Error ? error.message : undefined
+            error instanceof Error ? error.message : undefined,
         );
     }
 };
@@ -311,7 +309,7 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
 
 export const updateProfile = async (
     userId: string,
-    data: { userName?: string; bio?: string; isLibraryPublic?: boolean }
+    data: { userName?: string; bio?: string; isLibraryPublic?: boolean },
 ): Promise<User> => {
     const userRepository = dataSource.getRepository(User);
 
@@ -329,7 +327,7 @@ export const updateProfile = async (
             throw new AppError(
                 "Ce nom d'utilisateur est déjà pris",
                 409,
-                "ConflictError"
+                "ConflictError",
             );
         }
     }
@@ -347,7 +345,7 @@ export const changePassword = async (
     userId: string,
     currentPassword: string,
     newPassword: string,
-    cookies: Cookies
+    cookies: Cookies,
 ): Promise<boolean> => {
     // Même politique qu'à l'inscription : sans ce contrôle, le changement
     // de mot de passe permettait de choisir un mot de passe faible.
@@ -355,7 +353,7 @@ export const changePassword = async (
         throw new AppError(
             "Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole.",
             400,
-            "ValidationError"
+            "ValidationError",
         );
     }
 
@@ -372,7 +370,7 @@ export const changePassword = async (
         throw new AppError(
             "L'utilisateur n'a pas de mot de passe défini",
             400,
-            "BadRequestError"
+            "BadRequestError",
         );
     }
 
@@ -382,7 +380,7 @@ export const changePassword = async (
         throw new AppError(
             "Mot de passe actuel incorrect",
             401,
-            "UnauthorizedError"
+            "UnauthorizedError",
         );
     }
 
@@ -412,7 +410,7 @@ export type ProfileImage = "avatar" | "banner";
 export const setProfileImage = async (
     userId: string,
     kind: ProfileImage,
-    url: string | null
+    url: string | null,
 ): Promise<User> => {
     if (url !== null && !isValidHttpsUrl(url)) {
         throw new AppError("Invalid URL", 400, "ValidationError");

@@ -7,16 +7,16 @@
  */
 
 import {
-	BaseEntity,
-	Column,
-	Entity,
-	ManyToOne,
-	OneToMany,
-	PrimaryGeneratedColumn,
-} from "typeorm"
-import { ObjectType, Field, ID } from "type-graphql"
-import { User } from "../user/user"
-import { Book } from "../book/book"
+    BaseEntity,
+    Column,
+    Entity,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from "typeorm";
+import { ObjectType, Field, ID } from "type-graphql";
+import { User } from "../user/user";
+import { Book } from "../book/book";
 
 /**
  * Category Entity
@@ -53,60 +53,60 @@ import { Book } from "../book/book"
 @ObjectType()
 @Entity({ name: "category" })
 export class Category extends BaseEntity {
-	/**
-	 * Unique identifier for the category
-	 * @description
-	 * Auto-generated primary key.
-	 */
-	@Field(() => ID)
-	@PrimaryGeneratedColumn("uuid")
-	id!: string
+    /**
+     * Unique identifier for the category
+     * @description
+     * Auto-generated primary key.
+     */
+    @Field(() => ID)
+    @PrimaryGeneratedColumn("uuid")
+    id!: string;
 
-	/**
-	 * Name of the book category
-	 * @description
-	 * A short, unique label used to classify books.
-	 */
-	@Field()
-	@Column({ length: 100, unique: true })
-	name!: string
+    /**
+     * Name of the book category
+     * @description
+     * A short, unique label used to classify books.
+     */
+    @Field()
+    @Column({ length: 100, unique: true })
+    name!: string;
 
-	/**
-	 * Books belonging to this category
-	 * @description
-	 * One-to-many relation to the `Book` entity.
-	 */
-	@OneToMany(() => Book, book => book.category)
-	@Field(() => [Book])
-	books!: Book[]
+    /**
+     * Books belonging to this category
+     * @description
+     * One-to-many relation to the `Book` entity.
+     */
+    @OneToMany(() => Book, (book) => book.category)
+    @Field(() => [Book])
+    books!: Book[];
 
-	/**
-	 * User who created the category
-	 * @description
-	 * Many-to-one relation to the `User` entity.
-	 */
-	@ManyToOne(() => User)
-	@Field(() => User, { nullable: true })
-	createdBy!: User
+    /**
+     * User who created the category
+     * @description
+     * Many-to-one relation to the `User` entity.
+     */
+    @ManyToOne(() => User)
+    @Field(() => User, { nullable: true })
+    createdBy!: User;
 
-	/**
-	 * Timestamp when the category was created
-	 * @description
-	 * Automatically set on insertion.
-	 */
-	@Field()
-	@Column({ default: () => "CURRENT_TIMESTAMP" })
-	createdAt!: Date
+    /**
+     * Timestamp when the category was created
+     * @description
+     * Automatically set on insertion.
+     */
+    @Field()
+    @Column({ default: () => "CURRENT_TIMESTAMP" })
+    createdAt!: Date;
 
-	/**
-	 * Timestamp when the category was last updated
-	 * @description
-	 * Automatically updated on change.
-	 */
-	@Field()
-	@Column({
-		default: () => "CURRENT_TIMESTAMP",
-		onUpdate: "CURRENT_TIMESTAMP",
-	})
-	updatedAt!: Date
+    /**
+     * Timestamp when the category was last updated
+     * @description
+     * Automatically updated on change.
+     */
+    @Field()
+    @Column({
+        default: () => "CURRENT_TIMESTAMP",
+        onUpdate: "CURRENT_TIMESTAMP",
+    })
+    updatedAt!: Date;
 }

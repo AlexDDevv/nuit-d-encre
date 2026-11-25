@@ -11,7 +11,7 @@ export default function AuthorCardSkeleton() {
             {Array.from({ length: 12 }, (_, index) => (
                 <div
                     key={index}
-                    className="border-border bg-card relative aspect-2/3 overflow-hidden rounded-xl border-2"
+                    className="border-border bg-card aspect-2/3 relative overflow-hidden rounded-xl border-2"
                 >
                     {/* médaillon */}
                     <div className="absolute inset-x-0 top-[14%] flex justify-center">

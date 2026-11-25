@@ -3,16 +3,10 @@ import { FaFire, FaQuoteLeft } from "react-icons/fa6";
 import RatingStars from "@/components/sections/library/UI/RatingStars";
 import { Book } from "@/types/types";
 
-function StatChip({
-    children,
-    title,
-}: {
-    children: ReactNode;
-    title: string;
-}) {
+function StatChip({ children, title }: { children: ReactNode; title: string }) {
     return (
         <span
-            className="border-border inline-flex items-center gap-2 rounded-full border-2 bg-[hsl(20_3%_14%/0.6)] px-3.5 py-2 font-body text-xs"
+            className="border-border font-body inline-flex items-center gap-2 rounded-full border-2 bg-[hsl(20_3%_14%/0.6)] px-3.5 py-2 text-xs"
             title={title}
         >
             {children}
@@ -25,8 +19,7 @@ function StatChip({
  * et de recommandations.
  */
 export default function BookStatChips({ book }: { book: Book }) {
-    const hasRating =
-        book.averageRating != null && (book.reviewCount ?? 0) > 0;
+    const hasRating = book.averageRating != null && (book.reviewCount ?? 0) > 0;
     const reviewCount = book.reviewCount ?? 0;
     const recCount = book.recommendationCount ?? 0;
 

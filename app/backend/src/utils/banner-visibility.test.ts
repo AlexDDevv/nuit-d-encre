@@ -8,7 +8,11 @@ describe("isBannerVisibleTo", () => {
     });
 
     it("réserve une bannière « connectés » aux utilisateurs authentifiés", () => {
-        expect(isBannerVisibleTo(BannerAudience.AUTHENTICATED, true)).toBe(true);
-        expect(isBannerVisibleTo(BannerAudience.AUTHENTICATED, false)).toBe(false);
+        expect(isBannerVisibleTo(BannerAudience.AUTHENTICATED, true)).toBe(
+            true,
+        );
+        expect(isBannerVisibleTo(BannerAudience.AUTHENTICATED, false)).toBe(
+            false,
+        );
     });
 });

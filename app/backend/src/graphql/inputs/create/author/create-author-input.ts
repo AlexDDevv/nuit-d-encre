@@ -28,7 +28,7 @@ import { Column } from "typeorm";
  * - `wikipediaUrl`: optional link to a Wikipedia page for the author.
  * - `officialWebsite`: optional link to the author’s official website.
  *
-    * The class uses the following decorators:
+ * The class uses the following decorators:
  * - `@Field()`: Exposes the property in the GraphQL schema (via type-graphql).
  * - `@Length()`: Validates string length.
  * - `@ValidateIf()`: Allowed to accept empty fields.
@@ -61,26 +61,33 @@ export class CreateAuthorInput {
     @Field({ nullable: true })
     @Column({ nullable: true })
     @SkipIfEmpty()
-    @Length(1, 10000, { message: "Biography must be between 1 and 10000 characters" })
-    biography?: string
+    @Length(1, 10000, {
+        message: "Biography must be between 1 and 10000 characters",
+    })
+    biography?: string;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
     @SkipIfEmpty()
     @Length(1, 100, {
-        message: "Nationality must be between 1 and 100 characters ('french', 'english').",
+        message:
+            "Nationality must be between 1 and 100 characters ('french', 'english').",
     })
     nationality?: string;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
     @SkipIfEmpty()
-    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Wikipedia URL must be a valid http(s) URL." })
+    @IsUrl(EXTERNAL_URL_OPTIONS, {
+        message: "Wikipedia URL must be a valid http(s) URL.",
+    })
     wikipediaUrl?: string;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
     @SkipIfEmpty()
-    @IsUrl(EXTERNAL_URL_OPTIONS, { message: "Official website URL must be a valid http(s) URL." })
+    @IsUrl(EXTERNAL_URL_OPTIONS, {
+        message: "Official website URL must be a valid http(s) URL.",
+    })
     officialWebsite?: string;
 }

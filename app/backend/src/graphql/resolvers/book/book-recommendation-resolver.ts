@@ -29,7 +29,7 @@ import { requireUser } from "../../../utils/current-user";
  * BookRecommendation Resolver
  * @description
  * Handles all book recommendation-related GraphQL mutations and queries.
- * 
+ *
  * Recommendations are lightweight endorsements that users can toggle on/off.
  * Unlike reviews, they contain no text or rating - just a simple "I recommend this book".
  */
@@ -37,16 +37,16 @@ import { requireUser } from "../../../utils/current-user";
 export class BookRecommendationsResolver {
     /**
      * Query to check if the current user has recommended a specific book.
-     * 
+     *
      * @description
      * Returns the recommendation object if it exists, or null if the user
      * hasn't recommended this book yet.
-     * 
+     *
      * @param bookId - The ID of the book to check.
      * @param context - GraphQL context containing the authenticated user.
-     * 
+     *
      * @returns The BookRecommendation object if found, null otherwise.
-     * 
+     *
      * @example
      * ```graphql
      * query {
@@ -56,14 +56,14 @@ export class BookRecommendationsResolver {
      *   }
      * }
      * ```
-     * 
+     *
      * @throws AppError - If user is not authenticated or query fails.
      */
     @Authorized()
     @Query(() => BookRecommendation, { nullable: true })
     async bookRecommendation(
         @Arg("bookId", () => ID) bookId: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<BookRecommendation | null> {
         const user = await requireUser(context);
 
@@ -83,22 +83,22 @@ export class BookRecommendationsResolver {
 
     /**
      * Mutation to toggle a book recommendation.
-     * 
+     *
      * @description
      * This is the primary way to manage recommendations. It works as a toggle:
      * - If the user hasn't recommended the book → creates a new recommendation
      * - If the user has already recommended it → removes the recommendation
-     * 
+     *
      * This approach is more user-friendly than separate create/delete mutations
      * as it simplifies the frontend logic (one button that toggles state).
-     * 
+     *
      * @param data - Input containing the book ID to recommend.
      * @param context - GraphQL context containing the authenticated user.
-     * 
+     *
      * @returns An object with:
      * - `recommendation`: The BookRecommendation object (null if removed)
      * - `action`: "created" or "removed" to indicate what happened
-     * 
+     *
      * @example
      * ```graphql
      * mutation {
@@ -111,7 +111,7 @@ export class BookRecommendationsResolver {
      *   }
      * }
      * ```
-     * 
+     *
      * @throws AppError - If user is not found, book doesn't exist, or operation fails.
      */
     @Authorized()
@@ -119,7 +119,7 @@ export class BookRecommendationsResolver {
     async toggleBookRecommendation(
         @Arg("data", () => CreateBookRecommendationInput)
         data: CreateBookRecommendationInput,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<BookRecommendationToggleResult> {
         const user = await requireUser(context);
 
@@ -176,17 +176,17 @@ export class BookRecommendationsResolver {
 
     /**
      * Mutation to delete a book recommendation (alternative to toggle).
-     * 
+     *
      * @description
      * Explicit delete operation for removing a recommendation.
      * Can be useful if you prefer separate create/delete mutations
      * instead of the toggle approach.
-     * 
+     *
      * @param bookId - The ID of the book to remove the recommendation from.
      * @param context - GraphQL context containing the authenticated user.
-     * 
+     *
      * @returns The deleted BookRecommendation object with its ID.
-     * 
+     *
      * @example
      * ```graphql
      * mutation {
@@ -196,14 +196,14 @@ export class BookRecommendationsResolver {
      *   }
      * }
      * ```
-     * 
+     *
      * @throws AppError - If recommendation not found or deletion fails.
      */
     @Authorized()
     @Mutation(() => BookRecommendation, { nullable: true })
     async deleteBookRecommendation(
         @Arg("bookId", () => ID) bookId: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<BookRecommendation | null> {
         const user = await requireUser(context);
 
@@ -222,7 +222,7 @@ export class BookRecommendationsResolver {
             throw new AppError(
                 "Recommendation not found",
                 404,
-                "NotFoundError"
+                "NotFoundError",
             );
         }
 

@@ -41,10 +41,13 @@ export default function StatusFilterSegments({
                 type="button"
                 onClick={() => onStatusChange("")}
                 aria-pressed={selectedStatus === ""}
-                className={cn(SEG_BASE, selectedStatus === "" ? ACTIVE : INACTIVE)}
+                className={cn(
+                    SEG_BASE,
+                    selectedStatus === "" ? ACTIVE : INACTIVE,
+                )}
             >
                 Tout
-                <span className="font-mono text-xxs font-medium opacity-70">
+                <span className="text-xxs font-mono font-medium opacity-70">
                     {total}
                 </span>
             </button>
@@ -65,7 +68,7 @@ export default function StatusFilterSegments({
                             )}
                         />
                         {seg.label}
-                        <span className="font-mono text-xxs font-medium opacity-70">
+                        <span className="text-xxs font-mono font-medium opacity-70">
                             {countByStatus[seg.value]}
                         </span>
                     </button>

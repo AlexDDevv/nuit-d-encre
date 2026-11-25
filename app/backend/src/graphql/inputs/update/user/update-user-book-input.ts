@@ -9,12 +9,7 @@
  */
 
 import { Field, ID, InputType } from "type-graphql";
-import {
-  IsEnum,
-  IsOptional,
-  Validate,
-  IsDate,
-} from "class-validator";
+import { IsEnum, IsOptional, Validate, IsDate } from "class-validator";
 import { ReadingStatus } from "../../../../types/types";
 import { EndAfterStart } from "../../../helpers/endAfterStart";
 
@@ -60,28 +55,28 @@ import { EndAfterStart } from "../../../helpers/endAfterStart";
  */
 @InputType()
 export class UpdateUserBookInput {
-  /** Target by UserBook primary key (preferred) */
-  @Field(() => ID)
-  id!: string
+    /** Target by UserBook primary key (preferred) */
+    @Field(() => ID)
+    id!: string;
 
-  /** Reading status */
-  @Field(() => ReadingStatus, { nullable: true })
-  @IsOptional()
-  @IsEnum(ReadingStatus)
-  status?: ReadingStatus;
+    /** Reading status */
+    @Field(() => ReadingStatus, { nullable: true })
+    @IsOptional()
+    @IsEnum(ReadingStatus)
+    status?: ReadingStatus;
 
-  /** Visibility flag (public/private) */
+    /** Visibility flag (public/private) */
 
-  /** Reading start date */
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsDate()
-  startedAt?: Date;
+    /** Reading start date */
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsDate()
+    startedAt?: Date;
 
-  /** Reading finish date (>= startedAt) */
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsDate()
-  @Validate(EndAfterStart)
-  finishedAt?: Date;
+    /** Reading finish date (>= startedAt) */
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsDate()
+    @Validate(EndAfterStart)
+    finishedAt?: Date;
 }

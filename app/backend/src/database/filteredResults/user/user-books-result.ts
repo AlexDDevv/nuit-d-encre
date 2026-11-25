@@ -1,8 +1,4 @@
-import {
-    Field,
-    Int,
-    ObjectType,
-} from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { UserBook } from "../../../database/entities/user/user-book";
 
 @ObjectType()

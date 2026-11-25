@@ -6,8 +6,8 @@
  * throughout the application.
  */
 
-import { useContext } from "react"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
 
 /**
  * useAuthContext Hook
@@ -19,11 +19,11 @@ import { AuthContext } from "@/contexts/AuthContext"
  * @throws Error if used outside of an AuthProvider
  */
 export function useAuthContext() {
-	const context = useContext(AuthContext)
+    const context = useContext(AuthContext);
 
-	if (context === undefined) {
-		throw new Error("useAuthContext must be used within an AuthProvider")
-	}
+    if (context === undefined) {
+        throw new Error("useAuthContext must be used within an AuthProvider");
+    }
 
-	return context
+    return context;
 }

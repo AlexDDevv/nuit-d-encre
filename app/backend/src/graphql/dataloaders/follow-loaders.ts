@@ -16,7 +16,10 @@ export async function batchFollowerCount(
             .where("f.followingId IN (:...ids)", { ids })
             .groupBy("f.followingId")
             .getRawMany<{ userId: string; count: string }>();
-        const rows = raw.map((r) => ({ key: r.userId, value: Number(r.count) }));
+        const rows = raw.map((r) => ({
+            key: r.userId,
+            value: Number(r.count),
+        }));
         return mapRowsToKeys<string, number>(ids, rows, 0);
     } catch (error) {
         console.error("Error batching follower counts:", error);
@@ -35,7 +38,10 @@ export async function batchFollowingCount(
             .where("f.followerId IN (:...ids)", { ids })
             .groupBy("f.followerId")
             .getRawMany<{ userId: string; count: string }>();
-        const rows = raw.map((r) => ({ key: r.userId, value: Number(r.count) }));
+        const rows = raw.map((r) => ({
+            key: r.userId,
+            value: Number(r.count),
+        }));
         return mapRowsToKeys<string, number>(ids, rows, 0);
     } catch (error) {
         console.error("Error batching following counts:", error);
@@ -53,7 +59,10 @@ export function makeIsFollowedByMeBatch(getUser: GetUser) {
             const me = await getUser();
             if (!me) return ids.map(() => false);
             const rows = await UserFollow.find({
-                where: { follower: { id: me.id }, following: { id: In([...ids]) } },
+                where: {
+                    follower: { id: me.id },
+                    following: { id: In([...ids]) },
+                },
                 relations: { following: true },
             });
             const followed = new Set(rows.map((r) => r.following.id));

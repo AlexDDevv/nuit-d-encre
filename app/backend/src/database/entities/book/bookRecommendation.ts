@@ -72,7 +72,9 @@ export class BookRecommendation extends BaseEntity {
      * Many-to-one relationship with the User entity.
      * Each recommendation belongs to exactly one user.
      */
-    @ManyToOne(() => User, (user) => user.bookRecommendations, { nullable: true })
+    @ManyToOne(() => User, (user) => user.bookRecommendations, {
+        nullable: true,
+    })
     @Field(() => User, { nullable: true })
     user?: User | null;
 
@@ -95,4 +97,4 @@ export class BookRecommendation extends BaseEntity {
     @Field()
     @Column({ default: () => "CURRENT_TIMESTAMP" })
     createdAt!: Date;
-} 
+}

@@ -44,12 +44,12 @@ export default function Socle({
             {/* libellé de l'occupant (au-dessus) */}
             <div className="mb-2 flex h-9 flex-col items-center justify-end text-center">
                 {selected ? (
-                    <span className="border-primary/50 text-primary inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-[hsl(43_59%_81%/0.16)] px-2 py-0.75 font-body text-xxs font-bold">
+                    <span className="border-primary/50 text-primary py-0.75 font-body text-xxs inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-[hsl(43_59%_81%/0.16)] px-2 font-bold">
                         <FaCheck size={10} aria-hidden="true" /> Ce livre
                     </span>
                 ) : occName ? (
                     <span
-                        className="max-w-32.5 truncate font-quote text-xs italic leading-tight text-[hsl(20_12%_58%)]"
+                        className="max-w-32.5 font-quote truncate text-xs italic leading-tight text-[hsl(20_12%_58%)]"
                         title={`Occupée par « ${occName} »`}
                     >
                         occupée par
@@ -69,23 +69,25 @@ export default function Socle({
                 type="button"
                 onClick={() => onPick(rank)}
                 aria-pressed={selected}
-                aria-label={`Placer « ${bookTitle} » en ${PLACE_LABEL[rank]}${current ? " (position actuelle)" : ""
-                    }${occName
+                aria-label={`Placer « ${bookTitle} » en ${PLACE_LABEL[rank]}${
+                    current ? " (position actuelle)" : ""
+                }${
+                    occName
                         ? `. Occupée par ${occName}, qui quittera vos favoris`
                         : ""
-                    }`}
+                }`}
                 className={cn(
                     "focus-visible:ring-primary focus-visible:ring-offset-popover group relative flex w-full cursor-pointer flex-col items-center justify-start gap-2 overflow-hidden rounded-t-xl border-2 pt-4 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
                     HEIGHT[rank],
                     selected
                         ? cn(
-                            SELECTED_GRADIENT,
-                            "border-t-primary border-x-[hsl(43_59%_81%/0.6)] border-b-transparent shadow-[0_-2px_30px_-6px_hsl(43_59%_60%/0.55),inset_0_1px_0_hsl(43_59%_81%/0.4)]",
-                        )
+                              SELECTED_GRADIENT,
+                              "border-t-primary border-x-[hsl(43_59%_81%/0.6)] border-b-transparent shadow-[0_-2px_30px_-6px_hsl(43_59%_60%/0.55),inset_0_1px_0_hsl(43_59%_81%/0.4)]",
+                          )
                         : cn(
-                            BASE_GRADIENT[rank],
-                            "border-border shadow-[inset_0_1px_0_hsl(43_59%_81%/0.08)] hover:border-t-primary hover:border-x-[hsl(43_59%_81%/0.6)] hover:shadow-[0_-2px_22px_-10px_hsl(43_59%_60%/0.45),inset_0_1px_0_hsl(43_59%_81%/0.12)]",
-                        ),
+                              BASE_GRADIENT[rank],
+                              "border-border hover:border-t-primary shadow-[inset_0_1px_0_hsl(43_59%_81%/0.08)] hover:border-x-[hsl(43_59%_81%/0.6)] hover:shadow-[0_-2px_22px_-10px_hsl(43_59%_60%/0.45),inset_0_1px_0_hsl(43_59%_81%/0.12)]",
+                          ),
                 )}
             >
                 {/* emblème */}
@@ -118,9 +120,9 @@ export default function Socle({
                 {current && (
                     <span
                         className={cn(
-                            "absolute left-1/2 top-1 -translate-x-1/2 rounded-full border bg-[hsl(20_3%_9%/0.55)] px-2 py-px font-mono text-xxxs font-medium uppercase tracking-wider",
+                            "text-xxxs absolute left-1/2 top-1 -translate-x-1/2 rounded-full border bg-[hsl(20_3%_9%/0.55)] px-2 py-px font-mono font-medium uppercase tracking-wider",
                             selected
-                                ? "border-[hsl(43_59%_21%/0.5)] text-primary-foreground"
+                                ? "text-primary-foreground border-[hsl(43_59%_21%/0.5)]"
                                 : "border-primary/40 text-primary",
                         )}
                     >

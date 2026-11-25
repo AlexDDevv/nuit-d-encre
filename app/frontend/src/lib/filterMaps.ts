@@ -86,7 +86,6 @@ export const countryLabelMap: Record<string, string> = {
 export function getCountryLabel(nationality?: string): string {
     if (!nationality) return "";
     return (
-        countryLabelMap[nationality.toLowerCase()] ??
-        nationality.toUpperCase()
+        countryLabelMap[nationality.toLowerCase()] ?? nationality.toUpperCase()
     );
 }

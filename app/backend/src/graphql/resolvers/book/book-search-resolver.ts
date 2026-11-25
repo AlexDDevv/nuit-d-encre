@@ -19,7 +19,10 @@ import {
     parseFullName,
 } from "../../../utils/author-factory";
 import { Author } from "../../../database/entities/author/author";
-import { enforceRateLimit, tryRateLimit } from "../../../middlewares/rate-limiter";
+import {
+    enforceRateLimit,
+    tryRateLimit,
+} from "../../../middlewares/rate-limiter";
 import { requireUser } from "../../../utils/current-user";
 
 const DB_THRESHOLD = 5;
@@ -42,7 +45,11 @@ export class BookSearchResolver {
         const trimmed = query.trim();
         if (trimmed.length < 3) return [];
         if (trimmed.length > 200) {
-            throw new AppError("Recherche trop longue (200 caractères max)", 400, "ValidationError");
+            throw new AppError(
+                "Recherche trop longue (200 caractères max)",
+                400,
+                "ValidationError",
+            );
         }
 
         // Les ISBN sont stockés sans séparateurs : normaliser la saisie
@@ -51,7 +58,17 @@ export class BookSearchResolver {
 
         // 1. DB search
         const dbBooks = await Book.createQueryBuilder("book")
-            .select(["book.id", "book.title", "book.isbn13", "book.publishedYear", "book.publisher", "book.language", "book.coverUrl", "book.format", "book.isImported"])
+            .select([
+                "book.id",
+                "book.title",
+                "book.isbn13",
+                "book.publishedYear",
+                "book.publisher",
+                "book.language",
+                "book.coverUrl",
+                "book.format",
+                "book.isImported",
+            ])
             .leftJoin("book.author", "author")
             .addSelect(["author.id", "author.firstname", "author.lastname"])
             .leftJoin("book.category", "category")

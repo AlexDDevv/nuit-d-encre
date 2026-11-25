@@ -6,16 +6,23 @@
  */
 
 import { Field, ID, InputType, Int } from "type-graphql";
-import { IsInt, IsOptional, IsString, Max, MaxLength, Min } from "class-validator";
+import {
+    IsInt,
+    IsOptional,
+    IsString,
+    Max,
+    MaxLength,
+    Min,
+} from "class-validator";
 
 /**
  * CreateBookReviewInput
  * @description
  * Input data required to create a review for a book.
- * 
+ *
  * A review consists of a mandatory rating (numerical score) and an optional
  * text review. The user is automatically determined from the authentication context.
- * 
+ *
  * @example
  * ```graphql
  * mutation {

@@ -40,7 +40,7 @@ export class ProfileResolver {
 
     @Query(() => User, { nullable: true })
     async getUserProfile(
-        @Arg("id", () => ID) id: string
+        @Arg("id", () => ID) id: string,
     ): Promise<User | null> {
         const user = await User.findOne({ where: { id } });
         if (!user) throw new AppError("User not found", 404, "NotFoundError");
@@ -49,7 +49,7 @@ export class ProfileResolver {
 
     @Query(() => [UserBook])
     async getUserFavoriteBooks(
-        @Arg("userId", () => ID) userId: string
+        @Arg("userId", () => ID) userId: string,
     ): Promise<UserBook[]> {
         return UserBook.createQueryBuilder("userBook")
             .leftJoinAndSelect("userBook.user", "user")
@@ -67,12 +67,16 @@ export class ProfileResolver {
     async setFavoriteBook(
         @Arg("userBookId", () => ID) userBookId: string,
         @Arg("rank", () => Int) rank: number,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<UserBook> {
         const user = await requireUser(context);
 
         if (rank < 1 || rank > 3) {
-            throw new AppError("Le rang doit être entre 1 et 3", 400, "BadUserInput");
+            throw new AppError(
+                "Le rang doit être entre 1 et 3",
+                400,
+                "BadUserInput",
+            );
         }
 
         const userBook = await UserBook.findOne({
@@ -85,7 +89,11 @@ export class ProfileResolver {
         }
 
         const existing = await UserBook.findOne({
-            where: { user: { id: user.id }, isFavorite: true, favoriteRank: rank },
+            where: {
+                user: { id: user.id },
+                isFavorite: true,
+                favoriteRank: rank,
+            },
         });
 
         if (existing && existing.id !== userBookId) {
@@ -105,7 +113,7 @@ export class ProfileResolver {
     @Mutation(() => UserBook)
     async removeFavoriteBook(
         @Arg("userBookId", () => ID) userBookId: string,
-        @Ctx() context: Context
+        @Ctx() context: Context,
     ): Promise<UserBook> {
         const user = await requireUser(context);
 

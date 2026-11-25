@@ -6,17 +6,24 @@
  */
 
 import { Field, ID, InputType, Int } from "type-graphql";
-import { IsInt, IsOptional, IsString, Max, MaxLength, Min } from "class-validator";
+import {
+    IsInt,
+    IsOptional,
+    IsString,
+    Max,
+    MaxLength,
+    Min,
+} from "class-validator";
 
 /**
  * UpdateBookReviewInput
  * @description
  * Input data for updating an existing book review.
- * 
+ *
  * All fields except `id` are optional, allowing partial updates.
  * Users can update just the rating, just the text, or both.
  * Only the owner of the review can update it.
- * 
+ *
  * @example
  * ```graphql
  * mutation {

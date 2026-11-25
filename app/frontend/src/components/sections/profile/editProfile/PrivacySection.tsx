@@ -21,9 +21,8 @@ export default function PrivacySection() {
     const [runExport, { loading: exporting }] = useLazyQuery(EXPORT_MY_DATA, {
         fetchPolicy: "network-only",
     });
-    const [deleteAccount, { loading: deleting }] = useMutation(
-        DELETE_MY_ACCOUNT,
-    );
+    const [deleteAccount, { loading: deleting }] =
+        useMutation(DELETE_MY_ACCOUNT);
 
     const handleExport = async () => {
         const { data } = await runExport();
@@ -63,8 +62,8 @@ export default function PrivacySection() {
                     Mes données
                 </h3>
                 <p className="text-muted-foreground/80 font-body text-sm">
-                    Téléchargez une copie de toutes vos données personnelles
-                    au format JSON.
+                    Téléchargez une copie de toutes vos données personnelles au
+                    format JSON.
                 </p>
                 <Button
                     variant="secondary"
@@ -86,8 +85,8 @@ export default function PrivacySection() {
                 </div>
                 <p className="text-muted-foreground/80 font-body text-sm">
                     Cette action est irréversible. Votre profil et vos données
-                    personnelles seront définitivement supprimés ; vos
-                    critiques publiques seront anonymisées.
+                    personnelles seront définitivement supprimés ; vos critiques
+                    publiques seront anonymisées.
                 </p>
                 {!confirmOpen ? (
                     <Button

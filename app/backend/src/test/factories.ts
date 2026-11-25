@@ -27,12 +27,18 @@ export function stubPersistence(entityClass: {
     prototype: { save: unknown; remove: unknown };
 }) {
     const save = jest
-        .spyOn(entityClass.prototype as { save: () => Promise<unknown> }, "save")
+        .spyOn(
+            entityClass.prototype as { save: () => Promise<unknown> },
+            "save",
+        )
         .mockImplementation(async function (this: unknown) {
             return this;
         });
     const remove = jest
-        .spyOn(entityClass.prototype as { remove: () => Promise<unknown> }, "remove")
+        .spyOn(
+            entityClass.prototype as { remove: () => Promise<unknown> },
+            "remove",
+        )
         .mockImplementation(async function (this: unknown) {
             return this;
         });

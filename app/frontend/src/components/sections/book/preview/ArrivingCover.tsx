@@ -12,10 +12,13 @@ function AbsentCover({ title, source }: { title: string; source: string }) {
         >
             <div
                 className="pointer-events-none absolute rounded-sm"
-                style={{ inset: 14, border: "1px dashed hsl(43 59% 81% / 0.22)" }}
+                style={{
+                    inset: 14,
+                    border: "1px dashed hsl(43 59% 81% / 0.22)",
+                }}
             />
             <span
-                className="font-mono text-xxs uppercase tracking-[0.26em]"
+                className="text-xxs font-mono uppercase tracking-[0.26em]"
                 style={{ color: "hsl(43 59% 81% / 0.4)" }}
             >
                 couverture&nbsp;absente
@@ -25,9 +28,12 @@ function AbsentCover({ title, source }: { title: string; source: string }) {
             >
                 {title}
             </h3>
-            <span className="h-px w-10" style={{ background: "hsl(43 59% 81% / 0.35)" }} />
             <span
-                className="font-mono text-xxs tracking-wide"
+                className="h-px w-10"
+                style={{ background: "hsl(43 59% 81% / 0.35)" }}
+            />
+            <span
+                className="text-xxs font-mono tracking-wide"
                 style={{ color: "hsl(20 12% 55%)" }}
             >
                 numérisé&nbsp;·&nbsp;{source}
@@ -52,7 +58,7 @@ function AccessionStamp({ short, code }: { short: string; code: string }) {
                 }}
             >
                 <span
-                    className="font-mono text-xxxs uppercase tracking-[0.2em]"
+                    className="text-xxxs font-mono uppercase tracking-[0.2em]"
                     style={{ color: "hsl(43 59% 81% / 0.62)" }}
                 >
                     Fonds&nbsp;numérique
@@ -63,9 +69,12 @@ function AccessionStamp({ short, code }: { short: string; code: string }) {
                 >
                     {short}
                 </span>
-                <span className="h-px w-full" style={{ background: "hsl(43 59% 81% / 0.35)" }} />
                 <span
-                    className="font-mono text-xxxs tracking-widest"
+                    className="h-px w-full"
+                    style={{ background: "hsl(43 59% 81% / 0.35)" }}
+                />
+                <span
+                    className="text-xxxs font-mono tracking-widest"
                     style={{ color: "hsl(43 59% 81% / 0.5)" }}
                 >
                     Nº&nbsp;{code}
@@ -89,11 +98,11 @@ export function ArrivingCover({ book }: { book: BookSearchResult }) {
                 }}
             />
             <div
-                className="relative mx-auto w-full max-w-75"
+                className="max-w-75 relative mx-auto w-full"
                 style={{ transform: "rotate(-2.4deg)" }}
             >
                 <div
-                    className="bg-background relative aspect-2/3 overflow-hidden rounded-md"
+                    className="bg-background aspect-2/3 relative overflow-hidden rounded-md"
                     style={{
                         border: "2px dashed hsl(43 59% 81% / 0.4)",
                         boxShadow: "0 26px 55px -20px hsl(20 3% 3% / 0.95)",
@@ -104,7 +113,9 @@ export function ArrivingCover({ book }: { book: BookSearchResult }) {
                             src={book.coverUrl}
                             alt={`Couverture de ${book.title}`}
                             className="h-full w-full object-cover"
-                            style={{ filter: "saturate(0.62) brightness(0.82) contrast(0.98)" }}
+                            style={{
+                                filter: "saturate(0.62) brightness(0.82) contrast(0.98)",
+                            }}
                         />
                     ) : (
                         <AbsentCover title={book.title} source={label} />
@@ -118,7 +129,7 @@ export function ArrivingCover({ book }: { book: BookSearchResult }) {
                         }}
                     />
                     <span
-                        className="pointer-events-none absolute left-0 top-0 h-full w-1.25"
+                        className="w-1.25 pointer-events-none absolute left-0 top-0 h-full"
                         style={{ background: "hsl(20 3% 6% / 0.4)" }}
                     />
 
@@ -126,10 +137,12 @@ export function ArrivingCover({ book }: { book: BookSearchResult }) {
                 </div>
 
                 <p
-                    className="mt-4 text-center font-mono text-xxs tracking-wide"
+                    className="text-xxs mt-4 text-center font-mono tracking-wide"
                     style={{ color: "hsl(20 12% 56%)" }}
                 >
-                    {book.coverUrl ? "couverture fournie par " : "aucune couverture · "}
+                    {book.coverUrl
+                        ? "couverture fournie par "
+                        : "aucune couverture · "}
                     <span style={{ color: "hsl(43 30% 64%)" }}>{label}</span>
                 </p>
             </div>

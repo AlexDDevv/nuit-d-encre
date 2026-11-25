@@ -64,7 +64,10 @@ import {
 
 const PER_PAGE = { library: 24, home: 12 } as const;
 
-export function useBooksData({ mode, skip = false }: UseBooksMode & { skip?: boolean }) {
+export function useBooksData({
+    mode,
+    skip = false,
+}: UseBooksMode & { skip?: boolean }) {
     const [searchParams] = useSearchParams();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filters, setFilters] = useState<string[]>([]);

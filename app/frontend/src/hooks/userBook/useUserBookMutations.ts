@@ -1,4 +1,8 @@
-import { CreateUserBookInput, UpdateUserBookInput, UserBook } from "@/types/types";
+import {
+    CreateUserBookInput,
+    UpdateUserBookInput,
+    UserBook,
+} from "@/types/types";
 import { useMutation } from "@apollo/client";
 import { useToast } from "@/hooks/toast/useToast";
 import { parseGraphQLError } from "@/utils/graphql-error";
@@ -106,7 +110,10 @@ export function useUserBookMutations() {
             error: updateUserBookError,
             reset: resetUpdateUserBookError,
         },
-    ] = useMutation<{ updateUserBook: UserBook }, { data: UpdateUserBookInput }>(UPDATE_USER_BOOK, {
+    ] = useMutation<
+        { updateUserBook: UserBook },
+        { data: UpdateUserBookInput }
+    >(UPDATE_USER_BOOK, {
         update(cache, { data }) {
             const updated = data?.updateUserBook;
             if (!updated) return;
@@ -184,7 +191,10 @@ export function useUserBookMutations() {
                     "Vous pouvez poursuivre votre lecture du tableau de bord.",
             });
         } catch (error) {
-            const { title, description } = parseGraphQLError(error, "deleteUserBook");
+            const { title, description } = parseGraphQLError(
+                error,
+                "deleteUserBook",
+            );
             showToast({ type: "error", title, description });
         }
     };

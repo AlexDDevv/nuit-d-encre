@@ -59,8 +59,7 @@ function removeCommentFromCache(
             fields: {
                 comments: (existing = [], { readField }) =>
                     existing.filter(
-                        (ref: Reference) =>
-                            readField("id", ref) !== commentId,
+                        (ref: Reference) => readField("id", ref) !== commentId,
                     ),
                 commentCount: (existing = 0) => Math.max(existing - 1, 0),
             },
