@@ -91,7 +91,6 @@ export default function AuthorForm() {
         entity: author,
         error: authorError,
         isLoading: isLoadingAuthor,
-        notFoundNeedle: "Failed to fetch author",
         notFoundMessage: "Author not found",
         loadErrorMessage: "Error loading author",
     });

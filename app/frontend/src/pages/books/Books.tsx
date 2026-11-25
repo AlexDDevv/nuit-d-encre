@@ -9,6 +9,7 @@ import { useBooksData } from "@/hooks/book/useBooksData";
 import { useBookSearch } from "@/hooks/book/useBookSearch";
 import { BookCardData } from "@/types/types";
 import BookPageSkeleton from "@/components/UI/skeleton/BookPageSkeleton";
+import { isNotFoundError } from "@/lib/graphqlErrors";
 
 export default function Books() {
     const [searchParams] = useSearchParams();
@@ -29,11 +30,7 @@ export default function Books() {
         useBookSearch(query);
 
     if (!isSearchMode && !books && booksError) {
-        const isNotFoundError = booksError.graphQLErrors.some((error) =>
-            error.message.includes("Books not found"),
-        );
-
-        if (isNotFoundError) {
+        if (isNotFoundError(booksError)) {
             throw new Response("Books not found", { status: 404 });
         }
 

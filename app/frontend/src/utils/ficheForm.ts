@@ -1,35 +1,25 @@
-import { ApolloError } from "@apollo/client";
 import { FieldValues, UseFormSetError } from "react-hook-form";
 import { ErrorContext, parseGraphQLError } from "@/utils/graphql-error";
+import { isNotFoundError } from "@/lib/graphqlErrors";
+import { AssertEntityLoadedOptions } from "@/types/types";
 
 /**
  * Garde de chargement d'une fiche (livre, auteur, liste de catégories) :
- * lève une `Response` 404/500 captée par le routeur lorsque l'entité requise
- * est absente ou en erreur.
+ * lève une `Response` captée par le routeur lorsque l'entité requise est
+ * absente (404) ou en erreur (404 si le backend répond NOT_FOUND, 500 sinon).
  */
 export function assertEntityLoaded<E>({
     enabled,
     entity,
     error,
     isLoading,
-    notFoundNeedle,
     notFoundMessage,
     loadErrorMessage,
-}: {
-    enabled: boolean;
-    entity: E | null | undefined;
-    error?: ApolloError;
-    isLoading: boolean;
-    notFoundNeedle: string;
-    notFoundMessage: string;
-    loadErrorMessage: string;
-}) {
+}: AssertEntityLoadedOptions<E>) {
     if (!enabled) return;
 
     if (!entity && error) {
-        const isNotFound = error.graphQLErrors.some((e) =>
-            e.message.includes(notFoundNeedle),
-        );
+        const isNotFound = isNotFoundError(error);
         throw new Response(isNotFound ? notFoundMessage : loadErrorMessage, {
             status: isNotFound ? 404 : 500,
         });

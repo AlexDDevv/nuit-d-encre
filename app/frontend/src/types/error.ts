@@ -1,3 +1,5 @@
+import { ApolloError } from "@apollo/client";
+
 /** Motif d'illustration littéraire associé à chaque type d'erreur. */
 export type ErrorMotif =
     | "emptyShelf"
@@ -29,4 +31,14 @@ export interface ErrorTechDetails {
     message?: string;
     data?: string;
     stack?: string;
+}
+
+/** Options de `assertEntityLoaded` (utils/ficheForm.ts). */
+export interface AssertEntityLoadedOptions<E> {
+    enabled: boolean;
+    entity: E | null | undefined;
+    error?: ApolloError;
+    isLoading: boolean;
+    notFoundMessage: string;
+    loadErrorMessage: string;
 }

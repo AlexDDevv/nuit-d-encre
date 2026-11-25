@@ -28,6 +28,7 @@ import { useAuthorMutations } from "@/hooks/author/useAuthorMutations";
 import { useToast } from "@/hooks/toast/useToast";
 import { hasIncompleteInfo } from "@/lib/utils";
 import { getCountryLabel } from "@/lib/filterMaps";
+import { isNotFoundError } from "@/lib/graphqlErrors";
 
 export default function AuthorDetails() {
     const navigate = useNavigate();
@@ -50,10 +51,7 @@ export default function AuthorDetails() {
     }
 
     if (authorError) {
-        const isNotFoundError = authorError.graphQLErrors.some((error) =>
-            error.message.includes("Failed to fetch author"),
-        );
-        if (isNotFoundError) {
+        if (isNotFoundError(authorError)) {
             throw new Response("Author not found", { status: 404 });
         }
         throw new Response("Error loading author", { status: 500 });

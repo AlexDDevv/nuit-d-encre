@@ -25,6 +25,7 @@ import { hasIncompleteBookInfo, slugify } from "@/lib/utils";
 import { formatLabelMap } from "@/lib/filterMaps";
 import { parseGraphQLError } from "@/utils/graphql-error";
 import { UserBookStatus } from "@/types/types";
+import { isNotFoundError } from "@/lib/graphqlErrors";
 
 export default function BookDetails() {
     const { createUserBook, isCreatingUserBook } = useUserBookMutations();
@@ -49,11 +50,7 @@ export default function BookDetails() {
     }
 
     if (bookError) {
-        const isNotFoundError = bookError.graphQLErrors.some((error) =>
-            error.message.includes("Failed to fetch book"),
-        );
-
-        if (isNotFoundError) {
+        if (isNotFoundError(bookError)) {
             throw new Response("Book not found", { status: 404 });
         }
 

@@ -12,6 +12,7 @@ import { CategoryBook } from "@/types/types";
 import { useLocation, useSearchParams } from "react-router-dom";
 import Button from "@/components/UI/Button/Button";
 import { useCategoriesData } from "@/hooks/category/useCategoriesData";
+import { isNotFoundError } from "@/lib/graphqlErrors";
 
 export default function SelectCategory() {
     const { categories, isLoadingCategories, errorCategories } =
@@ -27,11 +28,7 @@ export default function SelectCategory() {
     }
 
     if (errorCategories) {
-        const isNotFoundError = errorCategories.graphQLErrors.some((error) =>
-            error.message.includes("Failed to fetch categories"),
-        );
-
-        if (isNotFoundError) {
+        if (isNotFoundError(errorCategories)) {
             throw new Response("Categories not found", { status: 404 });
         }
 

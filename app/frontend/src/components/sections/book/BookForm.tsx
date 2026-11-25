@@ -64,7 +64,6 @@ export default function BookForm() {
         entity: categories,
         error: errorCategories,
         isLoading: isLoadingCategories,
-        notFoundNeedle: "Categories not found",
         notFoundMessage: "Categories not found",
         loadErrorMessage: "Failed to fetch categories",
     });
@@ -128,7 +127,6 @@ export default function BookForm() {
         entity: book,
         error: bookError,
         isLoading: isLoadingBook,
-        notFoundNeedle: "Failed to fetch book",
         notFoundMessage: "Book not found",
         loadErrorMessage: "Error loading book",
     });
