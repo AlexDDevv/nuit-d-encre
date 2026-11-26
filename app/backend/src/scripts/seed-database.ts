@@ -1171,6 +1171,12 @@ const libraryData: LibrarySeed[] = [
         book: "lotr",
         status: ReadingStatus.TO_READ,
     },
+    {
+        user: "elise",
+        book: "miserables",
+        status: ReadingStatus.ABANDONED,
+        startedAt: "2026-04-02",
+    },
     // Marc : quelques lectures, un favori
     {
         user: "marc",

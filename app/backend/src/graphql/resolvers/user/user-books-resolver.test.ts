@@ -122,6 +122,19 @@ describe("UserBooksResolver", () => {
             expect(grantXp).not.toHaveBeenCalled();
         });
 
+        it("n'accorde rien et ne journalise rien quand le livre est abandonné", async () => {
+            jest.spyOn(UserBook, "findOne")
+                .mockResolvedValueOnce(existingUserBook(ReadingStatus.READING))
+                .mockResolvedValueOnce(new UserBook());
+
+            await resolver.updateUserBook(
+                { id: "ub-1", status: ReadingStatus.ABANDONED },
+                makeContext(user),
+            );
+
+            expect(grantXp).not.toHaveBeenCalled();
+        });
+
         it("ne cherche que dans la bibliothèque de l'utilisateur connecté", async () => {
             const findOne = jest
                 .spyOn(UserBook, "findOne")

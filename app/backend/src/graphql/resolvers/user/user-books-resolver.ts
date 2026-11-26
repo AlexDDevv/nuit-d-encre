@@ -236,6 +236,7 @@ export class UserBooksResolver {
             reading: 0,
             read: 0,
             paused: 0,
+            abandoned: 0,
         };
         for (const row of rows) {
             const n = Number(row.count);
@@ -244,6 +245,8 @@ export class UserBooksResolver {
             else if (row.status === ReadingStatus.READING) counts.reading = n;
             else if (row.status === ReadingStatus.READ) counts.read = n;
             else if (row.status === ReadingStatus.PAUSED) counts.paused = n;
+            else if (row.status === ReadingStatus.ABANDONED)
+                counts.abandoned = n;
         }
         return counts;
     }

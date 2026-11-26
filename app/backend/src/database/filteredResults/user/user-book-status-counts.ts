@@ -20,4 +20,7 @@ export class UserBookStatusCounts {
 
     @Field(() => Int)
     paused!: number;
+
+    @Field(() => Int)
+    abandoned!: number;
 }

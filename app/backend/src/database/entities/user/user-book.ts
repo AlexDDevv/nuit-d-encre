@@ -45,7 +45,7 @@ registerEnumType(ReadingStatus, { name: "ReadingStatus" });
  * - `id`: unique identifier for the user-book entry.
  * - `user`: the owner of the library entry (foreign key).
  * - `book`: the referenced book (foreign key).
- * - `status`: reading status (e.g., TO_READ, READING, READ, PAUSED...).
+ * - `status`: reading status (TO_READ, READING, READ, PAUSED, ABANDONED).
  * - `startedAt`: optional date when the user started reading the book.
  * - `finishedAt`: optional date when the user finished reading the book.
  * - `createdAt`: timestamp when the entry was created.

@@ -3,4 +3,5 @@ export enum ReadingStatus {
     READING = "reading",
     READ = "read",
     PAUSED = "paused",
+    ABANDONED = "abandoned",
 }
