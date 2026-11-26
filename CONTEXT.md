@@ -115,6 +115,14 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Coût : les toasts de formulaire reconnaissent encore les erreurs par leur message.
 - Référence : `f9232d0`, `2f22cfb`.
 
+### Statut « abandonné », discret
+
+- Décision : un livre peut être rangé en « Abandonné » dans la bibliothèque, à côté de « À lire », « En cours », « En pause » et « Lu ». Le statut ne rapporte pas d'XP et n'écrit aucune action : il n'apparaît ni dans le fil ni dans l'activité du profil, seulement dans la bibliothèque.
+- Inspiration : le statut « DNF » (did not finish) de StoryGraph et Hardcover.
+- Alternative écartée : un indicateur booléen à côté du statut, qui aurait permis des états contradictoires (« En cours » et abandonné à la fois).
+- Effet : les « livres terminés » du profil, comptés depuis le journal d'actions, l'excluent sans autre changement ; passer un livre lu en abandonné ne retire pas l'XP déjà gagnée.
+- Référence : `app/backend/src/database/migrations/1788000000000-AddAbandonedReadingStatus.ts`.
+
 ### Activité publique, bibliothèque privée par défaut
 
 - Décision : l'activité des lecteurs est publique (fil des abonnements, fil global pour découvrir d'autres lecteurs, activité du profil), mais la bibliothèque n'est montrée que si son propriétaire active « Partager ma bibliothèque ». Sans partage, les ajouts et lectures terminées disparaissent des fils et du profil ; critiques, recommandations et favoris restent visibles.
@@ -236,4 +244,4 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
-- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). En tête : progression et journal de lecture, citations, statut « abandonné », défi de lecture annuel, leaderboard. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
+- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). En tête ensuite : balises spoiler, leaderboard, défi de lecture annuel, puis progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.

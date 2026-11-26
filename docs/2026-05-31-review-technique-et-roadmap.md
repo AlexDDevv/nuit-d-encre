@@ -46,7 +46,7 @@ Le MVP est complet et déployable. Le projet avait été considéré comme termi
 | Core (livres/auteurs) | 9/10 | Solide |
 | Recherche & import hybride | 9/10 | BDD d'abord, puis Google Books + Open Library |
 | Critiques, votes, commentaires | 9/10 | Pas de balise spoiler |
-| Bibliothèque perso | 6/10 | 4 statuts, une seule lecture par livre, pas de progression, pas de listes |
+| Bibliothèque perso | 6/10 | 5 statuts (dont « abandonné »), une seule lecture par livre, pas de progression, pas de listes |
 | Gamification | 7/10 | XP/niveaux/titres + barre XP ; pas de leaderboard, défis ni succès |
 | Social | 6/10 | Follow, fil, commentaires ; pas de notifications ni de modération |
 | Découverte | 4/10 | Pas de recommandations personnalisées, pas de citations ni de listes |
@@ -63,7 +63,7 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 |---|---|---|
 | **Citations** d'un livre, avec likes | Babelio (fonctionnalité phare) | absent |
 | **Progression de lecture** (page / %) et notes de lecture | StoryGraph, Hardcover, Goodreads | `UserBook` n'a que `startedAt` / `finishedAt` |
-| **Statut « abandonné » (DNF)** et **relectures** | StoryGraph, Hardcover | 4 statuts, une lecture par livre |
+| **Statut « abandonné » (DNF)** et **relectures** | StoryGraph, Hardcover | DNF fait ; une lecture par livre |
 | **Défi de lecture annuel** | Goodreads, StoryGraph | absent |
 | **Bilan annuel / statistiques** (pages, genres, rythme) | StoryGraph, Hardcover | stats de profil, pas de bilan |
 | **Listes / étagères perso** publiques | Babelio, Hardcover | absent |
@@ -88,7 +88,7 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 
 ### Palier 1 — Gains rapides (un week-end chacun)
 
-- [ ] **Statut DNF (« abandonné »)** : nouvelle valeur `ABANDONED` dans `ReadingStatus`,
+- [x] **Statut DNF (« abandonné »)** (✅ 2026-11-26, sans action dans le fil, visible seulement dans la bibliothèque) : nouvelle valeur `ABANDONED` dans `ReadingStatus`,
       exclue des stats de livres lus et sans XP de lecture terminée. Visibilité dans le fil :
       action de bibliothèque, donc masquée par `onlyVisibleActions` si `isLibraryPublic` est faux.
 - [ ] **Balises spoiler** dans les critiques et commentaires (syntaxe `||texte||`, rendu
