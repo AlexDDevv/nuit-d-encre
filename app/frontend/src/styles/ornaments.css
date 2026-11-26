@@ -1,0 +1,210 @@
+/* Animations décoratives de la DA. Toutes s'arrêtent en mouvement réduit (bloc final). */
+
+/* Reflet de la barre d'XP (profil) */
+@keyframes xpShimmer {
+    0% {
+        transform: translateX(-120%);
+    }
+    100% {
+        transform: translateX(320%);
+    }
+}
+.xp-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: linear-gradient(
+        100deg,
+        transparent,
+        hsl(43 80% 90% / 0.55),
+        transparent
+    );
+    animation: xpShimmer 2.6s ease-in-out infinite;
+}
+
+/* Balayage doré de la bannière XP/complétion */
+@keyframes xpSweep {
+    0% {
+        transform: translateX(-130%);
+    }
+    60%,
+    100% {
+        transform: translateX(360%);
+    }
+}
+.xp-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    width: 45%;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        hsl(43 59% 81% / 0.16) 50%,
+        transparent 70%
+    );
+    animation: xpSweep 3.4s ease-in-out infinite;
+}
+
+/* Pages d'erreur : sceau qui se pose, fumée qui monte */
+@keyframes sealIn {
+    from {
+        transform: scale(0.86);
+        opacity: 0;
+    }
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+@keyframes smokeRise {
+    from {
+        stroke-dashoffset: 220;
+        opacity: 0;
+    }
+    30% {
+        opacity: 0.9;
+    }
+    to {
+        stroke-dashoffset: 0;
+        opacity: 0.55;
+    }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .seal-in {
+        animation: sealIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .smoke-path {
+        stroke-dasharray: 220;
+        animation: smokeRise 2.2s ease-out 0.25s both;
+    }
+}
+
+/* Nœud lumineux (frise de progression) */
+@keyframes nodeGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 14px 2px hsl(43 59% 81% / 0.35);
+    }
+    50% {
+        box-shadow: 0 0 22px 5px hsl(43 59% 81% / 0.55);
+    }
+}
+.node-glow {
+    animation: nodeGlow 3s ease-in-out infinite;
+}
+
+/* Étincelles d'encre dorée */
+@keyframes twinkle {
+    0%,
+    100% {
+        opacity: 0.25;
+        transform: scale(0.7);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.twinkle {
+    animation: twinkle 2.4s ease-in-out infinite;
+}
+
+/* Vacillement de la chandelle (icône XP, sceau) */
+@keyframes candle {
+    0%,
+    100% {
+        opacity: 0.85;
+        transform: scale(1);
+    }
+    45% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+    70% {
+        opacity: 0.9;
+        transform: scale(0.97);
+    }
+}
+.candle {
+    transform-origin: center bottom;
+    animation: candle 2.8s ease-in-out infinite;
+}
+
+/* Lueur du sceau lunaire */
+@keyframes sealGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 hsl(43 59% 81% / 0);
+    }
+    50% {
+        box-shadow: 0 0 26px 2px hsl(43 59% 81% / 0.18);
+    }
+}
+.seal-glow {
+    animation: sealGlow 4s ease-in-out infinite;
+}
+
+/* Halo de chandelle derrière la 1re place du classement */
+@keyframes podiumGlow {
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: translateX(-50%) scale(1);
+    }
+    35% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.05);
+    }
+    62% {
+        opacity: 0.7;
+        transform: translateX(-50%) scale(0.97);
+    }
+    80% {
+        opacity: 0.92;
+        transform: translateX(-50%) scale(1.02);
+    }
+}
+.podium-glow {
+    position: absolute;
+    left: 50%;
+    top: -70px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        hsl(38 85% 62% / 0.26) 0%,
+        hsl(38 85% 62% / 0.08) 38%,
+        transparent 68%
+    );
+    pointer-events: none;
+    z-index: 0;
+    animation: podiumGlow 5s ease-in-out infinite;
+}
+.podium-glow-soft {
+    top: -30px;
+    width: 260px;
+    height: 260px;
+    opacity: 0.6;
+}
+@media (max-width: 639px) {
+    .podium-glow {
+        top: -40px;
+        width: 220px;
+        height: 220px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xp-sweep::after,
+    .twinkle,
+    .candle,
+    .seal-glow,
+    .podium-glow {
+        animation: none !important;
+    }
+}

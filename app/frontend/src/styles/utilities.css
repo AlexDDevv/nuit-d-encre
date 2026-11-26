@@ -1,0 +1,70 @@
+/* Titre doré (profil, classement) */
+@utility text-gradient-gold {
+    color: hsl(43 62% 84%);
+    text-shadow: 0 1px 0 hsl(20 30% 8% / 0.25);
+}
+
+/* Grand chiffre gravé / embossé doré (code HTTP des pages d'erreur) */
+@utility digit-emboss {
+    color: hsl(43 62% 82%);
+    text-shadow:
+        0 1px 0 hsl(43 70% 90% / 0.35),
+        0 -1px 0 hsl(20 30% 6% / 0.55),
+        0 2px 1px hsl(20 30% 6% / 0.45),
+        0 0 38px hsl(43 59% 60% / 0.28);
+}
+
+@utility no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Filet doré (ornement signature : séparateur et liseré latéral) */
+@utility filet {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        hsl(43 59% 81% / 0.5),
+        transparent
+    );
+}
+
+/* Vignette de chandelle plein écran (pages d'erreur) */
+@utility candle-vignette {
+    background-image:
+        radial-gradient(
+            1100px 640px at 50% -14%,
+            hsl(43 45% 50% / 0.2),
+            transparent 60%
+        ),
+        radial-gradient(
+            820px 540px at 6% 110%,
+            hsl(43 30% 22% / 0.22),
+            transparent 56%
+        ),
+        radial-gradient(
+            760px 540px at 100% 100%,
+            hsl(43 30% 20% / 0.16),
+            transparent 55%
+        );
+}
+
+/* Grain papier sur les surfaces lourdes (bannière, hero) */
+@utility grain {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        opacity: 0.5;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    }
+}

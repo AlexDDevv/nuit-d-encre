@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { UseModalTransitionOptions } from "@/types/types";
 
-/** Durée de l'animation de sortie (`.modal-out` / `.overlay-out` dans index.css). */
+/** Durée de l'animation de sortie (`.modal-out` / `.overlay-out` dans styles/motion.css). */
 export const MODAL_EXIT_MS = 200;
 
 type ExitPhase = null | "request" | "external" | "done";

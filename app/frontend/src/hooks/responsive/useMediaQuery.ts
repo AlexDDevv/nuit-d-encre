@@ -1,6 +1,6 @@
 import { useMemo, useSyncExternalStore } from "react";
 
-// Miroir des breakpoints Tailwind : `xs` redéfini dans src/styles/theme.css,
+// Miroir des breakpoints Tailwind : `xs` redéfini dans src/styles/tokens.css,
 // le reste correspond aux défauts de Tailwind 4.
 export const BREAKPOINTS = {
     xs: 480,

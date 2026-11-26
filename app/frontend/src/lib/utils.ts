@@ -5,7 +5,7 @@ import type { KeyboardEvent } from "react";
 
 /**
  * tailwind-merge instance qui connaît nos tokens de taille sous-standard
- * (`text-xxs`, `text-xxxs` définis dans theme.css). Sans ça, tailwind-merge les
+ * (`text-xxs`, `text-xxxs` définis dans styles/tokens.css). Sans ça, tailwind-merge les
  * classe dans le groupe couleur (`text-*`) et écrase toute classe de couleur
  * fusionnée avec — laissant l'élément sans couleur.
  */
