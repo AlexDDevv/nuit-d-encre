@@ -46,10 +46,6 @@ const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const Fil = lazy(() => import("@/pages/Fil"));
 const Classement = lazy(() => import("@/pages/Classement"));
-// Page de contrôle visuel des tokens : retirée du build de prod (DEV vaut false).
-const DesignStates = import.meta.env.DEV
-    ? lazy(() => import("@/pages/dev/DesignStates"))
-    : null;
 
 /**
  * Router confirmation
@@ -336,18 +332,6 @@ const router = createBrowserRouter([
                     </Suspense>
                 ),
             },
-            ...(DesignStates
-                ? [
-                      {
-                          path: "dev/etats",
-                          element: (
-                              <Suspense fallback={null}>
-                                  <DesignStates />
-                              </Suspense>
-                          ),
-                      },
-                  ]
-                : []),
         ],
     },
     {
