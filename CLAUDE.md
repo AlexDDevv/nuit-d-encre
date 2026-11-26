@@ -301,6 +301,44 @@ Chaque point renvoie à une primitive existante : l'utiliser plutôt que recoder
 12. **Tests** : un test d'autorisation par mutation sensible (visiteur, non-propriétaire, admin), avec `src/test/factories.ts`.
 13. **Front** : erreurs détectées par code (`lib/graphqlErrors.ts`, règles de `utils/graphql-error.ts`) ; requête de 8 niveaux au plus (`QUERY_LIMITS`) ; toute nouvelle origine externe ajoutée à la CSP nginx.
 
+## Convention de tests
+
+Un test existe pour attraper un bug plausible, pas pour augmenter la couverture. Aucun test n'est écrit par réflexe.
+
+**Critère d'entrée** : n'écrire un test que si au moins une condition est vraie.
+
+1. **L'erreur coûte cher** : fuite de données, élévation de droits, XP accordée deux fois, effacement RGPD incomplet, session non révoquée.
+2. **L'erreur serait silencieuse** : rien ne casse à l'écran (filtre propriétaire absent du `where`, borne décalée de un, fuseau horaire).
+3. **La logique est non triviale** : branches, calculs, bornes, dates, mappings avec cas limites.
+4. **C'est une régression déjà vécue** : un bug corrigé reçoit le test qui l'aurait attrapé.
+
+**Test décisif** : si l'on casse le code de façon réaliste (inverser une condition, retirer un filtre, décaler une borne), le test doit échouer. Sinon il ne sert à rien et ne doit pas être écrit.
+
+**Interdits** :
+
+- Tester un libellé, un texte d'UI, une classe CSS, un snapshot de rendu.
+- Tester qu'une constante vaut sa valeur (`expect(XP_MAP.BOOK_ADDED).toBe(50)`) : cela duplique le code au lieu de le vérifier.
+- Tester le framework ou une bibliothèque (TypeORM sauvegarde, React rend, class-validator valide un `@IsEmail`).
+- Tester un getter, un passe-plat, un composant sans logique.
+- Recopier l'implémentation en mocks (« `save` a été appelé avec… ») sans vérifier un résultat observable.
+- Multiplier les cas qui empruntent la même branche.
+
+**Justification obligatoire** : chaque `describe` commence par une ligne qui nomme le risque couvert. Sans risque nommable, pas de test.
+
+```ts
+// Risque : un non-propriétaire modifie la critique d'un autre.
+describe("updateReview", () => { ... });
+```
+
+**Forme** :
+
+- Vérifier un comportement observable (valeur renvoyée, erreur et son code, état persisté), pas l'enchaînement des appels internes.
+- Nommer le test d'après la règle métier (« refuse un visiteur », « n'accorde pas l'XP deux fois pour le même livre »), jamais « should work ».
+- Mutation sensible : le trio visiteur / non-propriétaire / propriétaire ou admin, rien de plus si aucune autre branche ne change.
+- Horloge figée, ni réseau ni BDD réelle (voir Gotcha « Tests »).
+
+**Compte rendu** : en fin de tâche, lister chaque test ajouté avec le risque qu'il couvre.
+
 ## Gotchas
 
 - **Proxy Vite → Docker** : le frontend appelle `/api` qui est proxifié vers `http://back:3310`. En dehors de Docker, ce proxy ne fonctionne pas — lancer via `docker compose up` obligatoirement.
@@ -308,7 +346,7 @@ Chaque point renvoie à une primitive existante : l'utiliser plutôt que recoder
 - **Livres importés** : `isImported: true` signale un livre venant de Google Books / Open Library. `hasIncompleteBookInfo()` détecte les champs manquants (summary par défaut, pageCount = 0, catégorie "Autre", pas de couverture).
 - **`slugify()`** est utilisé pour générer les URLs des livres et auteurs depuis leur titre/nom — s'assurer que les slugs sont bien formés avant navigation.
 - **Package manager : pnpm uniquement** — workspace pnpm configuré dans `pnpm-workspace.yaml`.
-- **Tests** — ciblés sur le sensible uniquement (auth, autorisations, XP, RGPD), pas de couverture exhaustive. Backend : Jest (`pnpm --filter backend test`) — services (`auth-service`, `grind/*`, `rgpd/*`), `auth-checker`, `format-error`, `utils/current-user`, `rate-limiter`, `utils/{authorizations,banner-visibility}` et resolvers de mutations (appel direct de la méthode avec `makeContext(user)` — qui fournit `getUser` — /`makeUser`/`stubPersistence` de `src/test/factories.ts`, statiques TypeORM mockés via `jest.spyOn`, pas de BDD). Frontend : **Vitest** (`pnpm --filter frontend test`, environnement `node`) sur la logique pure — `lib/{profileActivity,filterMaps,utils,password,downloadJson,spoiler,leaderboard,readingGoal,readingDate}`, `sections/feed/feedTargetHref`, validation de formulaires. Pas de tests de composants ni de hooks : il faudrait jsdom + Testing Library pour peu de valeur (la logique des hooks de liste tient dans les mappings de `filterMaps`, déjà couverts). Les tests de dates figent l'horloge (`vi.setSystemTime`). Jest tourne avec `maxWorkers: "25%"` (`jest.config.js`) : ts-jest type-checke dans chaque worker et la valeur par défaut sature la mémoire (workers tués par SIGKILL). Pour un simple contrôle de types côté backend, utiliser `pnpm --filter backend exec tsc --noEmit` (4 s) plutôt que `pnpm build`, qui compile vers `dist/` (`outDir` défini dans `tsconfig.json`).
+- **Tests** — ciblés sur le sensible uniquement (auth, autorisations, XP, RGPD), pas de couverture exhaustive. Backend : Jest (`pnpm --filter backend test`) — services (`auth-service`, `grind/*`, `rgpd/*`), `auth-checker`, `format-error`, `utils/current-user`, `rate-limiter`, `utils/{authorizations,banner-visibility}` et resolvers de mutations (appel direct de la méthode avec `makeContext(user)` — qui fournit `getUser` — /`makeUser`/`stubPersistence` de `src/test/factories.ts`, statiques TypeORM mockés via `jest.spyOn`, pas de BDD). Frontend : **Vitest** (`pnpm --filter frontend test`, environnement `node`) sur la logique pure — `lib/{profileActivity,filterMaps,utils,password,graphqlErrors,spoiler,leaderboard,readingGoal,readingDate}`, `sections/feed/feedTargetHref`, validation de formulaires. Pas de tests de composants ni de hooks : il faudrait jsdom + Testing Library pour peu de valeur (la logique des hooks de liste tient dans les mappings de `filterMaps`, déjà couverts). Les tests de dates figent l'horloge (`vi.setSystemTime`). Jest tourne avec `maxWorkers: "25%"` (`jest.config.js`) : ts-jest type-checke dans chaque worker et la valeur par défaut sature la mémoire (workers tués par SIGKILL). Pour un simple contrôle de types côté backend, utiliser `pnpm --filter backend exec tsc --noEmit` (4 s) plutôt que `pnpm build`, qui compile vers `dist/` (`outDir` défini dans `tsconfig.json`).
 - **Migrations TypeORM** : `datasource.ts` utilise `synchronize: false` ; les migrations sont jouées au boot, y compris en prod, sauf si `DB_MIGRATIONS_RUN="false"` (cf. `should-run-migrations.ts`). Les migrations sont dans `src/database/migrations/`. Le schéma initial est rejoué au boot après `docker compose down -v`. Logging SQL complet en dev, restreint à `error`/`warn` quand `NODE_ENV=production`.
 - **Identifiants UUID** : toutes les entités utilisent une PK UUID (`@PrimaryGeneratedColumn("uuid")`, `gen_random_uuid()` natif PostgreSQL 15). Le scalaire GraphQL `ID` sérialise en string ; les ids sont des `string` côté back et front. Les URLs sont `/<uuid>-<slug>` et l'id est extrait via `slug.slice(0, 36)` (un UUID contient des tirets).
 - **Admin & Profil implémentés et câblés** : `pages/Admin.tsx` (7 onglets — Dashboard, Utilisateurs, Livres, Auteurs, Catégories, Critiques, Bannières — + `AnalyticsBar`) et `pages/UserProfile.tsx` (hero éditable, stats, progression, favoris, activité) sont complets côté front ET backend. Backend : `AdminResolver` (`adminStats`, `recentActivity`, listes, suppressions), mutations de suppression réparties dans les resolvers de domaine (`deleteBook`/`deleteAuthor`/`updateCategory`/`deleteCategory`), `SiteBannersResolver` (CRUD + `activeSiteBanner`). Hooks front dans `hooks/admin/`. Les stats du profil sont calculées côté front via `lib/profileActivity` (`computeStats`) à partir des `UserActions`, pas via un FieldResolver.
