@@ -140,8 +140,9 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 
 ### Un défi de lecture annuel compté sur la date de fin
 
-- Décision : chaque lecteur peut se fixer un nombre de livres à lire dans l'année (entité `ReadingGoal`). La jauge du profil compte les livres « lus » dont la date de fin tombe dans l'année. Passer un livre en « Lu » le date du jour ; un champ « Lu le » dans la bibliothèque corrige la date. Un livre ajouté directement comme lu reste sans date et ne compte pas tant qu'elle n'est pas renseignée. Atteindre l'objectif rapporte 10 XP par livre visé (plafond 500), une fois par année.
-- Intention : un défi qu'on ne peut pas fausser sans le vouloir. Un nouvel inscrit qui saisit ses lectures passées ne doit pas compléter son défi en quelques minutes.
+- Décision : chaque lecteur peut se fixer un nombre de livres à lire dans l'année (entité `ReadingGoal`). La jauge du profil compte les livres « lus » dont la date de fin tombe dans l'année. Passer un livre en « Lu » le date du jour ; un champ « Lu le » (bibliothèque et fiche livre) corrige la date d'une lecture ancienne. Atteindre l'objectif rapporte 10 XP par livre visé (plafond 500), une fois par année.
+- Intention : un défi qu'on ne peut pas fausser sans le vouloir. Un nouvel inscrit qui saisit ses lectures passées doit pouvoir les dater pour qu'elles ne comptent pas dans l'année.
+- Version abandonnée après essai : un livre ajouté directement comme lu restait sans date et ne comptait pas. Le lecteur qui venait de finir un livre ne voyait pas sa jauge bouger, ce qui passait pour un bug.
 - Alternative écartée : compter les actions « livre terminé » de l'année, sans date de lecture. Plus simple, mais la saisie de lectures anciennes gonflait le compteur sans recours, et une relecture ne comptait jamais.
 - Effet : le défi suit la visibilité de la bibliothèque (visible des autres seulement si elle est partagée). Au passage, `startedAt` / `finishedAt` sont exposés en chaînes `YYYY-MM-DD` : en `Date`, la moindre requête les demandant aurait échoué.
 - Référence : `app/backend/src/services/gamification/reading-goal-service.ts`, migration `1789000000000-AddReadingGoal`.

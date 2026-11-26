@@ -242,7 +242,7 @@ Nuit-d-Encre/
 - **Credentials** : `credentials: "include"` pour les cookies HTTP-only
 - **Queries** : politique hybride par défaut — `cache-and-network` (watchQuery) / `cache-first` (query) ; vues critiques (auth, bannières, favoris) avec `fetchPolicy: "network-only"` explicite
 - **Mutations** : refetch manuel ou mise à jour du cache Apollo après mutation
-- **FieldResolvers** backend : `averageRating`, `reviewCount`, `hasUserReviewed`, `isInLibrary` calculés côté serveur dans `BooksResolver`
+- **FieldResolvers** backend : `averageRating`, `reviewCount`, `hasUserReviewed`, `isInLibrary`, `myReview`, `myUserBook` (entrée de bibliothèque du lecteur : statut et date, pour la fiche livre) calculés côté serveur dans `BooksResolver`
 - **Recherche hybride** : `BookSearchResolver` interroge la BDD + Google Books + Open Library en parallèle
 
 ### Formulaires
@@ -274,7 +274,7 @@ Nuit-d-Encre/
   - Défi de lecture atteint : 10 XP par livre visé, plafonné à 500 (montant variable passé en `xp` à `grantXpService`, une fois par année)
 - **Niveaux** : calculés depuis le total XP via `user-xp-service.ts`. `User.xp` est l'XP **du niveau en cours** ; l'XP cumulée se déduit par `totalXp(level, xp)` (`grind/total-xp.ts`, `TOTAL_XP_SQL` en SQL)
 - **Titres/Badges** : seedés en BDD via `seed-titles.ts`, débloqués selon le niveau
-- **Défi de lecture annuel** (`ReadingGoal`, un par lecteur et par année de Paris) : la progression compte les `UserBook` « lus » dont `finishedAt` tombe dans l'année, calculée à la lecture. Passer un livre en « Lu » depuis un autre statut pose `finishedAt` au jour (Paris) ; un livre **ajouté directement** comme lu reste sans date (lecture ancienne) et ne compte qu'une fois « Lu le » renseigné. `checkReadingGoal` est appelé après chaque passage en lu ou datation. Visible des autres comme la bibliothèque (`canViewLibrary`) ; `READING_GOAL_REACHED` est une action de bibliothèque.
+- **Défi de lecture annuel** (`ReadingGoal`, un par lecteur et par année de Paris) : la progression compte les `UserBook` « lus » dont `finishedAt` tombe dans l'année, calculée à la lecture. Tout passage en « Lu » (ajout ou changement de statut) sans date fournie pose `finishedAt` au jour (Paris) ; le champ « Lu le » (bibliothèque, fiche livre) corrige la date d'une lecture ancienne. `checkReadingGoal` est appelé après chaque passage en lu ou datation. Visible des autres comme la bibliothèque (`canViewLibrary`) ; `READING_GOAL_REACHED` est une action de bibliothèque.
 - **Dates de lecture** : `startedAt` / `finishedAt` sont des colonnes `date`, exposées en `String` `YYYY-MM-DD` (TypeORM les lit en chaîne, que le scalaire `DateTimeISO` refuserait). Pas de date de fin dans le futur.
 - **Traçabilité** : entité `UserActions` — log de chaque action XP avec timestamp
 - **XP une seule fois par cible** : `grantXpService(user, type, { xpKey, … })` n'accorde rien si le triplet `(user, type, xpKey)` existe déjà en `user_actions` (colonne `xpKey` + index unique partiel, migration `1785000000000`). La déduplication est **par cible, pas globale** : recommander le livre A, retirer puis remettre la recommandation ne redonne pas d'XP, mais recommander le livre B en donne. Le service renvoie un booléen (`true` = XP accordée).
