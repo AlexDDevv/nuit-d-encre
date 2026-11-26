@@ -13,7 +13,7 @@ export default function MoonMedallion({
 }) {
     return (
         <span
-            className="border-primary/55 text-primary bg-linear-to-b from-primary/25 relative grid shrink-0 place-items-center rounded-full border-2 to-transparent shadow-[0_0_18px_-3px_hsl(43_59%_70%/0.55)]"
+            className="border-primary/55 text-primary bg-linear-to-b from-primary/25 shadow-glow-gold relative grid shrink-0 place-items-center rounded-full border-2 to-transparent"
             style={{ width: size, height: size }}
         >
             {ring && (

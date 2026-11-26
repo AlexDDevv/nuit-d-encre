@@ -42,7 +42,7 @@ export default function BannerPreviewPanel({
                         Aperçu en direct
                     </span>
                 </div>
-                <div className="border-border bg-background/60 rounded-2xl border-2 p-4 shadow-[inset_0_1px_0_hsl(43_30%_60%/0.05)]">
+                <div className="border-border bg-background/60 inset-shadow-highlight rounded-2xl border-2 p-4">
                     {previewDismissed ? (
                         <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
                             <p className="font-quote text-muted-foreground/70 text-base italic">

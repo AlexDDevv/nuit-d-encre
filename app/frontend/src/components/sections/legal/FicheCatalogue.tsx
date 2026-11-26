@@ -11,7 +11,7 @@ export default function FicheCatalogue({
     rows: FicheRow[];
 }) {
     return (
-        <div className="grain bg-popover/70 border-primary/30 relative my-6 overflow-hidden rounded-xl border-2 shadow-[inset_0_1px_0_hsl(43_59%_81%/0.05)]">
+        <div className="grain bg-popover/70 border-primary/30 inset-shadow-highlight relative my-6 overflow-hidden rounded-xl border-2">
             {/* entête de fiche : libellé de catalogue */}
             <div className="border-primary/20 bg-primary/6 flex items-center justify-between gap-3 border-b px-5 py-2.5">
                 <span className="text-primary/80 text-xxs tracking-spaced font-mono font-semibold uppercase">

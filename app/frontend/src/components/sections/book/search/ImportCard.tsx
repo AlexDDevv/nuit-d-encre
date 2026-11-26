@@ -48,7 +48,7 @@ export default function ImportCard({ result }: ImportCardProps) {
             </div>
 
             {/* voile dégradé pour la lisibilité du texte */}
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,hsl(20_3%_7%/0.96)_0%,hsl(20_3%_7%/0.78)_26%,hsl(20_3%_7%/0.18)_52%,transparent_72%)]" />
+            <div className="cover-scrim pointer-events-none absolute inset-0" />
 
             {/* voile parchemin discret (signale « externe ») */}
             {result.coverUrl && (
@@ -64,7 +64,7 @@ export default function ImportCard({ result }: ImportCardProps) {
             {/* contenu en bas */}
             <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-3.5">
                 <h3
-                    className="text-foreground font-title line-clamp-2 font-medium leading-snug [text-shadow:0_1px_8px_hsl(20_3%_5%/0.8)]"
+                    className="text-foreground font-title text-shadow-legible line-clamp-2 font-medium leading-snug"
                     title={result.title}
                 >
                     {result.title}

@@ -201,7 +201,7 @@ export default function EditProfileModal({
                 aria-labelledby="edit-modal-title"
                 className={cn(
                     closing ? "modal-out" : "modal-in",
-                    "border-border bg-popover grain max-w-130 relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl border-2 shadow-[0_30px_80px_-20px_hsl(0_0%_0%/0.85)]",
+                    "border-border bg-popover grain max-w-130 shadow-modal relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl border-2",
                 )}
             >
                 {/* En-tête */}

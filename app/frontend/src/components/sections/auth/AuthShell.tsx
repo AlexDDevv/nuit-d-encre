@@ -18,7 +18,7 @@ export default function AuthShell({
             <div className="grid lg:grid-cols-[1fr_minmax(420px,468px)]">
                 <EditorialPanel mode={mode} />
 
-                <div className="border-border bg-card relative overflow-hidden rounded-3xl border-2 shadow-[0_40px_100px_-40px_hsl(20_30%_4%/0.85),inset_0_1px_0_hsl(43_59%_81%/0.05)] lg:rounded-l-none lg:rounded-r-2xl">
+                <div className="border-border bg-card shadow-panel inset-shadow-highlight relative overflow-hidden rounded-3xl border-2 lg:rounded-l-none lg:rounded-r-2xl">
                     <div
                         aria-hidden="true"
                         className="pointer-events-none absolute inset-0"

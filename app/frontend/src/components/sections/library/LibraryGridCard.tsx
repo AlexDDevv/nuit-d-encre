@@ -46,7 +46,7 @@ export default function LibraryGridCard({
     return (
         <div
             className={cn(
-                "bg-card group relative flex flex-col rounded-xl border-2 transition-all duration-200 hover:shadow-[0_18px_40px_-14px_rgba(0,0,0,0.7)]",
+                "bg-card hover:shadow-lift group relative flex flex-col rounded-xl border-2 transition-all duration-200",
                 isFavorite
                     ? "border-primary/40 hover:border-primary/60"
                     : "border-border hover:border-primary/55",

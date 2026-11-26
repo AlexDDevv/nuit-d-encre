@@ -69,7 +69,7 @@ function AuthorMedallion({ author }: { author: AuthorIdentity }) {
                     {author.lastname}
                 </p>
             </div>
-            <span className="bg-sunken/70 grid h-9 w-9 place-items-center rounded-full shadow-[inset_0_0_0_1px_hsl(43_59%_81%/0.28)]">
+            <span className="bg-sunken/70 inset-ring inset-ring-primary/28 grid h-9 w-9 place-items-center rounded-full">
                 <FaFeatherPointed
                     size={16}
                     className="text-primary/80"

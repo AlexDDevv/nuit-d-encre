@@ -22,7 +22,7 @@ export function Card({
             className={cn(
                 "border-border bg-card rounded-xl border-2 transition-all duration-200",
                 glow &&
-                    "hover:border-primary/55 hover:-translate-y-0.5 hover:shadow-[0_0_28px_-6px_hsl(43_59%_60%/0.30)]",
+                    "hover:border-primary/55 hover:shadow-glow-gold-soft hover:-translate-y-0.5",
                 className,
             )}
             {...rest}

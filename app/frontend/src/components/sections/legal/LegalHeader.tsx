@@ -8,7 +8,7 @@ export default function LegalHeader({ lastUpdate }: { lastUpdate: string }) {
             {/* vignette de chandelle locale */}
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(620px_280px_at_50%_-8%,hsl(43_45%_55%/0.18),transparent_62%)]"
+                className="hero-halo pointer-events-none absolute inset-0"
             />
             <div className="relative flex flex-col items-center">
                 <MoonMedallion size={66} ring />

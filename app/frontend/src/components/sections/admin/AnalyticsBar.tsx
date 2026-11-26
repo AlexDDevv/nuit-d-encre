@@ -35,7 +35,7 @@ export function AnalyticsBar({
                 return (
                     <div
                         key={stat.key}
-                        className="border-border bg-card hover:border-primary/45 group flex items-center gap-2.5 rounded-xl border-2 px-3 py-3 transition-all duration-200 hover:shadow-[0_0_24px_-8px_hsl(43_59%_60%/0.3)] sm:gap-3.5 sm:px-4 sm:py-3.5"
+                        className="border-border bg-card hover:border-primary/45 hover:shadow-glow-gold-soft group flex items-center gap-2.5 rounded-xl border-2 px-3 py-3 transition-all duration-200 sm:gap-3.5 sm:px-4 sm:py-3.5"
                     >
                         <span className="border-border bg-popover text-primary/80 group-hover:border-primary/45 group-hover:text-primary grid h-9 w-9 shrink-0 place-items-center rounded-lg border-2 transition-colors duration-200 sm:h-11 sm:w-11">
                             <Icon className="size-4 sm:size-5" />

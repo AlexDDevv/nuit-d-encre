@@ -53,7 +53,7 @@ export default function SupportCard({
     };
 
     return (
-        <div className="grain border-primary/30 bg-popover/70 relative overflow-hidden rounded-2xl border-2 shadow-[inset_0_1px_0_hsl(43_59%_81%/0.05),0_18px_40px_-24px_hsl(43_59%_40%/0.5)]">
+        <div className="grain border-primary/30 bg-popover/70 inset-shadow-highlight relative overflow-hidden rounded-2xl border-2 shadow-[0_18px_40px_-24px_hsl(43_59%_40%/0.5)]">
             <div className="border-primary/20 bg-primary/6 flex items-center justify-between gap-3 border-b px-5 py-3">
                 <span className="flex items-center gap-2.5">
                     <LuMail size={15} className="text-primary/80" />

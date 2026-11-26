@@ -57,7 +57,7 @@ function AuthorCard({
             <MonogramCover first={firstname} last={lastname} />
 
             {/* voile dégradé pour la lisibilité du texte */}
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,hsl(20_3%_7%/0.96)_0%,hsl(20_3%_7%/0.8)_25%,hsl(20_3%_7%/0.2)_52%,transparent_72%)]" />
+            <div className="cover-scrim pointer-events-none absolute inset-0" />
 
             {isIncomplete && (
                 <div className="absolute left-2 top-2 z-10">
@@ -74,7 +74,7 @@ function AuthorCard({
                 </div>
 
                 <h2
-                    className="text-foreground font-title line-clamp-2 text-base font-medium leading-snug [text-shadow:0_1px_8px_hsl(20_3%_5%/0.85)]"
+                    className="text-foreground font-title text-shadow-legible line-clamp-2 text-base font-medium leading-snug"
                     title={name}
                 >
                     {name}

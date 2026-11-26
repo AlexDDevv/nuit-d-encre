@@ -83,7 +83,7 @@ export default function BookShelf({
                     aria-label={`${book.title}, ${author} - ${statusConfig?.label ?? ""}`}
                     className="focus-visible:ring-ring group relative block w-28 rounded-md focus-visible:outline-none focus-visible:ring-2"
                 >
-                    <div className="bg-background border-border group-hover:border-primary/55 aspect-4/5 relative overflow-hidden rounded-md border-2 shadow-lg transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-[0_20px_40px_-14px_rgba(0,0,0,0.8)]">
+                    <div className="bg-background border-border group-hover:border-primary/55 aspect-4/5 group-hover:shadow-lift relative overflow-hidden rounded-md border-2 shadow-lg transition-all duration-200 group-hover:-translate-y-1.5">
                         <BookCover
                             coverUrl={book.coverUrl}
                             title={book.title}

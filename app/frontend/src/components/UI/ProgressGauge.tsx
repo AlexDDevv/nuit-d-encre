@@ -75,7 +75,7 @@ export default function ProgressGauge({
                     <span
                         aria-hidden="true"
                         className={cn(
-                            "bg-primary border-card -ml-1.75 -mt-1.75 absolute top-1/2 size-3.5 rotate-45 border-2 shadow-[0_0_0_1px_hsl(43_59%_81%)] transition-[left]",
+                            "bg-primary border-card -ml-1.75 -mt-1.75 ring-primary absolute top-1/2 size-3.5 rotate-45 border-2 ring transition-[left]",
                             motion,
                         )}
                         style={{ left: `${shown}%` }}
