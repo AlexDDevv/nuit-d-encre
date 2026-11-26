@@ -14,3 +14,4 @@ export * from "./feed";
 export * from "./error";
 export * from "./loader";
 export * from "./spoiler";
+export * from "./leaderboard";

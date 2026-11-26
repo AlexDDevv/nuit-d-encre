@@ -11,6 +11,7 @@ import {
     LuLogOut,
     LuShield,
     LuNewspaper,
+    LuTrophy,
 } from "react-icons/lu";
 import { FaFeatherPointed } from "react-icons/fa6";
 import { LiaBalanceScaleSolid } from "react-icons/lia";
@@ -82,9 +83,17 @@ export default function SidebarNav({ collapsed }: SidebarNavProps) {
         ariaLabel: "Voir le fil d'activité",
     };
 
+    const leaderboardLink: SidebarLink = {
+        href: "/classement",
+        label: "Classement",
+        icon: LuTrophy,
+        ariaLabel: "Voir le classement des lecteurs",
+    };
+
     const memberLinks: SidebarLink[] = user
         ? [
               feedLink,
+              leaderboardLink,
               ...(user.role === "admin"
                   ? [
                         {
