@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { hasValidIsbn13Checksum } from "@/lib/isbn";
+
 import { useToast } from "@/hooks/toast/useToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { TypeSelectOptions, CreateBookInput } from "@/types/types";
@@ -28,6 +29,9 @@ import { useBookData } from "@/hooks/book/useBookData";
 import { useBookMutations } from "@/hooks/book/useBookMutations";
 import { useCategoriesData } from "@/hooks/category/useCategoriesData";
 import { assertEntityLoaded, runFicheMutation } from "@/utils/ficheForm";
+
+/** Miroir de @Max sur pageCount (CreateBookInput / UpdateBookInput). */
+const BOOK_PAGE_COUNT_MAX = 50000;
 
 const SUMMARY_MAX = 5000;
 
@@ -281,8 +285,11 @@ export default function BookForm() {
                             required: "Le ISBN-13 est requis",
                             pattern: {
                                 value: /^\d{13}$/,
-                                message:
-                                    "Le ISBN-13 doit contenir exactement 13 chiffres, sans tiret.",
+                                message: "13 chiffres, sans tiret.",
+                            },
+                            maxLength: {
+                                value: 13,
+                                message: "13 chiffres, sans tiret.",
                             },
                         }}
                     />
@@ -298,8 +305,11 @@ export default function BookForm() {
                         rules={{
                             pattern: {
                                 value: /^(.{10}|)$/,
-                                message:
-                                    "Le ISBN-10 doit contenir exactement 10 caractères.",
+                                message: "10 caractères, sans tiret.",
+                            },
+                            maxLength: {
+                                value: 10,
+                                message: "10 caractères, sans tiret.",
                             },
                         }}
                     />
@@ -323,6 +333,10 @@ export default function BookForm() {
                                 message:
                                     "Le nombre de pages doit être au moins de 1.",
                             },
+                            max: {
+                                value: BOOK_PAGE_COUNT_MAX,
+                                message: "50 000 pages maximum.",
+                            },
                         }}
                     />
                     <TextField
@@ -342,6 +356,11 @@ export default function BookForm() {
                             required: "L'année de publication est requise",
                             min: {
                                 value: 1000,
+                                message:
+                                    "L'année de publication doit être une année valide.",
+                            },
+                            max: {
+                                value: 9999,
                                 message:
                                     "L'année de publication doit être une année valide.",
                             },

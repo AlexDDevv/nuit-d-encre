@@ -16,7 +16,7 @@ import AuthShell from "@/components/sections/auth/AuthShell";
 import AuthCardHeader from "@/components/sections/auth/AuthCardHeader";
 import Button from "@/components/UI/Button/Button";
 import ContinueWithGoogle from "@/components/UI/form/ContinueWithGoogle";
-import { isPasswordStrong } from "@/lib/password";
+import { isPasswordStrong, PASSWORD_MAX_LENGTH } from "@/lib/password";
 import { REGISTER, WHOAMI } from "@/graphql/user/auth";
 
 export default function Signup() {
@@ -152,6 +152,11 @@ export default function Signup() {
                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                             message: "Format d'email invalide",
                         },
+                        maxLength: {
+                            value: 254,
+                            message:
+                                "Adresse trop longue (254 caractères maximum).",
+                        },
                     }}
                 />
 
@@ -167,6 +172,10 @@ export default function Signup() {
                         errors={errors}
                         rules={{
                             required: "Le mot de passe est requis",
+                            maxLength: {
+                                value: PASSWORD_MAX_LENGTH,
+                                message: "255 caractères maximum.",
+                            },
                             validate: (value) =>
                                 isPasswordStrong(value as string) ||
                                 "Le mot de passe ne remplit pas tous les critères.",
@@ -191,6 +200,10 @@ export default function Signup() {
                     errors={errors}
                     rules={{
                         required: "Veuillez confirmer le mot de passe",
+                        maxLength: {
+                            value: PASSWORD_MAX_LENGTH,
+                            message: "255 caractères maximum.",
+                        },
                         validate: (value) =>
                             value === getValues("password") ||
                             "Les deux mots de passe ne correspondent pas.",

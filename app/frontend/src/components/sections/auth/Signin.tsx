@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/UI/Checkbox";
 import { Label } from "@/components/UI/form/Label";
 import ContinueWithGoogle from "@/components/UI/form/ContinueWithGoogle";
 import { LOGIN, WHOAMI } from "@/graphql/user/auth";
+import { PASSWORD_MAX_LENGTH } from "@/lib/password";
 
 export default function Signin() {
     const {
@@ -113,6 +114,11 @@ export default function Signin() {
                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                             message: "Format d'email invalide",
                         },
+                        maxLength: {
+                            value: 254,
+                            message:
+                                "Adresse trop longue (254 caractères maximum).",
+                        },
                     }}
                 />
                 <TextField<UserSignIn>
@@ -126,6 +132,10 @@ export default function Signin() {
                     errors={errors}
                     rules={{
                         required: "Le mot de passe est requis",
+                        maxLength: {
+                            value: PASSWORD_MAX_LENGTH,
+                            message: "255 caractères maximum.",
+                        },
                         minLength: {
                             value: 8,
                             message: "Doit contenir au moins 8 caractères",

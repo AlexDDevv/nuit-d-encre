@@ -166,9 +166,9 @@ export default function AuthorForm() {
                         rules={{
                             required: "Nom est requis",
                             maxLength: {
-                                value: 255,
+                                value: 100,
                                 message:
-                                    "Nom doit contenir 255 caractères maximum.",
+                                    "Nom doit contenir 100 caractères maximum.",
                             },
                         }}
                     />
@@ -183,9 +183,9 @@ export default function AuthorForm() {
                         rules={{
                             required: "Prénom est requis",
                             maxLength: {
-                                value: 255,
+                                value: 100,
                                 message:
-                                    "Prénom doit contenir 255 caractères maximum.",
+                                    "Prénom doit contenir 100 caractères maximum.",
                             },
                         }}
                     />
@@ -200,6 +200,10 @@ export default function AuthorForm() {
                         rules={{
                             pattern: {
                                 value: /^\d{2}\/\d{2}\/\d{4}$/,
+                                message: "Format attendu : JJ/MM/AAAA",
+                            },
+                            maxLength: {
+                                value: 10,
                                 message: "Format attendu : JJ/MM/AAAA",
                             },
                         }}
@@ -266,6 +270,11 @@ export default function AuthorForm() {
                                 message:
                                     "Veuillez entrer une URL valide (http ou https).",
                             },
+                            maxLength: {
+                                value: 2048,
+                                message:
+                                    "Lien trop long (2 048 caractères maximum).",
+                            },
                         }}
                     />
                     <TextField
@@ -283,6 +292,11 @@ export default function AuthorForm() {
                                 value: /^(https?:\/\/)/,
                                 message:
                                     "Veuillez entrer une URL valide (http ou https).",
+                            },
+                            maxLength: {
+                                value: 2048,
+                                message:
+                                    "Lien trop long (2 048 caractères maximum).",
                             },
                         }}
                     />

@@ -247,7 +247,7 @@ export default function EditProfileModal({
                                 <TextInput
                                     id="f-name"
                                     value={name}
-                                    maxLength={120}
+                                    maxLength={100}
                                     error={showI("name") ? errInfos.name : ""}
                                     placeholder="Votre nom de lecteur"
                                     onChange={(e) => setName(e.target.value)}
