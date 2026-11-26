@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { IconType } from "react-icons";
 
 import { BookReviewComment } from "./book-review";
@@ -172,4 +173,10 @@ export type ProgressGaugeProps = {
     showScale?: boolean;
     /** Version mince, sans graduations, losange ni brillance (aperçu). */
     compact?: boolean;
+};
+
+/** Section de la page de contrôle des tokens (pages/dev/DesignStates). */
+export type DesignSectionProps = {
+    title: string;
+    children: ReactNode;
 };
