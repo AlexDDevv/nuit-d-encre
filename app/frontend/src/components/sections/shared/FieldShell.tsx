@@ -83,16 +83,18 @@ export default function FieldShell({
             {error ? (
                 <span
                     role="alert"
-                    className="text-error inline-flex items-center gap-1.5 text-xs"
+                    className="text-error flex items-start gap-1.5 text-xs"
                 >
-                    <LuCircleAlert size={13} /> {error}
+                    <LuCircleAlert size={13} className="mt-px shrink-0" />
+                    {error}
                 </span>
             ) : success ? (
                 <span
                     role="status"
-                    className="text-success inline-flex items-center gap-1.5 text-xs"
+                    className="text-success flex items-start gap-1.5 text-xs"
                 >
-                    <LuCircleCheck size={13} /> {success}
+                    <LuCircleCheck size={13} className="mt-px shrink-0" />
+                    {success}
                 </span>
             ) : hint ? (
                 <span className="text-muted-foreground/65 font-quote text-xs italic">

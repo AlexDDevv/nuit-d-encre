@@ -3,6 +3,7 @@ import { FieldError, FieldValues } from "react-hook-form";
 import { Input } from "@/components/UI/form/Input";
 import FieldShell from "@/components/sections/shared/FieldShell";
 import { useRecovered } from "@/hooks/form/useRecovered";
+import { ruleValue } from "@/lib/fieldLimits";
 import { cn } from "@/lib/utils";
 import { TextFieldProps } from "@/types/types";
 
@@ -28,6 +29,15 @@ export default function TextField<T extends FieldValues>({
     const [filled, setFilled] = useState(false);
     const recovered = useRecovered(error, filled);
     const succeeded = !error && (!!success || recovered);
+    // La borne de validation sert aussi de limite de saisie : on ne peut pas
+    // taper au-delà. Un champ numérique est plafonné au nombre de chiffres de
+    // son maximum (maxLength est ignoré par les <input type="number">).
+    const maxLength = ruleValue(rules?.maxLength);
+    const max = ruleValue(rules?.max);
+    const maxDigits =
+        type === "number" && max !== undefined
+            ? String(Math.trunc(max)).length
+            : undefined;
 
     return (
         <FieldShell
@@ -56,9 +66,13 @@ export default function TextField<T extends FieldValues>({
                           }
                         : undefined
                 }
+                maxLength={maxLength}
                 {...inputProps}
                 {...field}
                 onChange={(e) => {
+                    if (maxDigits && e.target.value.length > maxDigits) {
+                        e.target.value = e.target.value.slice(0, maxDigits);
+                    }
                     setFilled(e.target.value !== "");
                     return onChange(e);
                 }}
