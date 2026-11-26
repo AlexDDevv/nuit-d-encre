@@ -68,11 +68,7 @@ export default function BookStatChips({ book }: { book: Book }) {
             </StatChip>
 
             <StatChip title={`${recCount} recommandations`}>
-                <FaFire
-                    size={13}
-                    className="text-[hsl(25_78%_58%)]"
-                    aria-hidden="true"
-                />
+                <FaFire size={13} className="text-ember" aria-hidden="true" />
                 <span className="text-foreground font-body font-bold">
                     {recCount}
                 </span>

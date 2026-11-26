@@ -27,7 +27,7 @@ export default function ConfirmRemoveOverlay({
     return (
         <div
             className={cn(
-                "absolute inset-0 z-40 flex items-center justify-center rounded-xl bg-[hsl(20_3%_9%/0.92)] px-4 text-center backdrop-blur-sm",
+                "bg-ink/92 absolute inset-0 z-40 flex items-center justify-center rounded-xl px-4 text-center backdrop-blur-sm",
                 isRow
                     ? "flex-col gap-2 sm:flex-row sm:justify-between sm:gap-4 sm:text-left"
                     : "flex-col gap-3",

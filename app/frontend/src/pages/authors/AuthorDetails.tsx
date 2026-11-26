@@ -266,7 +266,7 @@ export default function AuthorDetails() {
                                 )}
                             </p>
                         ) : (
-                            <p className="font-quote pl-7 text-base italic leading-[1.6] text-[hsl(20_12%_60%)]">
+                            <p className="font-quote text-subtle-foreground pl-7 text-base italic leading-[1.6]">
                                 La maison n'a pas encore recueilli de biographie
                                 pour {name}. Son œuvre, elle, parle déjà pour
                                 elle/lui.
@@ -294,7 +294,7 @@ export default function AuthorDetails() {
                     {/* liens externes */}
                     {hasExternal && (
                         <div className="flex flex-col gap-2">
-                            <p className="text-xxs tracking-caps font-mono uppercase text-[hsl(43_30%_60%)]">
+                            <p className="text-xxs tracking-caps text-gold-muted font-mono uppercase">
                                 Pour aller plus loin
                             </p>
                             <div className="flex flex-wrap items-center gap-2.5">

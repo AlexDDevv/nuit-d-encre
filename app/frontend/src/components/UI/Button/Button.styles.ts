@@ -30,11 +30,11 @@ export const variantClasses: Record<ButtonVariant, string> = {
     primary:
         "justify-center bg-primary text-primary-foreground border-primary shadow-[0_10px_26px_-14px_hsl(43_59%_55%/0.9)] hover:bg-transparent hover:text-primary hover:-translate-y-px hover:shadow-none active:bg-primary/15 active:text-primary active:scale-[0.97] active:shadow-none",
     secondary:
-        "justify-center bg-secondary text-secondary-foreground border-secondary hover:bg-transparent hover:border-[hsl(43_30%_42%)] hover:-translate-y-px active:bg-secondary/35 active:border-[hsl(43_30%_42%)] active:scale-[0.97]",
+        "justify-center bg-secondary text-secondary-foreground border-secondary hover:bg-transparent hover:border-gold-muted/60 hover:-translate-y-px active:bg-secondary/35 active:border-gold-muted/60 active:scale-[0.97]",
     destructive:
-        "justify-center bg-destructive text-destructive-foreground border-destructive shadow-[0_10px_26px_-14px_hsl(3_84%_45%/0.8)] hover:bg-transparent hover:text-error hover:border-[hsl(3_84%_54%)] hover:-translate-y-px hover:shadow-none active:bg-destructive/15 active:text-error active:border-[hsl(3_84%_54%)] active:scale-[0.97] active:shadow-none focus-visible:ring-destructive/80",
+        "justify-center bg-destructive text-destructive-foreground border-destructive shadow-[0_10px_26px_-14px_hsl(3_84%_45%/0.8)] hover:bg-transparent hover:text-error hover:border-destructive hover:-translate-y-px hover:shadow-none active:bg-destructive/15 active:text-error active:border-destructive active:scale-[0.97] active:shadow-none focus-visible:ring-destructive/80",
     outline:
-        "justify-center bg-transparent text-primary border-primary hover:bg-primary hover:text-primary-foreground hover:-translate-y-px active:bg-[hsl(43_59%_70%)] active:text-primary-foreground active:border-[hsl(43_59%_70%)] active:scale-[0.97]",
+        "justify-center bg-transparent text-primary border-primary hover:bg-primary hover:text-primary-foreground hover:-translate-y-px active:bg-primary/85 active:text-primary-foreground active:border-primary/85 active:scale-[0.97]",
     // Destructive discret : contour subtil, texte rouge doux, léger remplissage au survol
     destructiveGhost:
         "justify-center bg-transparent text-error border-destructive/40 hover:bg-destructive/10 hover:border-destructive/70 active:scale-[0.98] hover:-translate-y-px",

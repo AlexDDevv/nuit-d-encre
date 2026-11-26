@@ -38,6 +38,17 @@
         0 40px 90px -28px hsl(20 3% 2% / 0.95), 0 0 0 1px hsl(20 3% 8%);
     --shadow-cover:
         0 30px 60px -22px hsl(20 3% 3% / 0.95), 0 0 0 6px hsl(43 59% 81% / 0.06);
+    /* Élévation au survol d'une carte de livre */
+    --shadow-lift: 0 18px 40px -14px rgb(0 0 0 / 0.7);
+    /* Grands panneaux (formulaires de l'atelier, connexion) */
+    --shadow-panel: 0 40px 100px -44px hsl(20 30% 4% / 0.85);
+    /* Halo doré des médaillons et plaques de titre ; soft : survol des cartes */
+    --shadow-glow-gold: 0 0 18px -3px hsl(43 59% 70% / 0.55);
+    --shadow-glow-gold-soft: 0 0 26px -7px hsl(43 59% 60% / 0.3);
+    /* Reflet doré en haut d'une surface (se combine avec shadow-*) */
+    --inset-shadow-highlight: inset 0 1px 0 hsl(43 59% 81% / 0.05);
+    /* Lisibilité d'un titre posé sur une couverture */
+    --text-shadow-legible: 0 1px 8px hsl(20 3% 5% / 0.8);
 
     /* ── Animations ──────────────────────────────────────────────────── */
     --animate-fadeIn: fadeIn 0.15s ease-out;
@@ -88,6 +99,8 @@
     --color-sunken: hsl(20 3% 14%);
     /* Voile des modales et dégradés de lisibilité sur image */
     --color-scrim: hsl(20 3% 7%);
+    /* Encre profonde, avec opacité : pastilles posées sur une image, puits */
+    --color-ink: hsl(20 3% 10%);
     --color-border: hsl(0 0% 24%);
     /* Séparateur clair à peine visible (pointillés internes, barres de pied) */
     --color-hairline: hsl(0 0% 100% / 0.07);
@@ -98,6 +111,8 @@
        légendes, gold-bright l'or vif du survol des liens. */
     --color-gold-muted: hsl(43 30% 63%);
     --color-gold-bright: hsl(43 70% 88%);
+    /* Braise : icônes de recommandation (flamme) */
+    --color-ember: hsl(25 78% 58%);
 
     /* ── Couleurs : actions ──────────────────────────────────────────── */
     --color-primary: hsl(43 59% 81%);

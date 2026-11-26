@@ -20,7 +20,7 @@ type EstablishedCoverProps =
 function Stamp({ label, code }: { label: string; code: string }) {
     return (
         <div className="pointer-events-none absolute -right-3 top-5 z-20 rotate-[8deg] select-none">
-            <div className="border-primary/55 flex flex-col items-center gap-1 rounded-sm border-2 border-double bg-[hsl(20_3%_10%/0.55)] px-3 py-2 shadow-[0_2px_10px_-4px_hsl(20_3%_4%/0.8)]">
+            <div className="border-primary/55 bg-ink/55 flex flex-col items-center gap-1 rounded-sm border-2 border-double px-3 py-2 shadow-[0_2px_10px_-4px_hsl(20_3%_4%/0.8)]">
                 <span className="text-primary/60 text-xxxs tracking-caps font-mono uppercase">
                     {label}
                 </span>
@@ -101,7 +101,7 @@ export default function EstablishedCover(props: EstablishedCoverProps) {
         return (
             <div className="max-w-75 relative mx-auto w-full">
                 <div className="border-primary/85 aspect-2/3 shadow-cover relative overflow-hidden rounded-md border-2">
-                    <span className="w-1.25 pointer-events-none absolute left-0 top-0 z-10 h-full bg-[hsl(20_3%_6%/0.4)]" />
+                    <span className="w-1.25 bg-scrim/40 pointer-events-none absolute left-0 top-0 z-10 h-full" />
                     <AuthorMedallion author={author} />
                     <Stamp label="Auteur de la maison" code={code} />
                 </div>
@@ -139,7 +139,7 @@ export default function EstablishedCover(props: EstablishedCoverProps) {
                         <FallbackCover title={book.title} author={author} />
                     )}
                     {/* tranche / reliure */}
-                    <span className="w-1.25 pointer-events-none absolute left-0 top-0 h-full bg-[hsl(20_3%_6%/0.4)]" />
+                    <span className="w-1.25 bg-scrim/40 pointer-events-none absolute left-0 top-0 h-full" />
                 </div>
 
                 <Stamp label="De la collection" code={code} />

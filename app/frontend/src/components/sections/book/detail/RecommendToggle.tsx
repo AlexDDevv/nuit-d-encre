@@ -38,14 +38,14 @@ export default function RecommendToggle({
                 size={16}
                 className={cn(
                     "transition-transform duration-200 group-hover:scale-110",
-                    on ? "text-primary" : "text-[hsl(25_78%_58%)]",
+                    on ? "text-primary" : "text-ember",
                 )}
                 aria-hidden="true"
             />
             {on ? "Je recommande" : "Recommander"}
             <span
                 className={cn(
-                    "rounded-full bg-[hsl(20_3%_10%/0.6)] px-2 py-px font-mono text-xs",
+                    "bg-ink/60 rounded-full px-2 py-px font-mono text-xs",
                     on ? "text-primary" : "text-muted-foreground",
                 )}
             >

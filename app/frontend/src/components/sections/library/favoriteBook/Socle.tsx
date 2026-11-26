@@ -16,8 +16,8 @@ const SELECTED_GRADIENT =
 const HEIGHT: Record<Rank, string> = { 1: "h-37.5", 2: "h-29", 3: "h-23" };
 const NUMERAL_COLOR: Record<Rank, string> = {
     1: "text-primary",
-    2: "text-[hsl(43_50%_72%)]",
-    3: "text-[hsl(43_40%_62%)]",
+    2: "text-primary/85",
+    3: "text-gold-muted",
 };
 
 // ── Un socle du podium ────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@ export default function Socle({
                     </span>
                 ) : occName ? (
                     <span
-                        className="max-w-32.5 font-quote truncate text-xs italic leading-tight text-[hsl(20_12%_58%)]"
+                        className="max-w-32.5 font-quote text-subtle-foreground truncate text-xs italic leading-tight"
                         title={`Occupée par « ${occName} »`}
                     >
                         occupée par
@@ -59,7 +59,7 @@ export default function Socle({
                         </span>
                     </span>
                 ) : (
-                    <span className="font-quote text-xs italic text-[hsl(20_12%_46%)]">
+                    <span className="font-quote text-subtle-foreground/80 text-xs italic">
                         libre
                     </span>
                 )}
@@ -120,7 +120,7 @@ export default function Socle({
                 {current && (
                     <span
                         className={cn(
-                            "text-xxxs absolute left-1/2 top-1 -translate-x-1/2 rounded-full border bg-[hsl(20_3%_9%/0.55)] px-2 py-px font-mono font-medium uppercase tracking-wider",
+                            "text-xxxs bg-ink/55 absolute left-1/2 top-1 -translate-x-1/2 rounded-full border px-2 py-px font-mono font-medium uppercase tracking-wider",
                             selected
                                 ? "text-primary-foreground border-primary-foreground/50"
                                 : "border-primary/40 text-primary",

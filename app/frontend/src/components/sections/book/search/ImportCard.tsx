@@ -52,11 +52,11 @@ export default function ImportCard({ result }: ImportCardProps) {
 
             {/* voile parchemin discret (signale « externe ») */}
             {result.coverUrl && (
-                <div className="pointer-events-none absolute inset-0 bg-[hsl(43_20%_40%/0.10)]" />
+                <div className="bg-gold-muted/10 pointer-events-none absolute inset-0" />
             )}
 
             {/* chip source */}
-            <span className="text-primary/90 border-primary/30 py-0.75 font-body text-xxs absolute left-2 top-2 z-10 inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-[hsl(20_3%_9%/0.82)] px-2 font-bold tracking-wide backdrop-blur-sm">
+            <span className="text-primary/90 border-primary/30 py-0.75 font-body text-xxs bg-ink/82 absolute left-2 top-2 z-10 inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 font-bold tracking-wide backdrop-blur-sm">
                 <FaArrowUpRightFromSquare size={9} aria-hidden="true" />
                 {source}
             </span>

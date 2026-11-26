@@ -8,7 +8,7 @@ import { FaCheck } from "react-icons/fa6";
 export default function LibraryMark() {
     return (
         <span
-            className="bg-primary text-primary-foreground grid h-7 w-7 place-items-center rounded-full shadow-lg ring-1 ring-[hsl(20_3%_10%/0.5)]"
+            className="bg-primary text-primary-foreground ring-ink/50 grid h-7 w-7 place-items-center rounded-full shadow-lg ring-1"
             title="Dans ma bibliothèque"
             aria-label="Dans ma bibliothèque"
             role="img"

@@ -15,7 +15,7 @@ export default function ExternalFallback({ source }: ExternalFallbackProps) {
             <span className="text-foreground/40 text-xxxs tracking-caps font-mono uppercase">
                 couverture absente
             </span>
-            <span className="text-xxs font-mono tracking-wide text-[hsl(20_12%_52%)]">
+            <span className="text-xxs text-subtle-foreground font-mono tracking-wide">
                 via {source}
             </span>
         </div>

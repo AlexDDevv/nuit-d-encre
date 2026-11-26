@@ -94,7 +94,7 @@ export default function LibraryGridCard({
                             "focus-visible:ring-ring py-1.25 absolute left-2 top-2 z-10 inline-flex cursor-pointer items-center gap-1 rounded-full border px-2 backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2",
                             isFavorite
                                 ? "text-primary-foreground border-primary/40 bg-primary/90"
-                                : "text-primary border-primary/35 bg-[hsl(20_3%_9%/0.72)]",
+                                : "text-primary border-primary/35 bg-ink/72",
                         )}
                     >
                         <FaStar size={12} aria-hidden="true" />
