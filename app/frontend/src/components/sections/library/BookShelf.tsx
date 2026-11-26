@@ -1,15 +1,18 @@
 import { Link } from "react-router-dom";
 import { FaStar, FaQuoteLeft, FaHeart } from "react-icons/fa6";
+import { LuCalendarCheck } from "react-icons/lu";
 import { Tooltip } from "@/components/UI/Tooltip/Tooltip";
 import BookCover from "@/components/sections/book/BookCover";
 import BookCardRating from "@/components/sections/book/BookCard/BookCardRating";
 import { cn, slugify } from "@/lib/utils";
+import { formatReadingDate } from "@/lib/readingDate";
 import { BOOK_STATES, STATUS_COLORS } from "@/constants/bookStatus";
 import { BookShelfProps } from "@/types/types";
 
 export default function BookShelf({
     book,
     status,
+    finishedAt,
     isFavorite = false,
     favoriteRank = null,
 }: BookShelfProps) {
@@ -29,6 +32,16 @@ export default function BookShelf({
             <p className="font-quote text-xs italic text-[hsl(43_30%_64%)]">
                 {book.category?.name} · {book.publishedYear}
             </p>
+            {status === "READ" && finishedAt && (
+                <p className="text-muted-foreground font-body inline-flex items-center gap-1.5 text-xs">
+                    <LuCalendarCheck
+                        size={12}
+                        className="text-primary/60"
+                        aria-hidden="true"
+                    />
+                    Lu le {formatReadingDate(finishedAt)}
+                </p>
+            )}
             <span className="bg-primary/20 my-1.5 h-px w-full" />
             <BookCardRating
                 averageRating={book.averageRating}

@@ -281,6 +281,7 @@ export default function UserLibrary() {
                             key={userBook.id}
                             book={userBook.book}
                             status={userBook.status}
+                            finishedAt={userBook.finishedAt}
                             isFavorite={userBook.isFavorite}
                             favoriteRank={userBook.favoriteRank}
                         />

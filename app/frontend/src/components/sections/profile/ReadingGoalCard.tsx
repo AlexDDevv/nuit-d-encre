@@ -58,8 +58,8 @@ export default function ReadingGoalCard({
             <SectionHeading icon={LuTarget}>Défi {year}</SectionHeading>
 
             {!goal ? (
-                <div className="flex flex-col gap-4">
-                    <p className="text-muted-foreground font-body text-sm leading-relaxed">
+                <div className="flex flex-col gap-5">
+                    <p className="text-muted-foreground font-body text-center text-sm leading-relaxed">
                         Combien de livres lirez-vous cette année ? Chaque livre
                         passé en « Lu » ou daté dans l'année fait avancer la
                         jauge.
