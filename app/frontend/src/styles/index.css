@@ -91,6 +91,18 @@ body {
     }
 }
 
+/* Curseur clignotant du terminal de détails techniques (dev) */
+@keyframes caretBlink {
+    50% {
+        opacity: 0;
+    }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .caret-blink {
+        animation: caretBlink 1.1s steps(1) infinite;
+    }
+}
+
 /* ── Pages d'erreur : sceau, fumée, chiffre gravé, vignette ── */
 
 /* Vignette de chandelle plein écran (pages d'erreur) */

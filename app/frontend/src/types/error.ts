@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ApolloError } from "@apollo/client";
 import type { GRAPHQL_ERROR_CODES } from "@/lib/graphqlErrors";
 
@@ -32,6 +33,24 @@ export interface ErrorTechDetails {
     message?: string;
     data?: string;
     stack?: string;
+}
+
+/** Props du terminal flottant des détails techniques. */
+export interface TechNoticeProps {
+    tech: ErrorTechDetails;
+}
+
+/** Ligne clé/valeur de la sortie du terminal. */
+export interface TechLineProps {
+    label: string;
+    tone?: "destructive" | "accent";
+    children: ReactNode;
+}
+
+/** Position absolue (px, viewport) d'une fenêtre déplaçable. */
+export interface FloatingPosition {
+    x: number;
+    y: number;
 }
 
 /** Options de `assertEntityLoaded` (utils/ficheForm.ts). */

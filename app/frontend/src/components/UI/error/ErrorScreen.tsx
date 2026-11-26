@@ -80,9 +80,9 @@ export default function ErrorScreen({
                 <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
                     {actions}
                 </div>
-
-                {tech && <TechNotice tech={tech} />}
             </div>
+
+            {tech && <TechNotice tech={tech} />}
         </main>
     );
 }
