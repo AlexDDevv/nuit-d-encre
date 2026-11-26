@@ -50,7 +50,7 @@ export default function LeaderboardRow({
                     <Link
                         to={`/profil/${user.id}`}
                         aria-label={`Voir le profil de ${user.userName}${isViewer ? " (vous)" : ""}, ${formatRank(rank)}${tied ? " ex æquo" : ""}, ${formatXp(xp)} XP`}
-                        className="text-primary font-body bg-size-[0%_1px] hover:bg-size-[100%_1px] focus-visible:bg-size-[100%_1px] min-w-0 truncate bg-[linear-gradient(hsl(43_59%_81%/0.6),hsl(43_59%_81%/0.6))] bg-left-bottom bg-no-repeat pb-px text-sm font-bold transition-[background-size] duration-300 ease-out focus-visible:outline-none sm:text-base"
+                        className="text-primary font-body bg-size-[0%_2px] hover:bg-size-[100%_2px] focus-visible:bg-size-[100%_2px] min-w-0 truncate bg-[linear-gradient(hsl(43_59%_81%/0.6),hsl(43_59%_81%/0.6))] bg-left-bottom bg-no-repeat pb-0.5 text-sm font-bold transition-[background-size] duration-300 ease-out focus-visible:outline-none sm:text-base"
                     >
                         {user.userName}
                     </Link>

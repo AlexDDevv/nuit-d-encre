@@ -47,6 +47,50 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
     const tint = podiumTint(rank);
     const first = place === 0;
 
+    const identity = (
+        <>
+            <LeaderboardAvatar
+                userName={user.userName}
+                avatar={user.avatar}
+                className={cn(
+                    "mb-1.5",
+                    first
+                        ? "h-17 w-17 sm:h-26 sm:w-26 text-2xl sm:text-4xl"
+                        : "h-13 w-13 text-lg sm:h-20 sm:w-20 sm:text-3xl",
+                )}
+                style={{
+                    boxShadow: `0 0 0 3px hsl(20 3% 17%), 0 0 0 5px ${tint}`,
+                }}
+            />
+            <span className="font-body max-w-full truncate text-sm font-bold sm:text-base">
+                {user.userName}
+            </span>
+        </>
+    );
+
+    const details = (
+        <div className="flex flex-col items-center gap-1.5 pt-0.5">
+            <span className="flex flex-wrap justify-center gap-1.5">
+                <LevelBadge level={user.level} className={LEVEL_PILL_CLASS} />
+                {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
+            </span>
+            {user.title && (
+                <span className="text-muted-foreground font-quote hidden text-base italic leading-tight sm:block">
+                    {user.title.label}
+                </span>
+            )}
+            <span
+                className="font-quote mt-1 text-xl font-medium tabular-nums leading-none sm:text-[26px]"
+                style={{ color: tint }}
+            >
+                {formatXp(xp)}{" "}
+                <span className="text-muted-foreground font-body text-xs font-bold tracking-wider">
+                    XP
+                </span>
+            </span>
+        </div>
+    );
+
     return (
         <li
             aria-current={isViewer ? "true" : undefined}
@@ -66,53 +110,27 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
                 aria-label={`Voir le profil de ${user.userName}${isViewer ? " (vous)" : ""}, ${formatRank(rank)}, ${formatXp(xp)} XP`}
                 className={cn(
                     interactiveCardShell,
-                    "text-primary sm:pt-4.5 z-10 flex w-full flex-col items-center gap-1.5 px-1.5 pb-3 pt-3 text-center motion-reduce:hover:scale-100 sm:px-3 sm:pb-4",
+                    "text-primary sm:pt-4.5 z-10 grid w-full px-1.5 pb-3 pt-3 text-center [grid-template-areas:'stack'] motion-reduce:hover:scale-100 sm:px-3 sm:pb-4",
                     isViewer && "border-primary/70 bg-secondary/55",
                 )}
             >
-                <LeaderboardAvatar
-                    userName={user.userName}
-                    avatar={user.avatar}
-                    className={cn(
-                        "mb-1.5",
-                        first
-                            ? "h-17 w-17 sm:h-26 sm:w-26 text-2xl sm:text-4xl"
-                            : "h-13 w-13 text-lg sm:h-20 sm:w-20 sm:text-3xl",
-                    )}
-                    style={{
-                        boxShadow: `0 0 0 3px hsl(20 3% 17%), 0 0 0 5px ${tint}`,
-                    }}
-                />
-                <span className="font-body max-w-full truncate text-sm font-bold sm:text-base">
-                    {user.userName}
-                </span>
-                {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
+                {/* Gabarit invisible du contenu complet : fixe la hauteur finale
+                    de la carte, qui ne change pas au survol. */}
+                <div
+                    aria-hidden="true"
+                    className="invisible flex flex-col items-center gap-1.5 [grid-area:stack]"
+                >
+                    {identity}
+                    {details}
+                </div>
 
-                {/* niveau + titre révélés au survol / focus (toujours visibles sur mobile) */}
-                <div className="grid w-full grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100 max-sm:grid-rows-[1fr] max-sm:opacity-100">
-                    <div className="overflow-hidden">
-                        <div className="flex flex-col items-center gap-1.5 pt-0.5">
-                            <LevelBadge
-                                level={user.level}
-                                className={LEVEL_PILL_CLASS}
-                            />
-                            {user.title && (
-                                <span className="text-muted-foreground font-quote hidden text-base italic leading-tight sm:block">
-                                    {user.title.label}
-                                </span>
-                            )}
-                        </div>
+                <div className="flex flex-col items-center gap-1.5 self-center [grid-area:stack]">
+                    {identity}
+                    {/* le reste révélé au survol / focus (toujours visible sur mobile) */}
+                    <div className="grid w-full grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100 max-sm:grid-rows-[1fr] max-sm:opacity-100">
+                        <div className="overflow-hidden">{details}</div>
                     </div>
                 </div>
-                <span
-                    className="font-quote mt-1 text-xl font-medium tabular-nums leading-none sm:text-[26px]"
-                    style={{ color: tint }}
-                >
-                    {formatXp(xp)}{" "}
-                    <span className="text-muted-foreground font-body text-xs font-bold tracking-wider">
-                        XP
-                    </span>
-                </span>
             </Link>
             <div
                 aria-hidden="true"
