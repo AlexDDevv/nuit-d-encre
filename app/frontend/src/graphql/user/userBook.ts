@@ -45,6 +45,7 @@ export const GET_USER_BOOK_STATUS_COUNTS = gql`
             reading
             read
             paused
+            abandoned
         }
     }
 `;

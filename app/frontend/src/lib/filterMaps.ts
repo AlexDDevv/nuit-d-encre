@@ -44,6 +44,7 @@ export const statusLabelMap: Record<UserBookStatus, string> = {
     READING: "En cours",
     READ: "Lu",
     PAUSED: "En pause",
+    ABANDONED: "Abandonné",
 };
 
 /**

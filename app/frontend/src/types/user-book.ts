@@ -3,7 +3,8 @@ import { IconType } from "react-icons";
 import { Book } from "./book";
 import { User } from "./user";
 
-export type UserBookStatus = "TO_READ" | "READING" | "READ" | "PAUSED";
+export type UserBookStatus =
+    "TO_READ" | "READING" | "READ" | "PAUSED" | "ABANDONED";
 
 export interface UserBook {
     id: string;

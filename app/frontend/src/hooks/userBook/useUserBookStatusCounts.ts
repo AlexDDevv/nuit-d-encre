@@ -8,6 +8,7 @@ type StatusCounts = {
     reading: number;
     read: number;
     paused: number;
+    abandoned: number;
 };
 
 const EMPTY: StatusCounts = {
@@ -16,6 +17,7 @@ const EMPTY: StatusCounts = {
     reading: 0,
     read: 0,
     paused: 0,
+    abandoned: 0,
 };
 
 /**
@@ -30,12 +32,13 @@ export function useUserBookStatusCounts(userId?: string) {
 
     const counts = data?.userBookStatusCounts ?? EMPTY;
 
-    /** Compteur par statut d'énumération (TO_READ, READING, READ, PAUSED). */
+    /** Compteur par statut d'énumération (TO_READ, READING, READ, PAUSED, ABANDONED). */
     const countByStatus: Record<UserBookStatus, number> = {
         TO_READ: counts.toRead,
         READING: counts.reading,
         READ: counts.read,
         PAUSED: counts.paused,
+        ABANDONED: counts.abandoned,
     };
 
     return {

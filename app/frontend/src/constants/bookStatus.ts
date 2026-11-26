@@ -4,12 +4,13 @@ import {
     LuBookOpenCheck,
     LuPause,
     LuBookCheck,
+    LuBookX,
 } from "react-icons/lu";
 
 /**
  * Couleurs par statut de lecture (classes Tailwind), pour colorer le sélecteur
  * de statut et les pastilles dans la bibliothèque : à lire = neutre, en cours =
- * doré, lu = vert, en pause = ambre.
+ * doré, lu = vert, en pause = ambre, abandonné = rouge sourd et éteint.
  */
 export const STATUS_COLORS: Record<
     UserBookStatus,
@@ -30,6 +31,10 @@ export const STATUS_COLORS: Record<
     PAUSED: {
         chip: "border-[hsl(25_78%_51%/0.5)] bg-[hsl(25_78%_51%/0.16)] text-[hsl(25_82%_70%)]",
         dot: "bg-[hsl(25_80%_62%)]",
+    },
+    ABANDONED: {
+        chip: "border-[hsl(0_30%_45%/0.45)] bg-[hsl(0_20%_24%/0.45)] text-[hsl(0_22%_70%)]",
+        dot: "bg-[hsl(0_28%_55%)]",
     },
 };
 
@@ -53,5 +58,10 @@ export const BOOK_STATES: readonly UserBookStatusConfig[] = [
         icon: LuBookCheck,
         label: "Lu",
         value: "READ",
+    },
+    {
+        icon: LuBookX,
+        label: "Abandonné",
+        value: "ABANDONED",
     },
 ] as const;

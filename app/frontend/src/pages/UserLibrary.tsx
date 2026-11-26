@@ -33,6 +33,7 @@ const STATUS_STATS: { value: UserBookStatus; label: string }[] = [
     { value: "READING", label: "En cours" },
     { value: "READ", label: "Lu" },
     { value: "PAUSED", label: "En pause" },
+    { value: "ABANDONED", label: "Abandonné" },
 ];
 
 function StatChip({

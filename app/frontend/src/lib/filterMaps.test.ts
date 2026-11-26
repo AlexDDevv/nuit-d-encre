@@ -11,7 +11,13 @@ import {
     statusLabelMap,
 } from "./filterMaps";
 
-const STATUSES: UserBookStatus[] = ["TO_READ", "READING", "READ", "PAUSED"];
+const STATUSES: UserBookStatus[] = [
+    "TO_READ",
+    "READING",
+    "READ",
+    "PAUSED",
+    "ABANDONED",
+];
 const FORMATS: BookFormat[] = ["hardcover", "paperback", "softcover", "pocket"];
 
 describe("statuts de lecture", () => {
