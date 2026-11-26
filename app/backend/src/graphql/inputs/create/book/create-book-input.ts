@@ -65,6 +65,7 @@ export class CreateBookInput {
     @Field(() => Int)
     @IsInt({ message: "Page count must be an integer" })
     @Min(1, { message: "Page count must be at least 1" })
+    @Max(50000, { message: "Page count must not exceed 50000" })
     pageCount!: number;
 
     @Field(() => Int)
