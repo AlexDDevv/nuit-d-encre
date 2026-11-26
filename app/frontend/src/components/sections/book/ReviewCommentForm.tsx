@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { LuFeather } from "react-icons/lu";
 import Button from "@/components/UI/Button/Button";
 import TextareaField from "@/components/sections/shared/fields/TextareaField";
+import SpoilerButton from "@/components/sections/shared/spoiler/SpoilerButton";
 import { useToast } from "@/hooks/toast/useToast";
 import { useBookReviewCommentMutations } from "@/hooks/book/reviewComment/useBookReviewCommentMutations";
 import { parseGraphQLError } from "@/utils/graphql-error";
@@ -27,6 +29,7 @@ export default function ReviewCommentForm({
         watch,
         formState: { errors },
     } = useForm<ReviewCommentFormData>({ defaultValues: { content: "" } });
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
     const contentLength = watch("content").length;
 
@@ -62,19 +65,22 @@ export default function ReviewCommentForm({
                 rows={3}
                 max={MAX_LENGTH}
                 length={contentLength}
+                textareaRef={textareaRef}
             />
-            <Button
-                type="submit"
-                variant="primary"
-                size="sm"
-                loading={isCreatingComment}
-                disabled={isCreatingComment}
-                ariaLabel="Publier le commentaire"
-                className="self-end"
-                leftIcon={<LuFeather />}
-            >
-                Publier
-            </Button>
+            <div className="flex items-center justify-between gap-3">
+                <SpoilerButton textareaRef={textareaRef} />
+                <Button
+                    type="submit"
+                    variant="primary"
+                    size="sm"
+                    loading={isCreatingComment}
+                    disabled={isCreatingComment}
+                    ariaLabel="Publier le commentaire"
+                    leftIcon={<LuFeather />}
+                >
+                    Publier
+                </Button>
+            </div>
         </form>
     );
 }

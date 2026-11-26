@@ -10,6 +10,7 @@ import Button from "@/components/UI/Button/Button";
 import UserLink from "@/components/sections/profile/UserLink";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/hooks/auth/useAuthContext";
+import SpoilerText from "@/components/sections/shared/spoiler/SpoilerText";
 
 interface ReviewCardProps {
     review: BookReview;
@@ -97,7 +98,7 @@ export default function ReviewCard({
 
             {review.reviewText && (
                 <p className="text-foreground/85 font-quote whitespace-pre-wrap italic">
-                    {review.reviewText}
+                    <SpoilerText text={review.reviewText} />
                 </p>
             )}
 

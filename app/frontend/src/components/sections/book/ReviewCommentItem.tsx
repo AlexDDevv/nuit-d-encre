@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import Button from "@/components/UI/Button/Button";
 import UserLink from "@/components/sections/profile/UserLink";
+import SpoilerText from "@/components/sections/shared/spoiler/SpoilerText";
 import { ReviewCommentItemProps } from "@/types/types";
 
 /**
@@ -45,7 +46,7 @@ export default function ReviewCommentItem({
             </div>
 
             <p className="text-foreground/80 font-body whitespace-pre-wrap pl-10 text-sm leading-relaxed">
-                {comment.content}
+                <SpoilerText text={comment.content} />
             </p>
 
             {canDelete && !confirming && (

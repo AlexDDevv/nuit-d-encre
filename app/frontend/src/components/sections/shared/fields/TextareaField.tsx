@@ -17,9 +17,11 @@ export default function TextareaField<T extends FieldValues>({
     rows = 5,
     max,
     length,
+    textareaRef,
 }: TextareaFieldProps<T>) {
     const error = (errors as Record<string, FieldError | undefined>)[name]
         ?.message;
+    const { ref, ...field } = register(name, rules);
 
     return (
         <FieldShell
@@ -35,7 +37,11 @@ export default function TextareaField<T extends FieldValues>({
                 className={cn(atelierTextareaClass, "font-quote text-base")}
                 placeholder={placeholder}
                 aria-required={required}
-                {...register(name, rules)}
+                {...field}
+                ref={(element) => {
+                    ref(element);
+                    if (textareaRef) textareaRef.current = element;
+                }}
                 aria-invalid={error ? "true" : "false"}
                 errorMessage={error}
                 hideErrorMessage

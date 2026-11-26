@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ComponentProps, RefObject } from "react";
 import { IconType } from "react-icons";
 import {
     Control,
@@ -39,6 +39,8 @@ export type TextareaFieldProps<T extends FieldValues> = {
     max: number;
     /** Longueur courante (via `watch`) pour alimenter le compteur. */
     length: number;
+    /** Accès à l'élément, par exemple pour agir sur la sélection. */
+    textareaRef?: RefObject<HTMLTextAreaElement | null>;
 };
 
 export type SelectFieldProps<T extends FieldValues> = {

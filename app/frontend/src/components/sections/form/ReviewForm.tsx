@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { LuSparkles } from "react-icons/lu";
 import { FaFeatherPointed } from "react-icons/fa6";
 import { useForm, Controller } from "react-hook-form";
@@ -7,6 +8,7 @@ import FormWrapper from "@/components/UI/form/FormWrapper";
 import { atelierTextareaClass } from "@/components/sections/shared/atelierField";
 import { cn } from "@/lib/utils";
 import RatingStars from "@/components/sections/library/UI/RatingStars";
+import SpoilerButton from "@/components/sections/shared/spoiler/SpoilerButton";
 import { Book, BookReview } from "@/types/types";
 import { useToast } from "@/hooks/toast/useToast";
 import { useBookReviewMutations } from "@/hooks/book/review/useBookReviewMutations";
@@ -47,6 +49,14 @@ export default function ReviewForm({
         defaultValues: {
             rating: existingReview?.rating || 0,
             reviewText: existingReview?.reviewText || "",
+        },
+    });
+
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const { ref: reviewTextRef, ...reviewTextField } = register("reviewText", {
+        maxLength: {
+            value: 5000,
+            message: "La critique ne peut pas dépasser 5000 caractères",
         },
     });
 
@@ -152,14 +162,19 @@ export default function ReviewForm({
                 counter
                 className={cn(atelierTextareaClass, "font-quote")}
                 errorMessage={errors.reviewText?.message}
-                {...register("reviewText", {
-                    maxLength: {
-                        value: 5000,
-                        message:
-                            "La critique ne peut pas dépasser 5000 caractères",
-                    },
-                })}
+                {...reviewTextField}
+                ref={(element) => {
+                    reviewTextRef(element);
+                    textareaRef.current = element;
+                }}
             />
+            <div className="-mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <SpoilerButton textareaRef={textareaRef} />
+                <p className="text-muted-foreground text-xs">
+                    Sélectionnez un passage qui dévoile l'intrigue pour le
+                    flouter jusqu'au clic.
+                </p>
+            </div>
             <div className="flex items-center gap-4">
                 {/* astuce / bonus XP */}
                 {isDetailed ? (
