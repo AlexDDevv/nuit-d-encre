@@ -55,8 +55,8 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
                 className={cn(
                     "mb-1.5",
                     first
-                        ? "h-17 w-17 sm:h-26 sm:w-26 text-2xl sm:text-4xl"
-                        : "h-13 w-13 text-lg sm:h-20 sm:w-20 sm:text-3xl",
+                        ? "sm:h-26 sm:w-26 h-12 w-12 text-lg sm:text-4xl"
+                        : "h-10 w-10 text-sm sm:h-20 sm:w-20 sm:text-3xl",
                 )}
                 style={{
                     boxShadow: `0 0 0 3px hsl(20 3% 17%), 0 0 0 5px ${tint}`,
@@ -68,26 +68,33 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
         </>
     );
 
+    // Colonne : le titre, puis une ligne niveau (gauche) / XP (droite).
+    // Centré et empilé sur mobile, où le titre est masqué.
     const details = (
-        <div className="flex flex-col items-center gap-1.5 pt-0.5">
-            <span className="flex flex-wrap justify-center gap-1.5">
-                <LevelBadge level={user.level} className={LEVEL_PILL_CLASS} />
-                {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
-            </span>
+        <div className="flex w-full flex-col gap-1.5 pt-1.5">
             {user.title && (
-                <span className="text-muted-foreground font-quote hidden text-base italic leading-tight sm:block">
+                <span className="text-muted-foreground font-quote hidden text-left text-base italic leading-tight sm:block">
                     {user.title.label}
                 </span>
             )}
-            <span
-                className="font-quote mt-1 text-xl font-medium tabular-nums leading-none sm:text-[26px]"
-                style={{ color: tint }}
-            >
-                {formatXp(xp)}{" "}
-                <span className="text-muted-foreground font-body text-xs font-bold tracking-wider">
-                    XP
+            <div className="flex w-full flex-col items-center gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                <span className="flex flex-wrap justify-center gap-1.5 sm:justify-start">
+                    <LevelBadge
+                        level={user.level}
+                        className={LEVEL_PILL_CLASS}
+                    />
+                    {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
                 </span>
-            </span>
+                <span
+                    className="font-quote shrink-0 whitespace-nowrap text-xl font-medium tabular-nums leading-none sm:text-2xl"
+                    style={{ color: tint }}
+                >
+                    {formatXp(xp)}{" "}
+                    <span className="text-muted-foreground font-body text-xs font-bold tracking-wider">
+                        XP
+                    </span>
+                </span>
+            </div>
         </div>
     );
 
@@ -126,8 +133,8 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
 
                 <div className="flex flex-col items-center gap-1.5 self-center [grid-area:stack]">
                     {identity}
-                    {/* le reste révélé au survol / focus (toujours visible sur mobile) */}
-                    <div className="grid w-full grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100 max-sm:grid-rows-[1fr] max-sm:opacity-100">
+                    {/* le reste révélé au survol / focus */}
+                    <div className="grid w-full grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100">
                         <div className="overflow-hidden">{details}</div>
                     </div>
                 </div>
@@ -135,7 +142,7 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
             <div
                 aria-hidden="true"
                 className={cn(
-                    "bg-muted font-quote mt-2.5 flex w-[86%] items-start justify-center rounded-t-lg pt-2 text-2xl font-medium leading-none sm:pt-3 sm:text-[34px]",
+                    "bg-muted font-quote mt-2.5 flex w-[86%] items-start justify-center rounded-t-lg pt-2 text-2xl font-medium leading-none sm:pt-3 sm:text-4xl",
                     SOCLE_HEIGHT[place],
                 )}
                 style={{

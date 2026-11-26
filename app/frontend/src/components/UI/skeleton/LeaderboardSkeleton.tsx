@@ -5,9 +5,9 @@ const PULSE = "bg-muted animate-pulse motion-reduce:animate-none";
 /** Podium et lignes du classement en pulsation. */
 export function LeaderboardListSkeleton() {
     const podium = [
-        { avatar: "h-13 w-13 sm:h-20 sm:w-20", socle: "h-15 sm:h-23" },
-        { avatar: "h-17 w-17 sm:h-26 sm:w-26", socle: "h-22 sm:h-33" },
-        { avatar: "h-13 w-13 sm:h-20 sm:w-20", socle: "h-10 sm:h-16" },
+        { avatar: "h-10 w-10 sm:h-20 sm:w-20", socle: "h-15 sm:h-23" },
+        { avatar: "h-12 w-12 sm:h-26 sm:w-26", socle: "h-22 sm:h-33" },
+        { avatar: "h-10 w-10 sm:h-20 sm:w-20", socle: "h-10 sm:h-16" },
     ];
     return (
         <div aria-busy="true" aria-live="polite">
