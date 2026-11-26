@@ -103,6 +103,7 @@ export default function Signup() {
     };
 
     const password = watch("password");
+    const confirmPassword = watch("confirmPassword");
 
     return (
         <AuthShell mode="inscription" onSubmit={handleSubmit(onSubmit)}>
@@ -181,6 +182,11 @@ export default function Signup() {
                     icon={LuLock}
                     required
                     placeholder="Saisissez à nouveau"
+                    success={
+                        confirmPassword !== "" && confirmPassword === password
+                            ? "Les deux mots de passe correspondent"
+                            : undefined
+                    }
                     register={register}
                     errors={errors}
                     rules={{

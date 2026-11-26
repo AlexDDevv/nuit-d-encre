@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { hasValidIsbn13Checksum } from "@/lib/isbn";
 import { useToast } from "@/hooks/toast/useToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { TypeSelectOptions, CreateBookInput } from "@/types/types";
@@ -269,6 +270,11 @@ export default function BookForm() {
                         required
                         inputMode="numeric"
                         placeholder="9782070368228"
+                        success={
+                            hasValidIsbn13Checksum(isbn13Value)
+                                ? "Clé de contrôle vérifiée"
+                                : undefined
+                        }
                         register={register}
                         errors={errors}
                         rules={{

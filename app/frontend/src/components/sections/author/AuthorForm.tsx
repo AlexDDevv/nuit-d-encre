@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { isExternalUrl } from "@/lib/url";
 import { useToast } from "@/hooks/toast/useToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { CreateAuthorInput } from "@/types/types";
@@ -256,6 +257,7 @@ export default function AuthorForm() {
                         type="url"
                         inputMode="url"
                         placeholder="https://fr.wikipedia.org/wiki/…"
+                        success={isExternalUrl(watch("wikipediaUrl") ?? "")}
                         register={register}
                         errors={errors}
                         rules={{
@@ -273,6 +275,7 @@ export default function AuthorForm() {
                         type="url"
                         inputMode="url"
                         placeholder="https://exemple.fr"
+                        success={isExternalUrl(watch("officialWebsite") ?? "")}
                         register={register}
                         errors={errors}
                         rules={{
