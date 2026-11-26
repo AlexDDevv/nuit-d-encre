@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { LuMail } from "react-icons/lu";
+import { LuGlobe, LuHash, LuMail } from "react-icons/lu";
 import Banner from "@/components/UI/Banner/Banner";
 import XpPill from "@/components/UI/Banner/XpPill";
 import Button from "@/components/UI/Button/Button";
 import IncompleteChip from "@/components/UI/IncompleteChip";
 import { Input } from "@/components/UI/form/Input";
+import { Textarea } from "@/components/UI/form/Textarea";
 import FieldShell, {
     CharCounter,
 } from "@/components/sections/shared/FieldShell";
-import { atelierControlClass } from "@/components/sections/shared/atelierField";
 import PasswordStrengthMeter from "@/components/sections/auth/PasswordStrengthMeter";
 import { ConfirmDialog } from "@/components/sections/admin/ui/ConfirmDialog";
 import { StatusChip } from "@/components/sections/admin/ui/chips";
@@ -129,41 +129,89 @@ export default function DesignStates() {
                 </div>
             </Section>
 
-            <Section title="Messages de formulaire">
-                <div className="grid gap-6 md:grid-cols-2">
+            <Section title="Champs : neutre, erreur, succès">
+                <div className="grid gap-6 md:grid-cols-3">
                     <FieldShell
-                        htmlFor="dev-err"
-                        label="Champ en erreur"
+                        htmlFor="dev-default"
+                        label="Neutre"
+                        icon={LuMail}
+                        hint="Indice affiché sous le champ"
+                    >
+                        <Input
+                            id="dev-default"
+                            className="pl-11"
+                            placeholder="lecteur@exemple.fr"
+                        />
+                    </FieldShell>
+                    <FieldShell
+                        htmlFor="dev-error"
+                        label="Erreur"
                         icon={LuMail}
                         required
                         error="Adresse e-mail invalide"
                     >
-                        <input
-                            id="dev-err"
-                            className={cn(atelierControlClass, "w-full pl-11")}
+                        <Input
+                            id="dev-error"
+                            state="error"
+                            className="pl-11"
                             defaultValue="lecteur@"
                         />
                     </FieldShell>
                     <FieldShell
-                        htmlFor="dev-hint"
-                        label="Champ avec indice"
-                        hint="Indice affiché sous le champ"
-                        counter={{ value: 280, max: 300 }}
+                        htmlFor="dev-success"
+                        label="Succès avec message"
+                        icon={LuHash}
+                        success="Clé de contrôle vérifiée"
                     >
-                        <input
-                            id="dev-hint"
-                            className={cn(atelierControlClass, "w-full px-3.5")}
+                        <Input
+                            id="dev-success"
+                            state="success"
+                            className="pl-11 font-mono"
+                            defaultValue="9782070368228"
                         />
                     </FieldShell>
-                    <Input
-                        errorMessage="Message d'erreur d'Input (ErrorInput)"
-                        defaultValue="valeur refusée"
-                    />
-                    <div className="flex items-center gap-6">
-                        <CharCounter value={120} max={300} />
-                        <CharCounter value={285} max={300} />
-                        <CharCounter value={312} max={300} />
-                    </div>
+                    <FieldShell
+                        htmlFor="dev-success-border"
+                        label="Succès sans message (URL, champ corrigé)"
+                        icon={LuGlobe}
+                    >
+                        <Input
+                            id="dev-success-border"
+                            state="success"
+                            className="pl-11"
+                            defaultValue="https://fr.wikipedia.org/wiki/Colette"
+                        />
+                    </FieldShell>
+                    <FieldShell
+                        htmlFor="dev-textarea-error"
+                        label="Zone de texte en erreur"
+                        error="La critique doit faire au moins 10 caractères"
+                        counter={{ value: 4, max: 2000 }}
+                    >
+                        <Textarea
+                            id="dev-textarea-error"
+                            state="error"
+                            rows={3}
+                            className="font-quote min-h-24 text-base"
+                            defaultValue="Bof"
+                        />
+                    </FieldShell>
+                    <FieldShell
+                        htmlFor="dev-disabled"
+                        label="Désactivé"
+                        counter={{ value: 285, max: 300 }}
+                    >
+                        <Input
+                            id="dev-disabled"
+                            disabled
+                            defaultValue="Lecture seule"
+                        />
+                    </FieldShell>
+                </div>
+                <div className="flex items-center gap-6">
+                    <CharCounter value={120} max={300} />
+                    <CharCounter value={285} max={300} />
+                    <CharCounter value={312} max={300} />
                 </div>
                 <div className="grid gap-6 md:grid-cols-3">
                     {PASSWORDS.map((p) => (
