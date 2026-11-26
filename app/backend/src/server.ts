@@ -22,6 +22,7 @@ import { BookRecommendationsResolver } from "./graphql/resolvers/book/book-recom
 import { ProfileResolver } from "./graphql/resolvers/user/profile-resolver";
 import { FollowResolver } from "./graphql/resolvers/user/follow-resolver";
 import { FeedResolver } from "./graphql/resolvers/user/feed-resolver";
+import { LeaderboardResolver } from "./graphql/resolvers/gamification/leaderboard-resolver";
 import { TitleResolver } from "./graphql/resolvers/gamification/title-resolver";
 import { BookSearchResolver } from "./graphql/resolvers/book/book-search-resolver";
 import { AdminResolver } from "./graphql/resolvers/admin/admin-resolver";
@@ -77,6 +78,7 @@ for (const name of ["COOKIE_SECRET", "JWT_SECRET", "APP_PORT"]) {
                 FollowResolver,
                 FeedResolver,
                 TitleResolver,
+                LeaderboardResolver,
                 BookSearchResolver,
                 AdminResolver,
                 SiteBannersResolver,
