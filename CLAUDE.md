@@ -107,7 +107,7 @@ Nuit-d-Encre/
 │   │       │   ├── config.ts             # Endpoint GraphQL (/api)
 │   │       │   └── router.tsx            # React Router v7 avec lazy loading + guards
 │   │       ├── constants/
-│   │       │   └── bookStatus.ts         # Mapping statuts de lecture
+│   │       │   └── bookStatus.ts         # Mapping statuts de lecture (icônes + classes des tokens status-*)
 │   │       ├── types/                    # Un fichier par domaine, re-exportés par types.ts
 │   │       │   ├── types.ts              # Barrel : export * de chaque domaine
 │   │       │   └── user.ts, book.ts, author.ts, admin.ts, banner.ts, feed.ts, ui.ts…
@@ -121,9 +121,15 @@ Nuit-d-Encre/
 │   │       │   ├── spoiler.ts            # parseSpoilers(), wrapSpoiler() : balises ||…|| (rendu : sections/shared/spoiler/)
 │   │       │   └── downloadJson.ts       # Téléchargement de l'export RGPD
 │   │       ├── styles/
-│   │       │   ├── index.css             # Imports Tailwind + CSS global
-│   │       │   ├── theme.css             # Variables CSS (design tokens)
-│   │       │   └── loader.css            # Styles d'animation
+│   │       │   ├── index.css             # Point d'entrée : imports seuls, dans l'ordre de la cascade
+│   │       │   ├── tokens.css            # @theme static : typo, tracking, ombres, couleurs (surfaces, états, statuts)
+│   │       │   ├── base.css              # html/body, scrollbar, focus clavier de repli
+│   │       │   ├── utilities.css         # @utility maison : filet, grain, no-scrollbar, ornements typographiques
+│   │       │   ├── motion.css            # Modales, fade-up, spinner
+│   │       │   ├── ornaments.css         # Animations décoratives (chandelle, sceau, podium…) + mouvement réduit
+│   │       │   ├── toast.css             # Sonner habillé par les tokens d'état
+│   │       │   ├── fonts.css             # Polices auto-hébergées
+│   │       │   └── loader-nocturne.css   # Loaders (importé par NocturneLoader)
 │   │       └── data/                     # Données statiques
 │   │
 │   └── backend/                          # Apollo Server 5 + TypeGraphQL + TypeORM
@@ -203,7 +209,11 @@ Nuit-d-Encre/
 ### Styling
 
 - **Tailwind CSS 4** via PostCSS (`@tailwindcss/postcss`)
-- **Variables CSS** dans `src/styles/theme.css` pour les design tokens (couleurs, espacements)
+- **Design tokens** dans `src/styles/tokens.css` (`@theme static`, toutes les variables émises car certaines sont lues en `var()` depuis du TS). Toute couleur d'interface passe par un token ; seules les illustrations (loaders, sceaux, couvertures factices, dégradés d'ornement) gardent des `hsl(...)` propres. Une valeur arbitraire qui vaut un token s'écrit avec le token (`bg-[hsl(43_59%_81%/0.45)]` → `bg-primary/45`).
+- **Tokens d'état** (`info`, `success`, `warning`, `error`, `reward` pour l'or des récompenses) : tout ce qui informe (bannière, toast, badge, message de formulaire) les utilise. Cinq rôles par état : `<état>` (texte, icône, aplat, ≥ 4,5:1 sur `background` et `card`), `<état>-foreground` (texte sur l'aplat), `<état>-border`, `<état>-surface` (voile de l'effet verre : `linear-gradient(surface, surface), var(--color-card)`), `<état>-subtle` (fond de pastille). `destructive` reste l'aplat des boutons destructeurs ; un texte d'erreur s'écrit `text-error`, jamais `text-destructive` (3:1, illisible).
+- **Statuts de lecture** : `status-<to-read|reading|read|paused|abandoned>` (+ `-border`, `-surface`, `-dot`), consommés par `constants/bookStatus.ts`.
+- **Autres tokens** : `subtle-foreground` (légendes), `sunken` (creux sur carte, avec opacité), `scrim` (voile de modale), `hairline` (séparateur clair), `gold-muted` / `gold-bright` ; ombres `shadow-{focus-halo,card-hover,modal,cover}` ; tracking `tracking-{label,caps,spaced,ornament}` (0.14 / 0.2 / 0.26 / 0.32em) au lieu de `tracking-[…]`.
+- **Toasts** : `useToast` (Sonner, `richColors`) ; leur habillage vit dans `styles/toast.css`, pas dans des classes `!important` au site d'appel.
 - **`cn()`** depuis `@/lib/utils` (clsx + tailwind-merge) — utilisé dans chaque composant
 - **CVA (class-variance-authority)** pour les variantes de composants UI (Button, inputs)
 - **4 espaces** d'indentation — configuré dans Prettier (tabWidth: 4)
