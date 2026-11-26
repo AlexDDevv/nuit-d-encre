@@ -200,7 +200,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .xp-shimmer::after,
     .xp-sweep::after,
+    .node-glow,
     .twinkle,
     .candle,
     .seal-glow,

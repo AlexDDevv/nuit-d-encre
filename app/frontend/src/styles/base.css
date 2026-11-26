@@ -27,3 +27,13 @@ body {
     background: var(--color-accent-foreground);
     border-radius: 8px;
 }
+
+/* Filet de sécurité : tout élément focusable sans indicateur propre en reçoit un.
+   En @layer base, il cède devant n'importe quel utilitaire (focus-visible:ring-*,
+   outline-none…) : les composants qui définissent leur focus gardent la main. */
+@layer base {
+    :focus-visible {
+        outline: 2px solid var(--color-ring);
+        outline-offset: 2px;
+    }
+}
