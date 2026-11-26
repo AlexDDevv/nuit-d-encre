@@ -81,6 +81,7 @@ registerEnumType(ReadingStatus, { name: "ReadingStatus" });
 @Entity({ name: "user_book" })
 @Unique("UQ_user_book", ["user", "book"])
 @Index("IDX_user", ["user"])
+@Index("IDX_user_book_user_finished", ["user", "finishedAt"])
 @Index("IDX_book", ["book"])
 export class UserBook extends BaseEntity {
     /**
@@ -131,18 +132,21 @@ export class UserBook extends BaseEntity {
      * @description
      * Optional date when the user started reading the book.
      */
-    @Field(() => Date, { nullable: true })
+    @Field(() => String, { nullable: true })
     @Column({ type: "date", nullable: true })
-    startedAt?: Date | null;
+    startedAt?: string | null;
 
     /**
      * Reading finish date
      * @description
      * Optional date when the user finished reading the book.
+     * Colonne `date` : TypeORM la lit et l'écrit en chaîne `YYYY-MM-DD`
+     * (le scalaire DateTimeISO refuserait cette valeur). Posée au passage à
+     * « lu » ; compte pour le défi de lecture de son année.
      */
-    @Field(() => Date, { nullable: true })
+    @Field(() => String, { nullable: true })
     @Column({ type: "date", nullable: true })
-    finishedAt?: Date | null;
+    finishedAt?: string | null;
 
     /**
      * Indicates whether this book is marked as a favorite

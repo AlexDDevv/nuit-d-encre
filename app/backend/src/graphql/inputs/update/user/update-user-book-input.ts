@@ -9,8 +9,15 @@
  */
 
 import { Field, ID, InputType } from "type-graphql";
-import { IsEnum, IsOptional, Validate, IsDate } from "class-validator";
+import {
+    IsEnum,
+    IsOptional,
+    Validate,
+    IsISO8601,
+    Matches,
+} from "class-validator";
 import { ReadingStatus } from "../../../../types/types";
+import { ISO_DATE_PATTERN } from "../../../../utils/paris-date";
 import { EndAfterStart } from "../../../helpers/endAfterStart";
 
 /**
@@ -68,15 +75,17 @@ export class UpdateUserBookInput {
     /** Visibility flag (public/private) */
 
     /** Reading start date */
-    @Field({ nullable: true })
+    @Field(() => String, { nullable: true })
     @IsOptional()
-    @IsDate()
-    startedAt?: Date;
+    @IsISO8601({ strict: true })
+    @Matches(ISO_DATE_PATTERN)
+    startedAt?: string | null;
 
     /** Reading finish date (>= startedAt) */
-    @Field({ nullable: true })
+    @Field(() => String, { nullable: true })
     @IsOptional()
-    @IsDate()
+    @IsISO8601({ strict: true })
+    @Matches(ISO_DATE_PATTERN)
     @Validate(EndAfterStart)
-    finishedAt?: Date;
+    finishedAt?: string | null;
 }

@@ -11,6 +11,7 @@
  *  - livres complets et importés-incomplets (hasIncompleteBookInfo), tous les
  *    formats, plusieurs langues, avec/sans critiques, avec/sans recommandations,
  *  - bibliothèques perso couvrant tous les ReadingStatus, favoris ordonnés,
+ *    défis de lecture de l'année (partagé chez Elise, privé chez Gaspard),
  *    entrées publiques et privées,
  *  - critiques courtes et détaillées (bonus > 200 caractères),
  *  - votes d'utilité (jamais sur sa propre critique),
@@ -51,6 +52,8 @@ import { BookReviewComment } from "../database/entities/book/bookReviewComment";
 import { BookRecommendation } from "../database/entities/book/bookRecommendation";
 import { UserFollow } from "../database/entities/user/user-follow";
 import { UserActions } from "../database/entities/user/user-actions";
+import { ReadingGoal } from "../database/entities/gamification/reading-goal";
+import { parisYear } from "../utils/paris-date";
 import { SiteBanner } from "../database/entities/banner/site-banner";
 import { register } from "../services/auth-service";
 import { eraseUserAccount } from "../services/rgpd/erasure-service";
@@ -1288,6 +1291,10 @@ const libraryData: LibrarySeed[] = [
     },
 ];
 
+/** Date AAAA-MM-JJ d'un timestamp, pour les colonnes `date` de user_book. */
+const isoDate = (timestamp: number) =>
+    new Date(timestamp).toISOString().slice(0, 10);
+
 const DETAILED = (txt: string) => txt; // simple marqueur de lisibilité
 
 type ReviewSeed = {
@@ -1689,6 +1696,7 @@ async function seed() {
             "book_recommendation",
             "book_review",
             "user_book",
+            "reading_goal",
             "book",
             "author",
             "category",
@@ -1814,8 +1822,8 @@ async function seed() {
             user: usersByKey.get(l.user)!,
             book: booksByKey.get(l.book)!,
             status: l.status,
-            startedAt: l.startedAt ? new Date(l.startedAt) : null,
-            finishedAt: l.finishedAt ? new Date(l.finishedAt) : null,
+            startedAt: l.startedAt ?? null,
+            finishedAt: l.finishedAt ?? null,
             isFavorite: l.isFavorite ?? false,
             favoriteRank: l.favoriteRank ?? null,
         });
@@ -1830,6 +1838,22 @@ async function seed() {
         }
     }
     console.log(`📖 ${libraryData.length} entrées de bibliothèque créées`);
+
+    // --- Défis de lecture (année en cours) ----------------------------------
+    // Elise : défi en cours (bibliothèque partagée, visible des autres) ;
+    // Gaspard : défi sur une bibliothèque privée, masqué aux visiteurs.
+    const goalsData = [
+        { user: "elise", target: 12 },
+        { user: "gaspard", target: 6 },
+    ];
+    for (const g of goalsData) {
+        await ReadingGoal.create({
+            user: usersByKey.get(g.user)!,
+            year: parisYear(),
+            target: g.target,
+        }).save();
+    }
+    console.log(`🎯 ${goalsData.length} défis de lecture créés`);
 
     // --- Critiques -----------------------------------------------------------
     // clé = `${userKey}|${bookKey}`
@@ -1952,8 +1976,8 @@ async function seed() {
             user,
             book: popularBook,
             status: ReadingStatus.READ,
-            startedAt: new Date(now - (i + 30) * 24 * 60 * 60 * 1000),
-            finishedAt: new Date(now - i * 24 * 60 * 60 * 1000),
+            startedAt: isoDate(now - (i + 30) * 24 * 60 * 60 * 1000),
+            finishedAt: isoDate(now - i * 24 * 60 * 60 * 1000),
             isFavorite: false,
             favoriteRank: null,
         });
@@ -2026,8 +2050,8 @@ async function seed() {
             user: doyen,
             book,
             status: ReadingStatus.READ,
-            startedAt: new Date(now - 200 * 24 * 60 * 60 * 1000),
-            finishedAt: new Date(now - 120 * 24 * 60 * 60 * 1000),
+            startedAt: isoDate(now - 200 * 24 * 60 * 60 * 1000),
+            finishedAt: isoDate(now - 120 * 24 * 60 * 60 * 1000),
             isFavorite: false,
             favoriteRank: null,
         });

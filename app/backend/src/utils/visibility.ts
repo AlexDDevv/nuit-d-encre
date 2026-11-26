@@ -11,6 +11,7 @@ import { Roles, UserActionType } from "../types/types";
 export const LIBRARY_ACTION_TYPES: readonly UserActionType[] = [
     UserActionType.BOOK_ADDED_TO_LIBRARY,
     UserActionType.BOOK_FINISHED,
+    UserActionType.READING_GOAL_REACHED,
 ];
 
 /** Le visiteur peut-il voir la bibliothèque (et son activité) du propriétaire ? */

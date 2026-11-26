@@ -36,9 +36,22 @@ import { UserBooksQueryInput } from "../../queries/user/user-books-input";
 import { UserBook } from "../../../database/entities/user/user-book";
 import { CreateUserBookInput } from "../../inputs/create/user/create-user-book-input";
 import { UpdateUserBookInput } from "../../inputs/update/user/update-user-book-input";
+import { checkReadingGoal } from "../../../services/gamification/reading-goal-service";
+import { parisToday } from "../../../utils/paris-date";
 import { requireUser } from "../../../utils/current-user";
 import { canViewLibrary } from "../../../utils/visibility";
 import { User } from "../../../database/entities/user/user";
+
+/** Une lecture ne peut pas se terminer après aujourd'hui (heure de Paris). */
+function assertNotInFuture(finishedAt?: string | null) {
+    if (finishedAt && finishedAt > parisToday()) {
+        throw new AppError(
+            "La date de fin de lecture ne peut pas être dans le futur",
+            400,
+            "BadRequestError",
+        );
+    }
+}
 
 /**
  * Bibliothèque consultée : celle de l'utilisateur connecté par défaut, ou
@@ -305,6 +318,7 @@ export class UserBooksResolver {
         @Ctx() context: Context,
     ): Promise<UserBook> {
         const user = await requireUser(context);
+        assertNotInFuture(data.finishedAt);
 
         const { bookId, ...rest } = data;
 
@@ -346,6 +360,16 @@ export class UserBooksResolver {
             });
         }
 
+        // Ajouté directement comme « lu » : sans date, c'est une lecture
+        // ancienne et elle ne compte pas pour le défi tant que « Lu le »
+        // n'est pas renseigné.
+        if (
+            newUserBook.status === ReadingStatus.READ &&
+            newUserBook.finishedAt
+        ) {
+            await checkReadingGoal(user);
+        }
+
         const userBookWithRelations = await UserBook.findOne({
             where: { id: newUserBook.id },
             relations: {
@@ -380,6 +404,7 @@ export class UserBooksResolver {
         @Ctx() context: Context,
     ): Promise<UserBook> {
         const user = await requireUser(context);
+        assertNotInFuture(data.finishedAt);
 
         const userBook = await UserBook.findOne({
             where: {
@@ -407,6 +432,12 @@ export class UserBooksResolver {
         // Apply updates
         Object.assign(userBook, updateData);
 
+        // Lecture terminée dans l'app : datée du jour, sauf date fournie.
+        const becameRead = !wasRead && userBook.status === ReadingStatus.READ;
+        if (becameRead && data.finishedAt === undefined) {
+            userBook.finishedAt = parisToday();
+        }
+
         await userBook.save();
 
         // Grant XP if book status changed to READ
@@ -416,6 +447,10 @@ export class UserBooksResolver {
                 targetId: userBook.id,
                 metadata: { to: userBook.status, title: userBook.book.title },
             });
+        }
+
+        if (userBook.status === ReadingStatus.READ && userBook.finishedAt) {
+            await checkReadingGoal(user);
         }
 
         // Reload with all relations

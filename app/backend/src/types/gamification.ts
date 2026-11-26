@@ -10,6 +10,9 @@ export type GrantXPOptions = {
     // Identifie ce qui est récompensé : une même clé ne rapporte de l'XP
     // qu'une seule fois par utilisateur et par type d'action.
     xpKey: string;
+    // XP accordée, si elle dépend de la cible (défi de lecture) ; à défaut,
+    // le montant d'ActionXPMap.
+    xp?: number;
     targetId?: string;
     metadata?: Record<string, any>;
 };

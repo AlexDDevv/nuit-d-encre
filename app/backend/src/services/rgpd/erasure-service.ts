@@ -32,7 +32,8 @@ const detachUser = (
  * - anonymise les contributions publiques (critiques, recommandations,
  *   commentaires) en détachant l'identité (userId -> NULL) ;
  * - détache les contributions au catalogue (livres, auteurs, catégories créées) ;
- * - supprime le compte, ce qui déclenche la cascade sur user_book et user_follow.
+ * - supprime le compte, ce qui déclenche la cascade sur user_book, user_follow
+ *   et reading_goal.
  */
 export const eraseUserAccount = async (userId: string): Promise<void> => {
     await dataSource.transaction(async (manager) => {
@@ -50,7 +51,7 @@ export const eraseUserAccount = async (userId: string): Promise<void> => {
         await detachUser(manager, Author, "user", userId);
         await detachUser(manager, Category, "createdBy", userId);
 
-        // 4. Compte : suppression (cascade user_book + user_follow).
+        // 4. Compte : suppression (cascade user_book, user_follow, reading_goal).
         await manager.delete(User, { id: userId });
     });
 };

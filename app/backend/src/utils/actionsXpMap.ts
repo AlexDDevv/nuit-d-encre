@@ -12,4 +12,6 @@ export const ActionXPMap: Record<UserActionType, number> = {
     [UserActionType.BOOK_IMPORTED]: 30,
     [UserActionType.BOOK_COMPLETED]: 50,
     [UserActionType.AUTHOR_COMPLETED]: 50,
+    // Montant réel calculé selon l'objectif (readingGoalXp), passé en `xp`.
+    [UserActionType.READING_GOAL_REACHED]: 0,
 };

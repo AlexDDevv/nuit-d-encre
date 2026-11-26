@@ -19,6 +19,7 @@ export const exportUserData = async (userId: string): Promise<string> => {
             followers: true,
             books: true,
             authors: true,
+            readingGoals: true,
         },
     });
 
@@ -50,6 +51,12 @@ export const exportUserData = async (userId: string): Promise<string> => {
         abonnes: (user.followers ?? []).length,
         livresAjoutes: user.books ?? [],
         auteursAjoutes: user.authors ?? [],
+        defisDeLecture: (user.readingGoals ?? []).map((goal) => ({
+            annee: goal.year,
+            objectif: goal.target,
+            createdAt: goal.createdAt,
+            updatedAt: goal.updatedAt,
+        })),
     };
 
     return JSON.stringify(payload, null, 2);

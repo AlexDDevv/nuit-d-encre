@@ -19,7 +19,7 @@ export async function grantXpService(
     actionType: UserActionType,
     options: GrantXPOptions,
 ): Promise<boolean> {
-    const xpToAdd = ActionXPMap[actionType];
+    const xpToAdd = options.xp ?? ActionXPMap[actionType];
     const previous = { xp: user.xp, level: user.level };
 
     try {

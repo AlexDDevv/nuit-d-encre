@@ -9,4 +9,5 @@ export const xpKeys = {
     author: (authorId: string) => `author:${authorId}`,
     helpfulVote: (reviewId: string, voterId: string) =>
         `review:${reviewId}:voter:${voterId}`,
+    readingGoal: (year: number) => `reading-goal:${year}`,
 };

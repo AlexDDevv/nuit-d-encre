@@ -15,6 +15,7 @@ import { BookReview } from "../book/bookReview";
 import { BookRecommendation } from "../book/bookRecommendation";
 import { BookReviewVote } from "../book/bookReviewVote";
 import { Title } from "../gamification/title";
+import { ReadingGoal } from "../gamification/reading-goal";
 import { UserFollow } from "./user-follow";
 
 /**
@@ -137,6 +138,9 @@ export class User extends BaseEntity {
 
     @OneToMany(() => BookReviewVote, (vote) => vote.user)
     bookReviewVotes!: BookReviewVote[];
+
+    @OneToMany(() => ReadingGoal, (goal) => goal.user)
+    readingGoals!: ReadingGoal[];
 
     @Field()
     @Column({ default: () => "CURRENT_TIMESTAMP" })

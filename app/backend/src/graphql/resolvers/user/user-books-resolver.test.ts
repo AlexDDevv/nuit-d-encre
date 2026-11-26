@@ -2,6 +2,8 @@ import { Book } from "../../../database/entities/book/book";
 import { User } from "../../../database/entities/user/user";
 import { UserBook } from "../../../database/entities/user/user-book";
 import { grantXpService } from "../../../services/grind/grant-xp-service";
+import { checkReadingGoal } from "../../../services/gamification/reading-goal-service";
+import { parisToday } from "../../../utils/paris-date";
 import {
     makeContext,
     makeUser,
@@ -11,8 +13,10 @@ import { ReadingStatus, Roles, UserActionType } from "../../../types/types";
 import { UserBooksResolver } from "./user-books-resolver";
 
 jest.mock("../../../services/grind/grant-xp-service");
+jest.mock("../../../services/gamification/reading-goal-service");
 
 const grantXp = grantXpService as jest.Mock;
+const checkGoal = checkReadingGoal as jest.Mock;
 
 function makeBook(id: string): Book {
     const book = new Book();
@@ -27,6 +31,7 @@ describe("UserBooksResolver", () => {
 
     beforeEach(() => {
         jest.restoreAllMocks();
+        jest.clearAllMocks();
         stubPersistence(UserBook);
     });
 
@@ -80,6 +85,20 @@ describe("UserBooksResolver", () => {
                 expect.objectContaining({ xpKey: "book:book-1" }),
             );
         });
+
+        it("ne compte pas pour le défi un livre ajouté comme lu sans date", async () => {
+            jest.spyOn(Book, "findOne").mockResolvedValue(makeBook("book-1"));
+            jest.spyOn(UserBook, "findOne")
+                .mockResolvedValueOnce(null)
+                .mockResolvedValueOnce(new UserBook());
+
+            await resolver.createUserBook(
+                { bookId: "book-1", status: ReadingStatus.READ },
+                makeContext(user),
+            );
+
+            expect(checkGoal).not.toHaveBeenCalled();
+        });
     });
 
     describe("updateUserBook", () => {
@@ -120,6 +139,51 @@ describe("UserBooksResolver", () => {
             );
 
             expect(grantXp).not.toHaveBeenCalled();
+        });
+
+        it("date du jour la lecture terminée dans l'app et vérifie le défi", async () => {
+            const userBook = existingUserBook(ReadingStatus.READING);
+            jest.spyOn(UserBook, "findOne")
+                .mockResolvedValueOnce(userBook)
+                .mockResolvedValueOnce(new UserBook());
+
+            await resolver.updateUserBook(
+                { id: "ub-1", status: ReadingStatus.READ },
+                makeContext(user),
+            );
+
+            expect(userBook.finishedAt).toBe(parisToday());
+            expect(checkGoal).toHaveBeenCalledWith(user);
+        });
+
+        it("garde la date « Lu le » fournie", async () => {
+            const userBook = existingUserBook(ReadingStatus.READING);
+            jest.spyOn(UserBook, "findOne")
+                .mockResolvedValueOnce(userBook)
+                .mockResolvedValueOnce(new UserBook());
+
+            await resolver.updateUserBook(
+                {
+                    id: "ub-1",
+                    status: ReadingStatus.READ,
+                    finishedAt: "2025-06-01",
+                },
+                makeContext(user),
+            );
+
+            expect(userBook.finishedAt).toBe("2025-06-01");
+        });
+
+        it("refuse une date de fin dans le futur", async () => {
+            const findOne = jest.spyOn(UserBook, "findOne");
+
+            await expect(
+                resolver.updateUserBook(
+                    { id: "ub-1", finishedAt: "2999-01-01" },
+                    makeContext(user),
+                ),
+            ).rejects.toMatchObject({ statusCode: 400 });
+            expect(findOne).not.toHaveBeenCalled();
         });
 
         it("n'accorde rien et ne journalise rien quand le livre est abandonné", async () => {
