@@ -268,7 +268,7 @@ export default function EditProfileModal({
                                     <textarea
                                         id="f-bio"
                                         value={bio}
-                                        rows={4}
+                                        rows={3}
                                         maxLength={360}
                                         aria-invalid={
                                             !!(showI("bio") && errInfos.bio)
@@ -283,7 +283,7 @@ export default function EditProfileModal({
                                         }
                                         className={cn(
                                             atelierTextareaClass,
-                                            "font-quote w-full resize-none px-3.5 py-3 text-base italic placeholder:not-italic focus-visible:outline-none",
+                                            "font-quote min-h-24 w-full resize-none px-3.5 py-3 text-base italic placeholder:not-italic focus-visible:outline-none",
                                             showI("bio") &&
                                                 errInfos.bio &&
                                                 "border-destructive focus-visible:border-destructive",
