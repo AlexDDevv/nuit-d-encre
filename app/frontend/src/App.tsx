@@ -13,7 +13,7 @@ function App() {
             <Toaster
                 richColors
                 theme="dark"
-                position="bottom-center"
+                position="bottom-right"
                 closeButton
             />
             <div className="flex min-h-dvh">
