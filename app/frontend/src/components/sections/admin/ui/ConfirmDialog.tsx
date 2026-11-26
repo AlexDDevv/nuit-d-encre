@@ -42,7 +42,7 @@ export function ConfirmDialog({
                         size={16}
                         className="text-warning mt-0.5 shrink-0"
                     />
-                    <p className="font-body text-sm leading-snug text-warning">
+                    <p className="font-body text-warning text-sm leading-snug">
                         {warning}
                     </p>
                 </div>
