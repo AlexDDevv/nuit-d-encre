@@ -8,6 +8,8 @@ const apolloError = (code: string, message = "x") =>
         graphQLErrors: [new GraphQLError(message, { extensions: { code } })],
     });
 
+// Risque : un toast annonce la mauvaise cause d'échec ; la détection repose sur
+// le code puis sur un extrait de message, à ne pas renommer à la légère.
 describe("parseGraphQLError", () => {
     it("reconnaît l'erreur à son code, quel que soit le message", () => {
         expect(

@@ -10,6 +10,8 @@ const apolloError = (...codes: string[]) =>
         ),
     });
 
+// Risque : une erreur serveur est prise pour une ressource absente (ou
+// l'inverse) et la page affiche une fausse 404.
 describe("hasGraphQLErrorCode", () => {
     it("détecte le code parmi les erreurs GraphQL", () => {
         expect(
@@ -31,6 +33,7 @@ describe("hasGraphQLErrorCode", () => {
     });
 });
 
+// Risque : une page affiche « introuvable » pour une panne serveur.
 describe("isNotFoundError", () => {
     it("ne confond pas une erreur serveur avec une ressource absente", () => {
         expect(isNotFoundError(apolloError("NOT_FOUND"))).toBe(true);

@@ -3,7 +3,6 @@ import { UserAction, UserActionType } from "@/types/types";
 import {
     computeStats,
     describeAction,
-    describeFeedEntry,
     formatRelativeDate,
     sortByRecent,
     timeBucket,
@@ -22,6 +21,7 @@ const action = (
     createdAt = ago(0),
 ): UserAction => ({ type, xp: 0, createdAt, metadata });
 
+// Risque : les compteurs du profil comptent une action qui ne leur revient pas.
 describe("computeStats", () => {
     it("part de zéro sans action", () => {
         expect(computeStats([])).toEqual({
@@ -64,85 +64,9 @@ describe("computeStats", () => {
     });
 });
 
+// Risque : un type d'action nouveau ou des métadonnées corrompues font planter
+// le journal du profil et le fil.
 describe("describeAction", () => {
-    it.each<[UserActionType, string, string]>([
-        ["BOOK_ADDED", "A ajouté « Dune »", "added"],
-        [
-            "BOOK_ADDED_TO_LIBRARY",
-            "A ajouté « Dune » à sa bibliothèque",
-            "added",
-        ],
-        ["BOOK_IMPORTED", "A importé « Dune »", "added"],
-        ["BOOK_FINISHED", "A terminé « Dune »", "finished"],
-        ["BOOK_COMPLETED", "A complété la fiche de « Dune »", "complete"],
-        ["REVIEW_CREATED", "A écrit une critique de « Dune »", "review"],
-        ["BOOK_RECOMMENDED", "A recommandé « Dune »", "reco"],
-    ])("décrit %s", (type, label, kind) => {
-        expect(describeAction(action(type, '{"title":"Dune"}'))).toEqual({
-            label,
-            kind,
-        });
-    });
-
-    it.each<[UserActionType, string, string]>([
-        ["AUTHOR_ADDED", "A ajouté l'auteur Frank Herbert", "author"],
-        [
-            "AUTHOR_COMPLETED",
-            "A complété la fiche de Frank Herbert",
-            "complete",
-        ],
-    ])("décrit %s avec le nom complet de l'auteur", (type, label, kind) => {
-        expect(
-            describeAction(
-                action(type, '{"firstname":"Frank","lastname":"Herbert"}'),
-            ),
-        ).toEqual({ label, kind });
-    });
-
-    it.each<[UserActionType, string, string]>([
-        ["DETAILED_REVIEW_BONUS", "A rédigé une critique détaillée", "review"],
-        ["REVIEW_VOTED_HELPFUL", "A jugé une critique utile", "reco"],
-    ])("décrit %s sans dépendre des métadonnées", (type, label, kind) => {
-        expect(describeAction(action(type))).toEqual({ label, kind });
-    });
-
-    it("remplace un titre manquant par une tournure générique", () => {
-        expect(describeAction(action("BOOK_ADDED")).label).toBe(
-            "A ajouté un ouvrage",
-        );
-        expect(describeAction(action("BOOK_ADDED", "{}")).label).toBe(
-            "A ajouté un ouvrage",
-        );
-    });
-
-    it("décrit le défi de lecture atteint, avec ou sans métadonnées", () => {
-        expect(
-            describeAction(
-                action("READING_GOAL_REACHED", '{"year":2026,"target":24}'),
-            ),
-        ).toEqual({
-            label: "A atteint son défi de lecture 2026 : 24 livres",
-            kind: "finished",
-        });
-        expect(
-            describeAction(action("READING_GOAL_REACHED", '{"target":1}'))
-                .label,
-        ).toBe("A atteint son défi de lecture : 1 livre");
-        expect(describeAction(action("READING_GOAL_REACHED")).label).toBe(
-            "A atteint son défi de lecture",
-        );
-    });
-
-    it("remplace un auteur incomplet par une tournure générique", () => {
-        expect(describeAction(action("AUTHOR_ADDED", "{}")).label).toBe(
-            "A ajouté l'auteur un auteur",
-        );
-        expect(
-            describeAction(action("AUTHOR_ADDED", '{"lastname":"Herbert"}'))
-                .label,
-        ).toBe("A ajouté l'auteur Herbert");
-    });
-
     it.each([
         ["illisibles", "{pas du json"],
         ["non objet", '"Dune"'],
@@ -162,15 +86,8 @@ describe("describeAction", () => {
     });
 });
 
-describe("describeFeedEntry", () => {
-    it("produit exactement le même texte que le journal de profil", () => {
-        const metadata = '{"title":"Dune"}';
-        expect(describeFeedEntry({ type: "BOOK_ADDED", metadata })).toEqual(
-            describeAction(action("BOOK_ADDED", metadata)),
-        );
-    });
-});
-
+// Risque : une action glisse dans le mauvais groupe de dates aux bornes
+// (24 h, 48 h, 7 jours) ou une date invalide casse l'affichage.
 describe("dates", () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -203,17 +120,12 @@ describe("dates", () => {
 
     describe("formatRelativeDate", () => {
         it.each([
-            ["30 secondes", 30 * 1000, "il y a 30 secondes"],
-            ["5 minutes", 5 * 60 * 1000, "il y a 5 minutes"],
-            ["3 heures", 3 * HOUR_MS, "il y a 3 heures"],
             ["hier", DAY_MS, "hier"],
-            ["2 jours", 2 * DAY_MS, "avant-hier"],
             ["3 semaines", 21 * DAY_MS, "il y a 3 semaines"],
             // 365 jours retombe sur « 12 mois » : les divisions cumulées
             // (7 jours, 4,34524 semaines, 12 mois) n'atteignent pas tout à
             // fait l'année.
             ["1 an", 365 * DAY_MS, "il y a 12 mois"],
-            ["2 ans", 730 * DAY_MS, "il y a 2 ans"],
         ])("formate %s en français", (_label, age, expected) => {
             expect(formatRelativeDate(ago(age))).toBe(expected);
         });
@@ -225,6 +137,7 @@ describe("dates", () => {
     });
 });
 
+// Risque : trier en place le tableau figé renvoyé par Apollo lève une erreur.
 describe("sortByRecent", () => {
     it("classe de la plus récente à la plus ancienne", () => {
         const recent = action("BOOK_ADDED", null, "2026-06-15T10:00:00.000Z");

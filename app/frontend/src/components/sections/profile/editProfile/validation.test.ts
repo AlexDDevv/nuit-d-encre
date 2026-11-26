@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { validateSecurity } from "./validation";
 
+// Risque : le formulaire laisse partir un changement de mot de passe que le
+// backend refusera, ou sans confirmation.
 describe("validateSecurity", () => {
     const valid = {
         current: "Ancien1!",

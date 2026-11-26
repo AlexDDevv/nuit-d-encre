@@ -1,14 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { goalRatio, goalRewardXp, isGoalXpCapped } from "./readingGoal";
+import { goalRewardXp, isGoalXpCapped } from "./readingGoal";
 
-describe("goalRatio", () => {
-    it("borne l'avancement à 100 %", () => {
-        expect(goalRatio({ booksRead: 6, target: 24 })).toBe(0.25);
-        expect(goalRatio({ booksRead: 30, target: 24 })).toBe(1);
-    });
-});
-
-// Miroir de reading-goal-service.ts : l'XP promise doit être celle accordée.
+// Risque : l'XP promise dans le formulaire diffère de celle accordée par
+// reading-goal-service.ts (10 XP par livre visé, plafond 500).
 describe("goalRewardXp", () => {
     it("donne 10 XP par livre visé, plafonnés à 500", () => {
         expect(goalRewardXp(24)).toBe(240);

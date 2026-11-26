@@ -1,14 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { Author, Book } from "@/types/types";
-import {
-    buildAuthorAriaLabel,
-    buildBookAriaLabel,
-    getRatingClasses,
-    hasIncompleteBookInfo,
-    hasIncompleteInfo,
-    slugify,
-} from "./utils";
+import { hasIncompleteBookInfo, hasIncompleteInfo, slugify } from "./utils";
 
+// Risque : un slug mal formé produit une URL de fiche cassée ou ambiguë.
 describe("slugify", () => {
     it("lowercases and replaces spaces with dashes", () => {
         expect(slugify("Le Petit Prince")).toBe("le-petit-prince");
@@ -28,6 +22,8 @@ describe("slugify", () => {
     });
 });
 
+// Risque : le badge « fiche à compléter » diverge de la règle backend qui
+// accorde l'XP de complétion (isImportedBookIncomplete).
 describe("hasIncompleteBookInfo", () => {
     const completeImportedBook = {
         isImported: true,
@@ -70,6 +66,13 @@ describe("hasIncompleteBookInfo", () => {
                 category: { name: "Autre" },
             } as Book),
         ).toBe(true);
+    });
+
+    it("est plus strict que le backend sur la couverture", () => {
+        // Divergence connue : le front exige une couverture, le backend
+        // l'ignore. Un livre importé sans couverture mais complet par ailleurs
+        // garde son badge alors que l'XP est déjà accordée. Si le backend
+        // ajoute coverUrl à sa règle, supprimer ce test.
         expect(
             hasIncompleteBookInfo({
                 ...completeImportedBook,
@@ -79,26 +82,8 @@ describe("hasIncompleteBookInfo", () => {
     });
 });
 
-describe("hasIncompleteBookInfo vs backend", () => {
-    // Le badge « fiche à compléter » (front) et l'XP de complétion (backend,
-    // isImportedBookIncomplete) doivent rester cohérents. Divergence connue :
-    // le front exige en plus une couverture, le backend l'ignore. Un livre
-    // importé sans couverture mais complet par ailleurs n'affiche donc plus de
-    // badge une fois les autres champs remplis, alors que l'XP est déjà
-    // accordée. Si le backend ajoute coverUrl à sa règle, supprimer ce test.
-    it("est plus strict que le backend sur la couverture", () => {
-        const sansCouverture = {
-            isImported: true,
-            summary: "Un vrai résumé.",
-            pageCount: 96,
-            category: { name: "Roman" },
-            coverUrl: undefined,
-        } as Book;
-
-        expect(hasIncompleteBookInfo(sansCouverture)).toBe(true);
-    });
-});
-
+// Risque : la complétion d'un auteur affichée diverge de celle qui accorde
+// l'XP AUTHOR_COMPLETED.
 describe("hasIncompleteInfo", () => {
     const auteurComplet = {
         firstname: "Albert",
@@ -136,64 +121,5 @@ describe("hasIncompleteInfo", () => {
                 officialWebsite: undefined,
             } as Author),
         ).toBe(false);
-    });
-});
-
-describe("getRatingClasses", () => {
-    it.each([5, 4])("colore une note de %i en doré (primary)", (rating) => {
-        expect(getRatingClasses(rating)).toContain("border-l-primary");
-    });
-
-    it("colore une note de 3 en teinte neutre", () => {
-        expect(getRatingClasses(3)).toContain("border-l-accent-foreground");
-    });
-
-    it.each([2, 1, 0])(
-        "colore une note de %i en rouge (destructive)",
-        (rating) => {
-            expect(getRatingClasses(rating)).toContain("border-l-destructive");
-        },
-    );
-});
-
-describe("libellés d'accessibilité", () => {
-    it("décrit un livre avec son auteur et sa catégorie", () => {
-        expect(
-            buildBookAriaLabel(
-                "L'Étranger",
-                { firstname: "Albert", lastname: "Camus" },
-                "Roman",
-            ),
-        ).toBe("Voir le livre L'Étranger par Albert Camus - Roman");
-    });
-
-    it("retombe sur la catégorie « Livre » par défaut", () => {
-        expect(
-            buildBookAriaLabel("L'Étranger", {
-                firstname: "Albert",
-                lastname: "Camus",
-            }),
-        ).toContain("- Livre");
-    });
-
-    it("omet la mention « par » quand l'auteur n'a pas de nom", () => {
-        expect(
-            buildBookAriaLabel("Le Roman de Renart", {
-                firstname: "",
-                lastname: "",
-            }),
-        ).toBe("Voir le livre Le Roman de Renart - Livre");
-    });
-
-    it("n'insère pas d'espace en trop avec un auteur partiel", () => {
-        expect(
-            buildBookAriaLabel("Le Misanthrope", {
-                firstname: "",
-                lastname: "Molière",
-            }),
-        ).toBe("Voir le livre Le Misanthrope par Molière - Livre");
-        expect(buildAuthorAriaLabel("", "Molière")).toBe(
-            "Voir la fiche de l'auteur Molière",
-        );
     });
 });

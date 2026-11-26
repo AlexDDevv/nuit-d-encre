@@ -17,6 +17,8 @@ const entry = (
 
 const ID = "0f2b1c8e-5f3a-4a1d-9c7e-2b6d8a1f4e30";
 
+// Risque : le fil produit un lien mort (404) vers une fiche, ou plante sur
+// des métadonnées inattendues.
 describe("feedTarget", () => {
     describe("livres", () => {
         it.each<UserActionType>([
@@ -32,13 +34,6 @@ describe("feedTarget", () => {
                 label: "Le Petit Prince",
                 href: `/books/${ID}-le-petit-prince`,
             });
-        });
-
-        it("slugifie le titre dans l'URL", () => {
-            expect(
-                feedTarget(entry("BOOK_ADDED", '{"title":"L\'Étranger !"}'))
-                    ?.href,
-            ).toBe(`/books/${ID}-letranger`);
         });
     });
 

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { formatReadingDate, todayInputValue } from "./readingDate";
 
+// Risque : une date de lecture glisse d'un jour (fuseau) et fausse le défi
+// annuel.
 describe("dates de lecture", () => {
     it("formate la date du jour pour un champ date", () => {
         expect(todayInputValue(new Date(2026, 2, 5, 23, 59))).toBe(

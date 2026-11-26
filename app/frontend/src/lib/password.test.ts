@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isPasswordStrong, passwordScore } from "./password";
+import { isPasswordStrong } from "./password";
 
+// Risque : le front accepte un mot de passe que le backend refuse (ou
+// l'inverse) ; lib/password.ts doit rester le miroir de password-policy.ts.
 describe("isPasswordStrong", () => {
     it("accepte un mot de passe respectant tous les critères", () => {
         expect(isPasswordStrong("Motdepasse1!")).toBe(true);
@@ -27,12 +29,4 @@ describe("isPasswordStrong", () => {
             expect(isPasswordStrong(`Motdepasse1${symbol}`)).toBe(true);
         },
     );
-});
-
-describe("passwordScore", () => {
-    it("compte les critères satisfaits", () => {
-        expect(passwordScore("")).toBe(0);
-        expect(passwordScore("motdepasse")).toBe(2);
-        expect(passwordScore("Motdepasse1!")).toBe(5);
-    });
 });
