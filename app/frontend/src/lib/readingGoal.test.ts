@@ -1,34 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { goalRatio, goalStatusLabel } from "./readingGoal";
-
-const goal = (booksRead: number, target: number) => ({
-    year: 2026,
-    target,
-    booksRead,
-    rewardXp: target * 10,
-});
+import { goalRatio, goalRewardXp, isGoalXpCapped } from "./readingGoal";
 
 describe("goalRatio", () => {
     it("borne l'avancement à 100 %", () => {
-        expect(goalRatio(goal(6, 24))).toBe(0.25);
-        expect(goalRatio(goal(30, 24))).toBe(1);
+        expect(goalRatio({ booksRead: 6, target: 24 })).toBe(0.25);
+        expect(goalRatio({ booksRead: 30, target: 24 })).toBe(1);
     });
 });
 
-describe("goalStatusLabel", () => {
-    it("compte ce qui reste à lire, au singulier comme au pluriel", () => {
-        expect(goalStatusLabel(goal(22, 24))).toBe(
-            "Encore 2 livres pour relever le défi",
-        );
-        expect(goalStatusLabel(goal(23, 24))).toBe(
-            "Encore 1 livre pour relever le défi",
-        );
-    });
-
-    it("signale l'objectif atteint puis dépassé", () => {
-        expect(goalStatusLabel(goal(24, 24))).toBe("Défi relevé");
-        expect(goalStatusLabel(goal(25, 24))).toBe(
-            "Défi relevé, et 1 livre de plus",
-        );
+// Miroir de reading-goal-service.ts : l'XP promise doit être celle accordée.
+describe("goalRewardXp", () => {
+    it("donne 10 XP par livre visé, plafonnés à 500", () => {
+        expect(goalRewardXp(24)).toBe(240);
+        expect(goalRewardXp(50)).toBe(500);
+        expect(goalRewardXp(52)).toBe(500);
+        expect(isGoalXpCapped(50)).toBe(false);
+        expect(isGoalXpCapped(52)).toBe(true);
     });
 });
