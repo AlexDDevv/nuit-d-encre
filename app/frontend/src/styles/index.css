@@ -6,6 +6,7 @@
  * utilities  utilitaires maison (@utility) : filet, grain, ornements typographiques
  * motion     transitions d'interface (modales, apparitions, spinner)
  * ornaments  animations décoratives de la DA (chandelle, sceau, podium…)
+ * toast      habillage de Sonner par les tokens d'état
  *
  * loader-nocturne.css est importé par NocturneLoader, dans le chunk du loader.
  */
@@ -16,3 +17,4 @@
 @import "./utilities.css";
 @import "./motion.css";
 @import "./ornaments.css";
+@import "./toast.css";

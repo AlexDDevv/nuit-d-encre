@@ -20,10 +20,10 @@ const VARIANT_META: Record<
     BannerEditorVariant,
     { label: string; ring: string }
 > = {
-    info: { label: "Info", ring: "hsl(205 30% 60%)" },
-    success: { label: "Succès", ring: "hsl(140 38% 52%)" },
-    warning: { label: "Avertissement", ring: "hsl(25 80% 56%)" },
-    error: { label: "Erreur", ring: "hsl(3 84% 58%)" },
+    info: { label: "Info", ring: "var(--color-info)" },
+    success: { label: "Succès", ring: "var(--color-success)" },
+    warning: { label: "Avertissement", ring: "var(--color-warning)" },
+    error: { label: "Erreur", ring: "var(--color-error)" },
 };
 
 /** Champ étiqueté : intitulé en capitales, icône dorée, indication facultative. */
@@ -223,7 +223,7 @@ export function SavedBannerRow({
                     <button
                         type="button"
                         onClick={onDelete}
-                        className="border-destructive/45 font-body text-destructive hover:bg-destructive focus-visible:ring-destructive/40 inline-flex items-center gap-1.5 rounded-md border-2 bg-transparent px-2.5 py-1 text-xs font-bold transition-colors hover:text-white focus:outline-none focus-visible:ring-2"
+                        className="border-destructive/45 font-body text-error hover:bg-destructive focus-visible:ring-destructive/40 inline-flex items-center gap-1.5 rounded-md border-2 bg-transparent px-2.5 py-1 text-xs font-bold transition-colors hover:text-white focus:outline-none focus-visible:ring-2"
                     >
                         <LuTrash2 size={12} /> Supprimer
                     </button>

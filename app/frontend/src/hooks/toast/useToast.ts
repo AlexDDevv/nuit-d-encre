@@ -14,25 +14,6 @@ type ShowToastOptions = {
 export function useToast() {
     const navigate = useNavigate();
 
-    const buttonColorMap: Record<ToastType, { bg: string; fg: string }> = {
-        success: {
-            bg: "!bg-button-validate-bg",
-            fg: "!text-button-validate-fg",
-        },
-        error: {
-            bg: "!bg-button-destructive-bg",
-            fg: "!text-button-destructive-fg",
-        },
-        warning: {
-            bg: "!bg-button-warning-bg",
-            fg: "!text-button-warning-fg",
-        },
-        info: {
-            bg: "!bg-button-secondary-bg",
-            fg: "!text-button-secondary-fg",
-        },
-    };
-
     const showToast = ({
         type = "success",
         title,
@@ -48,17 +29,9 @@ export function useToast() {
                   }
                 : undefined;
 
-        const { bg, fg } = buttonColorMap[type];
-
-        const classNames = {
-            toast: `!text-sm`,
-            actionButton: `${bg} !px-3 !py-4 !text-sm ${fg}`,
-        };
-
         const toastOptions = {
             description,
             action,
-            classNames,
             duration: 5000,
         };
 
@@ -74,7 +47,7 @@ export function useToast() {
                 break;
             case "info":
             default:
-                toast(title, toastOptions);
+                toast.info(title, toastOptions);
                 break;
         }
     };

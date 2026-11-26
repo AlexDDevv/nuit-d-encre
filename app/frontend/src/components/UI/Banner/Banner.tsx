@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import Icon from "@/components/UI/Icon/Icon";
 import {
-    GOLD,
     baseClasses,
     variantConfig,
 } from "@/components/UI/Banner/Banner.styles";
@@ -142,7 +141,7 @@ const Banner = ({
             )}
             style={{
                 borderColor: v.border,
-                background: `linear-gradient(0deg, ${v.tint}, ${v.tint}), hsl(20 3% 17%)`,
+                background: `linear-gradient(0deg, ${v.tint}, ${v.tint}), var(--color-card)`,
                 boxShadow: v.gold
                     ? "0 18px 40px -24px hsl(43 59% 50% / 0.4), inset 0 1px 0 hsl(43 59% 81% / 0.08)"
                     : "0 14px 34px -26px hsl(20 3% 2% / 0.9)",
@@ -170,7 +169,7 @@ const Banner = ({
                             width: 4,
                             height: 4,
                             borderRadius: 99,
-                            background: GOLD,
+                            background: "var(--color-reward)",
                         }}
                     />
                     <span
@@ -181,7 +180,7 @@ const Banner = ({
                             width: 3,
                             height: 3,
                             borderRadius: 99,
-                            background: GOLD,
+                            background: "var(--color-reward)",
                             animationDelay: ".8s",
                         }}
                     />
@@ -193,7 +192,7 @@ const Banner = ({
                             width: 2.5,
                             height: 2.5,
                             borderRadius: 99,
-                            background: GOLD,
+                            background: "var(--color-reward)",
                             animationDelay: "1.4s",
                         }}
                     />
@@ -222,10 +221,7 @@ const Banner = ({
                 </span>
                 <div className="min-w-0">
                     {v.gold && (
-                        <span
-                            className="text-xxs mb-1 inline-flex items-center gap-1.5 font-mono uppercase tracking-[0.18em]"
-                            style={{ color: "hsl(43 30% 64%)" }}
-                        >
+                        <span className="text-xxs mb-1 inline-flex items-center gap-1.5 font-mono uppercase tracking-[0.18em] text-[hsl(43_30%_64%)]">
                             <Icon name="sparkles" size={10} /> Récompense
                         </span>
                     )}
@@ -236,10 +232,7 @@ const Banner = ({
                         {title}
                     </p>
                     {children && (
-                        <div
-                            className="font-body mt-1 text-xs leading-relaxed"
-                            style={{ color: "hsl(20 12% 73%)" }}
-                        >
+                        <div className="font-body text-muted-foreground mt-1 text-xs leading-relaxed">
                             {children}
                         </div>
                     )}

@@ -178,9 +178,9 @@ export default function EditProfileModal({
     const bioLen = bio.length;
     const bioTone =
         bioLen > 300
-            ? "text-destructive"
+            ? "text-error"
             : bioLen > 270
-              ? "text-warning-medium"
+              ? "text-warning"
               : "text-muted-foreground/70";
 
     return (
