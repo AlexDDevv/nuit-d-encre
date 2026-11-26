@@ -138,6 +138,14 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Effet : la décision de juin 2026 de ne pas lister les lecteurs (découverte par les critiques seulement) est abandonnée avec la reprise de la roadmap. Le classement est calculé à la lecture en SQL, sans colonne dénormalisée ; l'XP depuis toujours se déduit du niveau (`User.xp` ne garde que l'XP du niveau en cours).
 - Référence : `app/backend/src/graphql/resolvers/gamification/leaderboard-resolver.ts`, `app/backend/src/services/grind/total-xp.ts`.
 
+### Un défi de lecture annuel compté sur la date de fin
+
+- Décision : chaque lecteur peut se fixer un nombre de livres à lire dans l'année (entité `ReadingGoal`). La jauge du profil compte les livres « lus » dont la date de fin tombe dans l'année. Passer un livre en « Lu » le date du jour ; un champ « Lu le » dans la bibliothèque corrige la date. Un livre ajouté directement comme lu reste sans date et ne compte pas tant qu'elle n'est pas renseignée. Atteindre l'objectif rapporte 10 XP par livre visé (plafond 500), une fois par année.
+- Intention : un défi qu'on ne peut pas fausser sans le vouloir. Un nouvel inscrit qui saisit ses lectures passées ne doit pas compléter son défi en quelques minutes.
+- Alternative écartée : compter les actions « livre terminé » de l'année, sans date de lecture. Plus simple, mais la saisie de lectures anciennes gonflait le compteur sans recours, et une relecture ne comptait jamais.
+- Effet : le défi suit la visibilité de la bibliothèque (visible des autres seulement si elle est partagée). Au passage, `startedAt` / `finishedAt` sont exposés en chaînes `YYYY-MM-DD` : en `Date`, la moindre requête les demandant aurait échoué.
+- Référence : `app/backend/src/services/gamification/reading-goal-service.ts`, migration `1789000000000-AddReadingGoal`.
+
 ### Activité publique, bibliothèque privée par défaut
 
 - Décision : l'activité des lecteurs est publique (fil des abonnements, fil global pour découvrir d'autres lecteurs, activité du profil), mais la bibliothèque n'est montrée que si son propriétaire active « Partager ma bibliothèque ». Sans partage, les ajouts et lectures terminées disparaissent des fils et du profil ; critiques, recommandations et favoris restent visibles.
@@ -259,4 +267,4 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
-- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler et classement mensuel ensuite. En tête : défi de lecture annuel, puis progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
+- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler, classement mensuel et défi de lecture annuel ensuite. En tête : progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.

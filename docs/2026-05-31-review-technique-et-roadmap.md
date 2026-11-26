@@ -47,7 +47,7 @@ Le MVP est complet et déployable. Le projet avait été considéré comme termi
 | Recherche & import hybride | 9/10 | BDD d'abord, puis Google Books + Open Library |
 | Critiques, votes, commentaires | 9/10 | Balises spoiler `||…||` |
 | Bibliothèque perso | 6/10 | 5 statuts (dont « abandonné »), une seule lecture par livre, pas de progression, pas de listes |
-| Gamification | 8/10 | XP/niveaux/titres + barre XP + classement mensuel ; pas de défis ni de succès |
+| Gamification | 9/10 | XP/niveaux/titres + barre XP + classement mensuel + défi annuel ; pas de succès |
 | Social | 6/10 | Follow, fil, commentaires ; pas de notifications ni de modération |
 | Découverte | 4/10 | Pas de recommandations personnalisées, pas de citations ni de listes |
 | Admin | 8/10 | Complet |
@@ -64,7 +64,7 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 | **Citations** d'un livre, avec likes | Babelio (fonctionnalité phare) | absent |
 | **Progression de lecture** (page / %) et notes de lecture | StoryGraph, Hardcover, Goodreads | `UserBook` n'a que `startedAt` / `finishedAt` |
 | **Statut « abandonné » (DNF)** et **relectures** | StoryGraph, Hardcover | DNF fait ; une lecture par livre |
-| **Défi de lecture annuel** | Goodreads, StoryGraph | absent |
+| **Défi de lecture annuel** | Goodreads, StoryGraph | fait |
 | **Bilan annuel / statistiques** (pages, genres, rythme) | StoryGraph, Hardcover | stats de profil, pas de bilan |
 | **Listes / étagères perso** publiques | Babelio, Hardcover | absent |
 | **Balises spoiler** dans les critiques | tous | fait |
@@ -96,8 +96,9 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 - [x] **Leaderboard** : page `/classement`, XP du mois (heure de Paris, remise à zéro
       mensuelle) ou depuis toujours, tous les lecteurs ou ses abonnements ; top 50, podium,
       rang du lecteur hors du top ; admin exclu (✅ 2026-11-26).
-- [ ] **Défi de lecture annuel** : objectif sur `User` (ou entité `ReadingGoal` par année),
-      jauge sur le profil, titre ou succès débloqué à l'atteinte.
+- [x] **Défi de lecture annuel** : entité `ReadingGoal` par année, jauge sur le profil,
+      10 XP par livre visé à l'atteinte (plafond 500) et action dans le fil ; compte les
+      livres lus datés dans l'année, champ « Lu le » dans la bibliothèque (✅ 2026-11-26).
 - [ ] **Dette hors audit** : Pino, Sentry, purge RGPD, `type-graphql` stable (voir plus haut).
 
 ### Palier 2 — Le cœur lecteur
