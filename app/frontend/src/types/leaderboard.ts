@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 export type LeaderboardPeriod = "MONTH" | "ALL_TIME";
 export type LeaderboardScope = "ALL" | "FOLLOWING";
 
@@ -26,10 +28,12 @@ export type Leaderboard = {
 export type LeaderboardEntryProps = {
     entry: LeaderboardEntry;
     isViewer: boolean;
+    /** Rang partagé avec un autre lecteur. */
+    tied?: boolean;
 };
 
 export type PodiumStepProps = LeaderboardEntryProps & {
-    /** Place affichée (0 à 2), qui fixe la colonne et la hauteur. */
+    /** Place affichée (0 à 2) : la première au centre et surélevée. */
     place: number;
 };
 
@@ -38,7 +42,26 @@ export type LeaderboardPodiumProps = {
     viewerId?: string;
 };
 
+export type LeaderboardAvatarProps = {
+    userName: string;
+    avatar?: string | null;
+    className?: string;
+    style?: CSSProperties;
+};
+
 export type LeaderboardViewerBannerProps = {
-    standing: LeaderboardStanding;
+    /** Position du lecteur, ou null s'il n'a pas gagné d'XP sur la période. */
+    standing: LeaderboardStanding | null;
     period: LeaderboardPeriod;
+    /** XP et rang de la dernière place affichée (cible à rejoindre). */
+    lastXp: number;
+    lastRank: number;
+};
+
+export type LeaderboardEmptyProps = {
+    period: LeaderboardPeriod;
+    scope: LeaderboardScope;
+    /** Le lecteur ne suit personne (portée « Mes abonnements »). */
+    noFollows: boolean;
+    onShowAll: () => void;
 };

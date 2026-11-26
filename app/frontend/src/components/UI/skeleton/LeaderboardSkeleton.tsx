@@ -1,35 +1,92 @@
-/** Lignes du classement en pulsation (podium compris). */
+import { cn } from "@/lib/utils";
+
+const PULSE = "bg-muted animate-pulse motion-reduce:animate-none";
+
+/** Podium et lignes du classement en pulsation. */
 export function LeaderboardListSkeleton() {
+    const podium = [
+        { avatar: "h-13 w-13 sm:h-20 sm:w-20", socle: "h-15 sm:h-23" },
+        { avatar: "h-17 w-17 sm:h-26 sm:w-26", socle: "h-22 sm:h-33" },
+        { avatar: "h-13 w-13 sm:h-20 sm:w-20", socle: "h-10 sm:h-16" },
+    ];
     return (
-        <div aria-busy="true" aria-label="Chargement du classement">
-            <div className="grid grid-cols-3 items-end gap-3 pb-8 pt-4 sm:gap-6">
-                {[16, 20, 16].map((size, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2">
-                        <span
-                            className="bg-muted animate-pulse rounded-full"
-                            style={{
-                                width: `${size * 4}px`,
-                                height: `${size * 4}px`,
-                            }}
+        <div aria-busy="true" aria-live="polite">
+            <span className="sr-only">Chargement du classement…</span>
+            <div
+                aria-hidden="true"
+                className="flex items-end justify-center gap-1.5 pt-12 sm:gap-4"
+            >
+                {podium.map((step, i) => (
+                    <div
+                        key={i}
+                        className="max-w-55 flex flex-1 basis-0 flex-col items-center"
+                    >
+                        <div className="border-border bg-card py-4.5 flex w-full flex-col items-center gap-2.5 rounded-xl border-2 px-3">
+                            <span
+                                className={cn(
+                                    PULSE,
+                                    "rounded-full",
+                                    step.avatar,
+                                )}
+                            />
+                            <span
+                                className={cn(
+                                    PULSE,
+                                    "h-3.5 w-[70%] rounded-md",
+                                )}
+                            />
+                            <span
+                                className={cn(PULSE, "h-3 w-[45%] rounded-md")}
+                            />
+                            <span
+                                className={cn(PULSE, "h-5 w-[55%] rounded-md")}
+                            />
+                        </div>
+                        <div
+                            className={cn(
+                                PULSE,
+                                "mt-2.5 w-[86%] rounded-t-lg",
+                                step.socle,
+                            )}
                         />
-                        <span className="bg-muted/50 h-3 w-16 animate-pulse rounded" />
-                        <span className="bg-muted/40 h-3 w-12 animate-pulse rounded" />
                     </div>
                 ))}
             </div>
-            <ul className="flex flex-col gap-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <li
-                        key={i}
-                        className="border-border/70 bg-card/40 flex items-center gap-4 rounded-lg border px-4 py-3"
+            <div aria-hidden="true" className="bg-muted h-1 rounded-sm" />
+            <div aria-hidden="true" className="mt-8 flex flex-col gap-2">
+                {[1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4].map((opacity) => (
+                    <div
+                        key={opacity}
+                        style={{ opacity }}
+                        className="border-border bg-card px-4.5 flex items-center gap-3.5 rounded-xl border-2 py-3"
                     >
-                        <span className="bg-muted/50 h-3 w-6 animate-pulse rounded" />
-                        <span className="bg-muted h-8 w-8 animate-pulse rounded-full" />
-                        <span className="bg-muted/50 h-3 w-32 animate-pulse rounded" />
-                        <span className="bg-muted/40 ml-auto h-3 w-12 animate-pulse rounded" />
-                    </li>
+                        <span
+                            className={cn(
+                                PULSE,
+                                "h-4.5 w-7.5 ml-3.5 rounded-md",
+                            )}
+                        />
+                        <span
+                            className={cn(
+                                PULSE,
+                                "h-10.5 w-10.5 shrink-0 rounded-full",
+                            )}
+                        />
+                        <div className="flex flex-1 flex-col gap-2">
+                            <span
+                                className={cn(PULSE, "h-3 w-[40%] rounded-md")}
+                            />
+                            <span
+                                className={cn(
+                                    PULSE,
+                                    "h-2.5 w-[26%] rounded-md",
+                                )}
+                            />
+                        </div>
+                        <span className={cn(PULSE, "h-4.5 w-16 rounded-md")} />
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 }
@@ -37,7 +94,7 @@ export function LeaderboardListSkeleton() {
 /** Squelette plein écran de la page Classement (fallback de route). */
 export default function LeaderboardSkeleton() {
     return (
-        <section className="mx-auto w-full max-w-3xl px-4 py-7 md:px-6 md:py-9">
+        <section className="max-w-204 mx-auto w-full px-3.5 py-5 sm:px-6 sm:py-12">
             <LeaderboardListSkeleton />
         </section>
     );

@@ -1,109 +1,154 @@
 import { Link } from "react-router-dom";
-import { LuCrown } from "react-icons/lu";
 import LevelBadge from "@/components/sections/shared/LevelBadge";
 import { cn } from "@/lib/utils";
-import { formatRank } from "@/lib/leaderboard";
+import { formatRank, formatXp } from "@/lib/leaderboard";
 import { LeaderboardPodiumProps, PodiumStepProps } from "@/types/types";
+import LeaderboardAvatar from "./LeaderboardAvatar";
+import {
+    LEVEL_PILL_CLASS,
+    YOU_PILL_CLASS,
+    podiumTint,
+} from "./leaderboardStyles";
 
-/** Colonne de chaque place : la première au centre. */
-const COLUMNS = [
-    "col-start-2",
-    "col-start-1 row-start-1",
-    "col-start-3 row-start-1",
-] as const;
+const ROMAN = ["I", "II", "III"] as const;
 
-/** Teinte par rang : or, argent, bronze (les ex æquo partagent la teinte). */
-const MEDALS = [
-    "border-primary text-primary shadow-[0_0_24px_hsl(43_59%_60%/0.25)]",
-    "border-[hsl(0_0%_72%)] text-[hsl(0_0%_80%)]",
-    "border-[hsl(25_45%_52%)] text-[hsl(25_55%_66%)]",
-] as const;
+/** Ordre visuel (1re au centre) ; le DOM garde l'ordre du classement. */
+const VISUAL_ORDER = ["order-2", "order-1", "order-3"] as const;
+const SOCLE_HEIGHT = ["h-22 sm:h-33", "h-15 sm:h-23", "h-10 sm:h-16"] as const;
+
+function Crown() {
+    return (
+        <svg
+            aria-hidden="true"
+            viewBox="0 0 46 32"
+            fill="none"
+            stroke="hsl(43 59% 81%)"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            className="w-8.5 sm:w-11.5 relative z-10 mb-1.5 h-6 sm:h-8"
+        >
+            <path
+                d="M5 26 3 8l11 9 9-14 9 14 11-9-2 18z"
+                fill="hsl(43 59% 81% / .14)"
+            />
+            <path d="M5 30h36" />
+            <circle cx="23" cy="3" r="1.6" fill="hsl(43 59% 81%)" />
+            <circle cx="3" cy="8" r="1.4" fill="hsl(43 59% 81%)" />
+            <circle cx="43" cy="8" r="1.4" fill="hsl(43 59% 81%)" />
+            <path d="m23 17 2.5 3-2.5 3-2.5-3z" fill="hsl(43 59% 81%)" />
+        </svg>
+    );
+}
 
 function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
     const { rank, xp, user } = entry;
-    const medal = MEDALS[Math.min(rank, 3) - 1];
+    const tint = podiumTint(rank);
     const first = place === 0;
-    const initials = user.userName.slice(0, 2).toUpperCase();
 
     return (
         <li
-            className={cn(
-                "flex flex-col items-center gap-2 text-center",
-                COLUMNS[place],
-                first ? "sm:-translate-y-4" : "sm:translate-y-2",
-            )}
             aria-current={isViewer ? "true" : undefined}
+            className={cn(
+                "max-w-57 relative flex min-w-0 flex-1 basis-0 flex-col items-center",
+                VISUAL_ORDER[place],
+            )}
         >
-            {rank === 1 && <LuCrown className="text-primary" size={22} />}
+            {first && (
+                <>
+                    <span aria-hidden="true" className="podium-glow" />
+                    <Crown />
+                </>
+            )}
             <Link
                 to={`/profil/${user.id}`}
-                className="group flex flex-col items-center gap-2"
-            >
-                {user.avatar ? (
-                    <img
-                        src={user.avatar}
-                        alt=""
-                        className={cn(
-                            "rounded-full border-2 object-cover",
-                            first ? "h-20 w-20" : "h-16 w-16",
-                            medal,
-                        )}
-                    />
-                ) : (
-                    <span
-                        aria-hidden="true"
-                        className={cn(
-                            "font-quote grid place-items-center rounded-full border-2 bg-[radial-gradient(circle_at_32%_26%,hsl(43_30%_31%),hsl(20_3%_13%)_82%)]",
-                            first ? "h-20 w-20 text-2xl" : "h-16 w-16 text-xl",
-                            medal,
-                        )}
-                    >
-                        {initials}
-                    </span>
+                aria-label={`Voir le profil de ${user.userName}${isViewer ? " (vous)" : ""}, ${formatRank(rank)}, ${formatXp(xp)} XP`}
+                className={cn(
+                    "text-primary hover:border-primary focus-visible:ring-ring sm:pt-4.5 relative z-10 flex w-full flex-col items-center gap-1.5 rounded-xl border-2 px-1.5 pb-3 pt-3 text-center transition-all duration-200 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 motion-reduce:hover:scale-100 sm:px-3 sm:pb-4",
+                    isViewer
+                        ? "border-primary/70 bg-secondary/55"
+                        : "border-border bg-card",
                 )}
-                <span className="text-foreground group-hover:text-primary font-title max-w-32 truncate text-sm font-medium transition-colors">
+            >
+                <LeaderboardAvatar
+                    userName={user.userName}
+                    avatar={user.avatar}
+                    className={cn(
+                        "mb-1.5",
+                        first
+                            ? "h-17 w-17 sm:h-26 sm:w-26 text-2xl sm:text-4xl"
+                            : "h-13 w-13 text-lg sm:h-20 sm:w-20 sm:text-3xl",
+                    )}
+                    style={{
+                        boxShadow: `0 0 0 3px hsl(20 3% 17%), 0 0 0 5px ${tint}`,
+                    }}
+                />
+                <span className="font-body max-w-full truncate text-sm font-bold sm:text-base">
                     {user.userName}
                 </span>
+                <span className="flex flex-wrap justify-center gap-1.5">
+                    <LevelBadge
+                        level={user.level}
+                        className={LEVEL_PILL_CLASS}
+                    />
+                    {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
+                </span>
+                {user.title && (
+                    <span className="text-muted-foreground font-quote hidden text-base italic leading-tight sm:block">
+                        {user.title.label}
+                    </span>
+                )}
+                <span
+                    className="font-quote mt-1 text-xl font-medium tabular-nums leading-none sm:text-[26px]"
+                    style={{ color: tint }}
+                >
+                    {formatXp(xp)}{" "}
+                    <span className="text-muted-foreground font-body text-xs font-bold tracking-wider">
+                        XP
+                    </span>
+                </span>
             </Link>
-            <LevelBadge level={user.level} />
-            <span
+            <div
+                aria-hidden="true"
                 className={cn(
-                    "font-title text-sm font-bold",
-                    isViewer ? "text-primary" : "text-foreground",
+                    "bg-muted font-quote mt-2.5 flex w-[86%] items-start justify-center rounded-t-lg pt-2 text-2xl font-medium leading-none sm:pt-3 sm:text-[34px]",
+                    SOCLE_HEIGHT[place],
                 )}
+                style={{
+                    color: tint,
+                    boxShadow: `inset 0 0 0 1px hsl(0 0% 24%), inset 0 3px 0 0 ${tint}`,
+                }}
             >
-                {xp.toLocaleString("fr-FR")}&nbsp;XP
-            </span>
-            <span
-                className={cn(
-                    "font-mono text-xs font-bold uppercase tracking-widest",
-                    medal,
-                )}
-            >
-                {formatRank(rank)}
-            </span>
+                {ROMAN[Math.min(rank, 3) - 1]}
+            </div>
         </li>
     );
 }
 
-/** Les trois premiers, la première place au centre et surélevée. */
+/**
+ * Podium des trois premiers : la 1re place au centre, couronnée et éclairée
+ * à la chandelle, sur des socles numérotés en chiffres romains.
+ */
 export default function LeaderboardPodium({
     entries,
     viewerId,
 }: LeaderboardPodiumProps) {
     return (
-        <ol
-            aria-label="Podium"
-            className="grid grid-cols-3 items-end gap-3 pt-4 sm:gap-6"
-        >
-            {entries.slice(0, 3).map((entry, place) => (
-                <PodiumStep
-                    key={entry.user.id}
-                    entry={entry}
-                    place={place}
-                    isViewer={entry.user.id === viewerId}
-                />
-            ))}
-        </ol>
+        <section aria-labelledby="podium-title">
+            <h2 id="podium-title" className="sr-only">
+                Podium
+            </h2>
+            <ol className="m-0 flex list-none items-end justify-center gap-1.5 p-0 pt-14 sm:gap-4">
+                {entries.slice(0, 3).map((entry, place) => (
+                    <PodiumStep
+                        key={entry.user.id}
+                        entry={entry}
+                        place={place}
+                        isViewer={entry.user.id === viewerId}
+                    />
+                ))}
+            </ol>
+            <div aria-hidden="true" className="bg-secondary h-1 rounded-sm" />
+        </section>
     );
 }
