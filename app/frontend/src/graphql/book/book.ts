@@ -82,6 +82,11 @@ export const GET_BOOK = gql`
                 rating
                 reviewText
             }
+            myUserBook {
+                id
+                status
+                finishedAt
+            }
         }
     }
 `;

@@ -5,7 +5,7 @@ import { IconType } from "react-icons";
 import { Author } from "./author";
 import { User } from "./user";
 import { CategoryBook } from "./category";
-import { UserBookStatus } from "./user-book";
+import { UserBook, UserBookStatus } from "./user-book";
 
 export type BookFormat = "hardcover" | "paperback" | "softcover" | "pocket";
 
@@ -32,6 +32,8 @@ export interface Book {
     hasUserRecommended?: boolean;
     /** Critique de l'utilisateur courant sur ce livre (null si aucune). */
     myReview?: BookReview | null;
+    /** Entrée de bibliothèque de l'utilisateur courant (null si absent). */
+    myUserBook?: Pick<UserBook, "id" | "status" | "finishedAt"> | null;
     isInLibrary?: boolean;
     createdAt?: string;
 }
@@ -147,6 +149,7 @@ export type StatusPillProps = {
 export type BookShelfProps = {
     book: Book;
     status: UserBookStatus;
+    finishedAt?: string | null;
     isFavorite?: boolean;
     favoriteRank?: number | null;
 };

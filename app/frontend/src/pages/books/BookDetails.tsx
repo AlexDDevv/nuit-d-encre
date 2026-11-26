@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeftLong, FaBook, FaQuoteLeft } from "react-icons/fa6";
 import Button from "@/components/UI/Button/Button";
 import Banner from "@/components/UI/Banner/Banner";
 import XpPill from "@/components/UI/Banner/XpPill";
 import SelectBookStatus from "@/components/sections/book/SelectBookStatus";
+import FinishedAtField from "@/components/sections/library/UI/FinishedAtField";
 import BookReviews from "@/components/sections/book/BookReviews";
 import BookCard from "@/components/sections/book/BookCard/BookCard";
 import EstablishedCover from "@/components/sections/book/detail/EstablishedCover";
@@ -28,8 +28,12 @@ import { UserBookStatus } from "@/types/types";
 import { isNotFoundError } from "@/lib/graphqlErrors";
 
 export default function BookDetails() {
-    const { createUserBook, isCreatingUserBook } = useUserBookMutations();
-    const [status, setStatus] = useState<UserBookStatus | undefined>(undefined);
+    const {
+        createUserBook,
+        isCreatingUserBook,
+        updateUserBook,
+        isUpdatingUserBook,
+    } = useUserBookMutations();
     const navigate = useNavigate();
     const { deleteBook, isDeletingBook } = useBookMutations();
     const { showToast } = useToast();
@@ -74,20 +78,42 @@ export default function BookDetails() {
         (b) => b.id !== book.id,
     );
 
+    // Entrée de bibliothèque du lecteur : on la met à jour si elle existe,
+    // sinon le premier statut choisi ajoute le livre.
+    const userBook = book.myUserBook ?? null;
+    const isSavingStatus = isCreatingUserBook || isUpdatingUserBook;
+
     const handleStatusChange = async (newStatus: UserBookStatus) => {
+        const context = userBook ? "updateUserBook" : "createUserBook";
         try {
-            await createUserBook({ bookId: id, status: newStatus });
-            setStatus(newStatus);
+            if (userBook) {
+                await updateUserBook({ id: userBook.id, status: newStatus });
+            } else {
+                await createUserBook({ bookId: id, status: newStatus });
+            }
             showToast({
                 type: "success",
                 title: "Succès",
-                description:
-                    "Le livre a bien été ajouté à votre bibliothèque !",
+                description: userBook
+                    ? "Le statut de votre lecture a bien été mis à jour."
+                    : "Le livre a bien été ajouté à votre bibliothèque !",
             });
+        } catch (error) {
+            const { title, description } = parseGraphQLError(error, context);
+            showToast({ type: "error", title, description });
+        }
+    };
+
+    const handleFinishedAtChange = async (
+        userBookId: string,
+        finishedAt: string | null,
+    ) => {
+        try {
+            await updateUserBook({ id: userBookId, finishedAt });
         } catch (error) {
             const { title, description } = parseGraphQLError(
                 error,
-                "createUserBook",
+                "updateUserBook",
             );
             showToast({ type: "error", title, description });
         }
@@ -221,12 +247,20 @@ export default function BookDetails() {
                     <BookStatChips book={book} />
 
                     {/* statut de lecture - select existant, sans label */}
-                    <div className="mt-2">
+                    <div className="mt-2 flex flex-col gap-2">
                         <SelectBookStatus
-                            value={status}
+                            value={userBook?.status}
                             onChange={handleStatusChange}
-                            disabled={isCreatingUserBook}
+                            disabled={isSavingStatus}
                         />
+                        {userBook?.status === "READ" && (
+                            <FinishedAtField
+                                userBookId={userBook.id}
+                                finishedAt={userBook.finishedAt}
+                                onChange={handleFinishedAtChange}
+                                disabled={isSavingStatus}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

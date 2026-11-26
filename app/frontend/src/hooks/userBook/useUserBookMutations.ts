@@ -83,7 +83,13 @@ export function useUserBookMutations() {
             reset: resetCreateUserBookError,
         },
     ] = useMutation(CREATE_USER_BOOK, {
-        refetchQueries: [{ query: GET_USER_BOOKS }],
+        // Fiche livre (statut), compteurs de la bibliothèque et défi.
+        refetchQueries: [
+            { query: GET_USER_BOOKS },
+            "Book",
+            "UserBookStatusCounts",
+            "ReadingGoal",
+        ],
         awaitRefetchQueries: true,
     });
 
@@ -114,8 +120,8 @@ export function useUserBookMutations() {
         { updateUserBook: UserBook },
         { data: UpdateUserBookInput }
     >(UPDATE_USER_BOOK, {
-        // Passer en « lu » ou dater une lecture fait avancer le défi.
-        refetchQueries: ["ReadingGoal"],
+        // Compteurs par statut, et défi (passer en « lu » ou dater une lecture).
+        refetchQueries: ["UserBookStatusCounts", "ReadingGoal"],
         update(cache, { data }) {
             const updated = data?.updateUserBook;
             if (!updated) return;
