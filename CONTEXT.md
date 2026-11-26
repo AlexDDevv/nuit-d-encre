@@ -130,6 +130,14 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Effet : rien ne change côté serveur, le texte est stocké tel quel ; le découpage se fait côté front en éléments React, sans HTML injecté. L'admin voit le texte brut, marqueurs compris.
 - Référence : `app/frontend/src/lib/spoiler.ts`.
 
+### Un classement mensuel des lecteurs
+
+- Décision : une page « Classement » ordonne les lecteurs par XP gagnée ce mois-ci (remise à zéro le 1er, à l'heure de Paris) ou depuis toujours, parmi tous les lecteurs ou parmi ses abonnements. Top 50 avec podium, et le rang du lecteur affiché même hors du top. L'admin n'est pas classé.
+- Intention : donner envie de revenir, mettre les lecteurs en compétition et faire voir les lecteurs actifs.
+- Alternatives écartées : un classement depuis toujours seul, figé au profit des premiers inscrits ; un classement hebdomadaire en plus, souvent presque vide avec peu de lecteurs.
+- Effet : la décision de juin 2026 de ne pas lister les lecteurs (découverte par les critiques seulement) est abandonnée avec la reprise de la roadmap. Le classement est calculé à la lecture en SQL, sans colonne dénormalisée ; l'XP depuis toujours se déduit du niveau (`User.xp` ne garde que l'XP du niveau en cours).
+- Référence : `app/backend/src/graphql/resolvers/gamification/leaderboard-resolver.ts`, `app/backend/src/services/grind/total-xp.ts`.
+
 ### Activité publique, bibliothèque privée par défaut
 
 - Décision : l'activité des lecteurs est publique (fil des abonnements, fil global pour découvrir d'autres lecteurs, activité du profil), mais la bibliothèque n'est montrée que si son propriétaire active « Partager ma bibliothèque ». Sans partage, les ajouts et lectures terminées disparaissent des fils et du profil ; critiques, recommandations et favoris restent visibles.
@@ -239,7 +247,7 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 ## Limites et absences assumées
 
 - Pas de notifications, de modération ni de signalement : périmètre MVP volontaire.
-- Pas de classement des lecteurs, de recommandations personnalisées ni de recherche d'utilisateurs.
+- Pas de recommandations personnalisées ni de recherche d'utilisateurs.
 - Pas de logger structuré.
 - Les durées de conservation RGPD sont annoncées dans les mentions légales, mais aucune purge automatique n'est implémentée.
 - L'import d'un livre prend la première source qui répond (Open Library, sinon Google Books) sans fusionner les champs. La prévisualisation, elle, fusionne les deux sources (`book-search-resolver.ts`). Un livre importé peut donc avoir moins d'informations que sa prévisualisation.
@@ -251,4 +259,4 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
-- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler ensuite. En tête : leaderboard, défi de lecture annuel, puis progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
+- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler et classement mensuel ensuite. En tête : défi de lecture annuel, puis progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.

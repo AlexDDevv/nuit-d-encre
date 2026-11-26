@@ -143,7 +143,7 @@ Nuit-d-Encre/
 │           │   ├── filteredResults/      # Types TypeGraphQL pour pagination (BooksResult, etc.)
 │           │   └── migrations/           # Migrations TypeORM (jouées au boot)
 │           ├── graphql/
-│           │   ├── resolvers/            # 19 resolvers TypeGraphQL
+│           │   ├── resolvers/            # 20 resolvers TypeGraphQL
 │           │   │   ├── user/             # AuthResolver, UserBooksResolver, ProfileResolver, UserActionsResolver, FeedResolver, FollowResolver, PrivacyResolver (RGPD)
 │           │   │   ├── book/             # BooksResolver, BookReviewsResolver, BookReviewCommentsResolver, BookReviewVotesResolver, BookRecommendationsResolver, BookSearchResolver
 │           │   │   ├── author/           # AuthorsResolver
@@ -151,7 +151,7 @@ Nuit-d-Encre/
 │           │   │   ├── admin/            # AdminResolver (adminStats, recentActivity, listes/suppressions)
 │           │   │   ├── banner/           # SiteBannersResolver (CRUD admin + activeSiteBanner public)
 │           │   │   ├── stats/            # StatsResolver (compteurs publics du site)
-│           │   │   └── gamification/     # TitleResolver
+│           │   │   └── gamification/     # TitleResolver, LeaderboardResolver (classement SQL : mois / depuis toujours)
 │           │   ├── dataloaders/          # DataLoaders par requête (compteurs, follows, titres)
 │           │   ├── inputs/               # Input types TypeGraphQL (create/, update/)
 │           │   └── queries/              # Types d'entrée pour les queries de recherche
@@ -228,6 +228,7 @@ Nuit-d-Encre/
 - **Slugs** : les livres et auteurs utilisent `/books/:slug` et `/authors/:slug` générés via `slugify()`
 - **Route catch-all** : `path: "*"` lance une `Response` 404 vers `<ErrorElement>`
 - **Profil** : `/profil` (connecté, profil propre) et `/profil/:id` (public, lecture seule)
+- **Classement** : `/classement` (connecté), à côté du Fil dans la barre latérale
 - **Livre preview** : `/books/preview/:isbn13` pour les livres importés non encore enregistrés
 
 ### API & Data Fetching
@@ -266,7 +267,7 @@ Nuit-d-Encre/
   - Livre ajouté : 50 XP | Auteur ajouté : 30 XP
   - Livre terminé : 70 XP | Critique rédigée : 100 XP (+50 si détaillée)
   - Livre importé : 30 XP | Complété (livre/auteur) : 50 XP
-- **Niveaux** : calculés depuis le total XP via `user-xp-service.ts`
+- **Niveaux** : calculés depuis le total XP via `user-xp-service.ts`. `User.xp` est l'XP **du niveau en cours** ; l'XP cumulée se déduit par `totalXp(level, xp)` (`grind/total-xp.ts`, `TOTAL_XP_SQL` en SQL)
 - **Titres/Badges** : seedés en BDD via `seed-titles.ts`, débloqués selon le niveau
 - **Traçabilité** : entité `UserActions` — log de chaque action XP avec timestamp
 - **XP une seule fois par cible** : `grantXpService(user, type, { xpKey, … })` n'accorde rien si le triplet `(user, type, xpKey)` existe déjà en `user_actions` (colonne `xpKey` + index unique partiel, migration `1785000000000`). La déduplication est **par cible, pas globale** : recommander le livre A, retirer puis remettre la recommandation ne redonne pas d'XP, mais recommander le livre B en donne. Le service renvoie un booléen (`true` = XP accordée).
@@ -300,7 +301,7 @@ Chaque point renvoie à une primitive existante : l'utiliser plutôt que recoder
 - **Livres importés** : `isImported: true` signale un livre venant de Google Books / Open Library. `hasIncompleteBookInfo()` détecte les champs manquants (summary par défaut, pageCount = 0, catégorie "Autre", pas de couverture).
 - **`slugify()`** est utilisé pour générer les URLs des livres et auteurs depuis leur titre/nom — s'assurer que les slugs sont bien formés avant navigation.
 - **Package manager : pnpm uniquement** — workspace pnpm configuré dans `pnpm-workspace.yaml`.
-- **Tests** — ciblés sur le sensible uniquement (auth, autorisations, XP, RGPD), pas de couverture exhaustive. Backend : Jest (`pnpm --filter backend test`) — services (`auth-service`, `grind/*`, `rgpd/*`), `auth-checker`, `format-error`, `utils/current-user`, `rate-limiter`, `utils/{authorizations,banner-visibility}` et resolvers de mutations (appel direct de la méthode avec `makeContext(user)` — qui fournit `getUser` — /`makeUser`/`stubPersistence` de `src/test/factories.ts`, statiques TypeORM mockés via `jest.spyOn`, pas de BDD). Frontend : **Vitest** (`pnpm --filter frontend test`, environnement `node`) sur la logique pure — `lib/{profileActivity,filterMaps,utils,password,downloadJson,spoiler}`, `sections/feed/feedTargetHref`, validation de formulaires. Pas de tests de composants ni de hooks : il faudrait jsdom + Testing Library pour peu de valeur (la logique des hooks de liste tient dans les mappings de `filterMaps`, déjà couverts). Les tests de dates figent l'horloge (`vi.setSystemTime`). Jest tourne avec `maxWorkers: "25%"` (`jest.config.js`) : ts-jest type-checke dans chaque worker et la valeur par défaut sature la mémoire (workers tués par SIGKILL). Pour un simple contrôle de types côté backend, utiliser `pnpm --filter backend exec tsc --noEmit` (4 s) plutôt que `pnpm build`, qui compile vers `dist/` (`outDir` défini dans `tsconfig.json`).
+- **Tests** — ciblés sur le sensible uniquement (auth, autorisations, XP, RGPD), pas de couverture exhaustive. Backend : Jest (`pnpm --filter backend test`) — services (`auth-service`, `grind/*`, `rgpd/*`), `auth-checker`, `format-error`, `utils/current-user`, `rate-limiter`, `utils/{authorizations,banner-visibility}` et resolvers de mutations (appel direct de la méthode avec `makeContext(user)` — qui fournit `getUser` — /`makeUser`/`stubPersistence` de `src/test/factories.ts`, statiques TypeORM mockés via `jest.spyOn`, pas de BDD). Frontend : **Vitest** (`pnpm --filter frontend test`, environnement `node`) sur la logique pure — `lib/{profileActivity,filterMaps,utils,password,downloadJson,spoiler,leaderboard}`, `sections/feed/feedTargetHref`, validation de formulaires. Pas de tests de composants ni de hooks : il faudrait jsdom + Testing Library pour peu de valeur (la logique des hooks de liste tient dans les mappings de `filterMaps`, déjà couverts). Les tests de dates figent l'horloge (`vi.setSystemTime`). Jest tourne avec `maxWorkers: "25%"` (`jest.config.js`) : ts-jest type-checke dans chaque worker et la valeur par défaut sature la mémoire (workers tués par SIGKILL). Pour un simple contrôle de types côté backend, utiliser `pnpm --filter backend exec tsc --noEmit` (4 s) plutôt que `pnpm build`, qui compile vers `dist/` (`outDir` défini dans `tsconfig.json`).
 - **Migrations TypeORM** : `datasource.ts` utilise `synchronize: false` ; les migrations sont jouées au boot, y compris en prod, sauf si `DB_MIGRATIONS_RUN="false"` (cf. `should-run-migrations.ts`). Les migrations sont dans `src/database/migrations/`. Le schéma initial est rejoué au boot après `docker compose down -v`. Logging SQL complet en dev, restreint à `error`/`warn` quand `NODE_ENV=production`.
 - **Identifiants UUID** : toutes les entités utilisent une PK UUID (`@PrimaryGeneratedColumn("uuid")`, `gen_random_uuid()` natif PostgreSQL 15). Le scalaire GraphQL `ID` sérialise en string ; les ids sont des `string` côté back et front. Les URLs sont `/<uuid>-<slug>` et l'id est extrait via `slug.slice(0, 36)` (un UUID contient des tirets).
 - **Admin & Profil implémentés et câblés** : `pages/Admin.tsx` (7 onglets — Dashboard, Utilisateurs, Livres, Auteurs, Catégories, Critiques, Bannières — + `AnalyticsBar`) et `pages/UserProfile.tsx` (hero éditable, stats, progression, favoris, activité) sont complets côté front ET backend. Backend : `AdminResolver` (`adminStats`, `recentActivity`, listes, suppressions), mutations de suppression réparties dans les resolvers de domaine (`deleteBook`/`deleteAuthor`/`updateCategory`/`deleteCategory`), `SiteBannersResolver` (CRUD + `activeSiteBanner`). Hooks front dans `hooks/admin/`. Les stats du profil sont calculées côté front via `lib/profileActivity` (`computeStats`) à partir des `UserActions`, pas via un FieldResolver.
