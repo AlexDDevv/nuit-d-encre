@@ -26,7 +26,7 @@ export default function FicheManagementBar({
     return (
         <section
             className={cn(
-                "flex items-center justify-between border-t border-[hsl(0_0%_100%/0.06)] pt-6",
+                "border-hairline flex items-center justify-between border-t pt-6",
                 className,
             )}
         >

@@ -10,7 +10,7 @@ export default function CollectionSeam({
 }) {
     return (
         <div className="-mt-10 flex flex-wrap items-center gap-x-3 gap-y-2.5">
-            <span className="max-xs:basis-full text-xxs inline-flex items-center gap-2 whitespace-nowrap font-mono uppercase tracking-[0.24em] text-[hsl(43_30%_62%)]">
+            <span className="max-xs:basis-full text-xxs text-gold-muted inline-flex items-center gap-2 whitespace-nowrap font-mono uppercase tracking-[0.24em]">
                 {icon} {label}
             </span>
             <span className="h-px flex-1 bg-[linear-gradient(to_right,hsl(43_59%_81%/0.55),hsl(43_59%_81%/0.1))]" />

@@ -144,8 +144,8 @@ export default function BookReviews({ book, pageLimit = 6 }: BookReviewsProps) {
 
             {/* état vide - au-dessus du formulaire */}
             {!hasReviews && (
-                <div className="border-border mb-6 flex flex-col items-center gap-3 rounded-xl border-2 border-dashed bg-[hsl(20_3%_14%/0.4)] px-6 py-14 text-center">
-                    <span className="ring-primary/25 grid h-12 w-12 place-items-center rounded-full bg-[hsl(43_30%_25%/0.3)] ring-1">
+                <div className="border-border bg-sunken/40 mb-6 flex flex-col items-center gap-3 rounded-xl border-2 border-dashed px-6 py-14 text-center">
+                    <span className="ring-primary/25 bg-secondary/30 grid h-12 w-12 place-items-center rounded-full ring-1">
                         <FaFeatherPointed
                             size={18}
                             className="text-primary/70"
@@ -175,7 +175,7 @@ export default function BookReviews({ book, pageLimit = 6 }: BookReviewsProps) {
             ) : user ? (
                 !hasUserReviewed && <ReviewForm book={book} />
             ) : (
-                <div className="border-primary/30 mb-6 flex flex-col items-start gap-3 rounded-xl border-2 border-dashed bg-[hsl(20_3%_14%/0.5)] px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="border-primary/30 bg-sunken/50 mb-6 flex flex-col items-start gap-3 rounded-xl border-2 border-dashed px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-foreground/85 font-quote inline-flex items-center gap-2.5 italic">
                         <FaLock
                             size={15}

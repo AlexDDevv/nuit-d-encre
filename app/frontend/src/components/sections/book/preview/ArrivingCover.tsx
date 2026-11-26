@@ -138,12 +138,14 @@ export function ArrivingCover({ book }: { book: BookSearchResult }) {
 
                 <p
                     className="text-xxs mt-4 text-center font-mono tracking-wide"
-                    style={{ color: "hsl(20 12% 56%)" }}
+                    style={{ color: "var(--color-subtle-foreground)" }}
                 >
                     {book.coverUrl
                         ? "couverture fournie par "
                         : "aucune couverture · "}
-                    <span style={{ color: "hsl(43 30% 64%)" }}>{label}</span>
+                    <span style={{ color: "var(--color-gold-muted)" }}>
+                        {label}
+                    </span>
                 </p>
             </div>
         </div>

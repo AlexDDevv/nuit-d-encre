@@ -17,10 +17,10 @@ export function NoticeRow({
         <div
             className={cn(
                 "flex items-baseline justify-between gap-4 py-2.5",
-                !last && "border-b border-dashed border-[hsl(0_0%_100%/0.07)]",
+                !last && "border-hairline border-b border-dashed",
             )}
         >
-            <span className="text-xxs inline-flex shrink-0 items-center gap-2 font-mono uppercase tracking-[0.14em] text-[hsl(20_12%_56%)]">
+            <span className="text-xxs text-subtle-foreground inline-flex shrink-0 items-center gap-2 font-mono uppercase tracking-[0.14em]">
                 {icon}
                 {label}
             </span>
@@ -34,9 +34,7 @@ export function NoticeRow({
 /** Valeur absente, affichée « manquant » en ambre. */
 export function Missing() {
     return (
-        <span className="font-mono text-xs italic text-warning">
-            manquant
-        </span>
+        <span className="text-warning font-mono text-xs italic">manquant</span>
     );
 }
 
@@ -54,7 +52,7 @@ export default function NoticePanel({
     return (
         <section className="border-border bg-card/60 self-start rounded-xl border-2 p-6">
             <div className="mb-3 flex items-center gap-2.5">
-                <span className="font-mono text-xs uppercase tracking-[0.2em] text-[hsl(43_30%_62%)]">
+                <span className="text-gold-muted font-mono text-xs uppercase tracking-[0.2em]">
                     {title}
                 </span>
                 <span className="bg-primary/20 h-px flex-1" />

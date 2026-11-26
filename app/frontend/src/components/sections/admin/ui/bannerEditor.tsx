@@ -136,7 +136,7 @@ export function StateSelector({
                             style={{
                                 color: on
                                     ? "hsl(43 59% 88%)"
-                                    : "hsl(20 12% 73%)",
+                                    : "var(--color-muted-foreground)",
                             }}
                         >
                             {meta.label}

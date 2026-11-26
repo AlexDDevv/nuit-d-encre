@@ -172,7 +172,7 @@ export default function FavoriteBookModal({
     return (
         <div
             className={cn(
-                "z-70 fixed inset-0 flex items-center justify-center bg-[hsl(20_3%_7%/0.78)] px-4 backdrop-blur-[3px]",
+                "z-70 bg-scrim/78 fixed inset-0 flex items-center justify-center px-4 backdrop-blur-[3px]",
                 closing ? "overlay-out" : "overlay-in",
             )}
             onMouseDown={(e) => {
@@ -200,13 +200,13 @@ export default function FavoriteBookModal({
                     {/* en-tête */}
                     <div className="text-center">
                         <div className="mb-2.5 flex items-center justify-center gap-2.5">
-                            <span className="h-px w-7 bg-[hsl(43_59%_81%/0.45)]" />
+                            <span className="bg-primary/45 h-px w-7" />
                             <FaStar
                                 size={13}
                                 className="text-primary/70"
                                 aria-hidden="true"
                             />
-                            <span className="h-px w-7 bg-[hsl(43_59%_81%/0.45)]" />
+                            <span className="bg-primary/45 h-px w-7" />
                         </div>
                         <h2
                             id="fav-title"
@@ -216,7 +216,7 @@ export default function FavoriteBookModal({
                         </h2>
                         <p
                             id="fav-sub"
-                            className="font-quote mx-auto mt-2 max-w-sm text-base italic leading-relaxed text-[hsl(20_12%_70%)]"
+                            className="font-quote text-muted-foreground mx-auto mt-2 max-w-sm text-base italic leading-relaxed"
                         >
                             Choisissez la place de ce livre sur votre podium.
                         </p>
@@ -261,7 +261,7 @@ export default function FavoriteBookModal({
                 </div>
 
                 {/* actions */}
-                <div className="flex shrink-0 flex-wrap items-center justify-end gap-2.5 border-t border-dashed border-[hsl(0_0%_100%/0.08)] px-5 py-4 sm:px-8">
+                <div className="border-hairline flex shrink-0 flex-wrap items-center justify-end gap-2.5 border-t border-dashed px-5 py-4 sm:px-8">
                     {isFavorite && selectedRank != null && (
                         <Button
                             variant="destructiveGhost"

@@ -45,7 +45,7 @@ export default function AuthRequired() {
 
             <p
                 className="text-xxs mt-4 inline-flex max-w-full items-center gap-1.5 font-mono"
-                style={{ color: "hsl(20 12% 56%)" }}
+                style={{ color: "var(--color-subtle-foreground)" }}
             >
                 <Icon
                     name="arrowRight"

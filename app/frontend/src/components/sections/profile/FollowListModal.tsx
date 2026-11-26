@@ -48,7 +48,7 @@ export default function FollowListModal({
     return (
         <div
             className={cn(
-                "z-70 fixed inset-0 flex items-center justify-center bg-[hsl(20_3%_7%/0.78)] px-4 backdrop-blur-[3px]",
+                "z-70 bg-scrim/78 fixed inset-0 flex items-center justify-center px-4 backdrop-blur-[3px]",
                 closing ? "overlay-out" : "overlay-in",
             )}
             onMouseDown={(e) => {
@@ -72,13 +72,13 @@ export default function FollowListModal({
                 {/* en-tête */}
                 <div className="shrink-0 px-5 pb-5 pt-7 text-center sm:px-8 sm:pt-8">
                     <div className="mb-2.5 flex items-center justify-center gap-2.5">
-                        <span className="h-px w-7 bg-[hsl(43_59%_81%/0.45)]" />
+                        <span className="bg-primary/45 h-px w-7" />
                         <FaUserGroup
                             size={13}
                             className="text-primary/70"
                             aria-hidden="true"
                         />
-                        <span className="h-px w-7 bg-[hsl(43_59%_81%/0.45)]" />
+                        <span className="bg-primary/45 h-px w-7" />
                     </div>
                     <h2
                         id="follow-title"
@@ -91,13 +91,13 @@ export default function FollowListModal({
                             </span>
                         )}
                     </h2>
-                    <p className="font-quote mx-auto mt-2 max-w-sm text-base italic leading-relaxed text-[hsl(20_12%_70%)]">
+                    <p className="font-quote text-muted-foreground mx-auto mt-2 max-w-sm text-base italic leading-relaxed">
                         {subtitle}
                     </p>
                 </div>
 
                 {/* liste défilable */}
-                <div className="min-h-0 flex-1 overflow-y-auto border-t border-dashed border-[hsl(0_0%_100%/0.08)] px-5 pb-7 pt-5 sm:px-8 sm:pb-8">
+                <div className="border-hairline min-h-0 flex-1 overflow-y-auto border-t border-dashed px-5 pb-7 pt-5 sm:px-8 sm:pb-8">
                     {loading ? (
                         <div className="flex flex-col gap-2">
                             {[0, 1, 2].map((i) => (
@@ -121,7 +121,7 @@ export default function FollowListModal({
                                         id={u.id}
                                         userName={u.userName}
                                         avatar={u.avatar}
-                                        className="border-border hover:border-primary/55 flex w-full rounded-xl border bg-[hsl(20_3%_14%/0.6)] px-3 py-2.5 transition-colors duration-200"
+                                        className="border-border hover:border-primary/55 bg-sunken/60 flex w-full rounded-xl border px-3 py-2.5 transition-colors duration-200"
                                     />
                                 </li>
                             ))}

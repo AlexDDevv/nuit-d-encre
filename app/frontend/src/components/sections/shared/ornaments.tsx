@@ -54,7 +54,7 @@ export function GoldLink({
             href={href}
             target={external ? "_blank" : undefined}
             rel={external ? "noopener noreferrer" : undefined}
-            className="group/link text-primary decoration-primary/40 hover:decoration-primary focus-visible:ring-primary/70 focus-visible:ring-offset-background inline-flex items-center gap-1 rounded-sm font-medium underline underline-offset-2 transition-colors duration-200 hover:text-[hsl(43_70%_88%)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="group/link text-primary decoration-primary/40 hover:decoration-primary focus-visible:ring-primary/70 focus-visible:ring-offset-background hover:text-gold-bright inline-flex items-center gap-1 rounded-sm font-medium underline underline-offset-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         >
             {children}
             {external && (

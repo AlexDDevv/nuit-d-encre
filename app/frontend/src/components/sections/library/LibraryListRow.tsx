@@ -87,7 +87,7 @@ export default function LibraryListRow({
                     {author}
                 </Link>
                 <p className="text-muted-foreground font-body mt-0.5 text-xs sm:hidden">
-                    <span className="font-quote italic text-[hsl(43_30%_62%)]">
+                    <span className="font-quote text-gold-muted italic">
                         {book.category?.name}
                     </span>{" "}
                     · {book.publishedYear}
@@ -105,7 +105,7 @@ export default function LibraryListRow({
             </div>
             <div className="flex items-center gap-20">
                 {/* catégorie (md+) */}
-                <span className="font-quote hidden shrink-0 truncate text-xs italic text-[hsl(43_30%_64%)] md:block">
+                <span className="font-quote text-gold-muted hidden shrink-0 truncate text-xs italic md:block">
                     {book.category?.name}
                 </span>
                 <div className="flex items-center gap-5">

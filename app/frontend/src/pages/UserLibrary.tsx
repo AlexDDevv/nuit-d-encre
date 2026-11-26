@@ -53,8 +53,8 @@ function StatChip({
             className={cn(
                 "font-body inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs",
                 primary
-                    ? "border-primary/40 text-primary bg-[hsl(43_59%_81%/0.12)]"
-                    : "border-border text-muted-foreground bg-[hsl(20_3%_16%/0.6)]",
+                    ? "border-primary/40 text-primary bg-primary/12"
+                    : "border-border text-muted-foreground bg-popover/60",
             )}
         >
             {dotClass && (
@@ -206,12 +206,12 @@ export default function UserLibrary() {
                     {readOnly ? (
                         <Link
                             to={`/profil/${ownerId}`}
-                            className="hover:text-primary focus-visible:ring-ring font-quote rounded-sm text-sm italic tracking-wide text-[hsl(43_30%_62%)] transition-colors focus-visible:outline-none focus-visible:ring-2"
+                            className="hover:text-primary focus-visible:ring-ring font-quote text-gold-muted rounded-sm text-sm italic tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2"
                         >
                             La collection de {ownerName ?? "ce lecteur"}
                         </Link>
                     ) : (
-                        <span className="font-quote text-sm italic tracking-wide text-[hsl(43_30%_62%)]">
+                        <span className="font-quote text-gold-muted text-sm italic tracking-wide">
                             Votre collection
                         </span>
                     )}
@@ -245,7 +245,7 @@ export default function UserLibrary() {
             </header>
 
             {/* ── BARRE DE CONTRÔLE ── */}
-            <div className="border-border sticky top-0 z-30 -mx-4 border-y bg-[hsl(20_3%_17%/0.86)] px-4 py-4 backdrop-blur-sm sm:mx-0 sm:rounded-xl sm:border-2 sm:px-5">
+            <div className="border-border bg-card/86 sticky top-0 z-30 -mx-4 border-y px-4 py-4 backdrop-blur-sm sm:mx-0 sm:rounded-xl sm:border-2 sm:px-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <StatusFilterSegments
                         selectedStatus={selectedStatus}

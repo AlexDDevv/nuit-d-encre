@@ -42,7 +42,7 @@ export default function ReviewCard({
             className={cn(
                 "flex flex-col gap-3.5 rounded-xl border-2 p-5 transition-colors duration-200",
                 isOwnReview
-                    ? "border-primary/45 bg-[hsl(43_30%_25%/0.18)]"
+                    ? "border-primary/45 bg-secondary/18"
                     : "border-border bg-card/60 hover:border-primary/40",
             )}
         >

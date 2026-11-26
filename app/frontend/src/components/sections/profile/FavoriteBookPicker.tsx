@@ -26,7 +26,7 @@ function PickerRowSkeleton() {
     return (
         <li
             aria-hidden="true"
-            className="border-border flex items-center gap-3.5 rounded-xl border bg-[hsl(20_3%_14%/0.6)] px-3 py-2.5"
+            className="border-border bg-sunken/60 flex items-center gap-3.5 rounded-xl border px-3 py-2.5"
         >
             <Skeleton className="aspect-2/3 w-11 shrink-0" />
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -91,7 +91,7 @@ export default function FavoriteBookPicker({
     return (
         <div
             className={cn(
-                "z-70 fixed inset-0 flex items-center justify-center bg-[hsl(20_3%_7%/0.78)] px-4 backdrop-blur-[3px]",
+                "z-70 bg-scrim/78 fixed inset-0 flex items-center justify-center px-4 backdrop-blur-[3px]",
                 closing ? "overlay-out" : "overlay-in",
             )}
             onMouseDown={(e) => {
@@ -116,13 +116,13 @@ export default function FavoriteBookPicker({
                 <div className="shrink-0 px-5 pt-7 sm:px-8 sm:pt-8">
                     <div className="text-center">
                         <div className="mb-2.5 flex items-center justify-center gap-2.5">
-                            <span className="h-px w-7 bg-[hsl(43_59%_81%/0.45)]" />
+                            <span className="bg-primary/45 h-px w-7" />
                             <FaStar
                                 size={13}
                                 className="text-primary/70"
                                 aria-hidden="true"
                             />
-                            <span className="h-px w-7 bg-[hsl(43_59%_81%/0.45)]" />
+                            <span className="bg-primary/45 h-px w-7" />
                         </div>
                         <h2
                             id="picker-title"
@@ -130,7 +130,7 @@ export default function FavoriteBookPicker({
                         >
                             Choisir un favori
                         </h2>
-                        <p className="font-quote mx-auto mt-2 max-w-sm text-base italic leading-relaxed text-[hsl(20_12%_70%)]">
+                        <p className="font-quote text-muted-foreground mx-auto mt-2 max-w-sm text-base italic leading-relaxed">
                             Quel ouvrage prendra la {PLACE_LABEL[rank]} de votre
                             podium{"\u00A0"}?
                         </p>
@@ -151,7 +151,7 @@ export default function FavoriteBookPicker({
                 <ul
                     aria-busy={loadingBooks}
                     className={cn(
-                        "mt-4 flex h-[min(28rem,55vh)] min-h-0 shrink flex-col gap-2 overflow-y-auto border-t border-dashed border-[hsl(0_0%_100%/0.08)] px-5 py-4 transition-opacity duration-200 sm:px-8",
+                        "border-hairline mt-4 flex h-[min(28rem,55vh)] min-h-0 shrink flex-col gap-2 overflow-y-auto border-t border-dashed px-5 py-4 transition-opacity duration-200 sm:px-8",
                         refreshing && "opacity-60",
                     )}
                 >
@@ -176,7 +176,7 @@ export default function FavoriteBookPicker({
                                         })
                                     }
                                     className={cn(
-                                        "border-border group flex w-full cursor-pointer items-center gap-3.5 rounded-xl border bg-[hsl(20_3%_14%/0.6)] px-3 py-2.5 text-left transition-colors duration-200",
+                                        "border-border bg-sunken/60 group flex w-full cursor-pointer items-center gap-3.5 rounded-xl border px-3 py-2.5 text-left transition-colors duration-200",
                                         "hover:border-primary/55 focus-visible:ring-primary/60 focus-visible:outline-none focus-visible:ring-2",
                                         "disabled:hover:border-border disabled:cursor-default",
                                         current && "border-primary/40",
@@ -193,12 +193,12 @@ export default function FavoriteBookPicker({
                                         <p className="text-foreground font-quote group-hover:text-primary truncate text-lg leading-tight transition-colors">
                                             {ub.book.title}
                                         </p>
-                                        <p className="font-body mt-0.5 truncate text-xs text-[hsl(20_12%_72%)]">
+                                        <p className="font-body text-muted-foreground mt-0.5 truncate text-xs">
                                             {author}
                                         </p>
                                         {(ub.book.category?.name ||
                                             ub.book.publishedYear) && (
-                                            <p className="font-quote mt-0.5 truncate text-xs italic text-[hsl(43_30%_62%)]">
+                                            <p className="font-quote text-gold-muted mt-0.5 truncate text-xs italic">
                                                 {[
                                                     ub.book.category?.name,
                                                     ub.book.publishedYear,

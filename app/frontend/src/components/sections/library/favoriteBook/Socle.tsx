@@ -37,14 +37,14 @@ export default function Socle({
     onPick: (rank: Rank) => void;
 }) {
     const occName = occupant && !selected ? occupant.title : null;
-    const numColor = selected ? "text-[hsl(43_59%_21%)]" : NUMERAL_COLOR[rank];
+    const numColor = selected ? "text-primary-foreground" : NUMERAL_COLOR[rank];
 
     return (
         <div className="flex w-full flex-col items-center">
             {/* libellé de l'occupant (au-dessus) */}
             <div className="mb-2 flex h-9 flex-col items-center justify-end text-center">
                 {selected ? (
-                    <span className="border-primary/50 text-primary py-0.75 font-body text-xxs inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-[hsl(43_59%_81%/0.16)] px-2 font-bold">
+                    <span className="border-primary/50 text-primary py-0.75 font-body text-xxs bg-primary/16 inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 font-bold">
                         <FaCheck size={10} aria-hidden="true" /> Ce livre
                     </span>
                 ) : occName ? (
@@ -54,7 +54,7 @@ export default function Socle({
                     >
                         occupée par
                         <br />
-                        <span className="font-body text-xxs not-italic text-[hsl(43_30%_64%)]">
+                        <span className="font-body text-xxs text-gold-muted not-italic">
                             « {occName} »
                         </span>
                     </span>
@@ -82,11 +82,11 @@ export default function Socle({
                     selected
                         ? cn(
                               SELECTED_GRADIENT,
-                              "border-t-primary border-x-[hsl(43_59%_81%/0.6)] border-b-transparent shadow-[0_-2px_30px_-6px_hsl(43_59%_60%/0.55),inset_0_1px_0_hsl(43_59%_81%/0.4)]",
+                              "border-t-primary border-x-primary/60 border-b-transparent shadow-[0_-2px_30px_-6px_hsl(43_59%_60%/0.55),inset_0_1px_0_hsl(43_59%_81%/0.4)]",
                           )
                         : cn(
                               BASE_GRADIENT[rank],
-                              "border-border hover:border-t-primary shadow-[inset_0_1px_0_hsl(43_59%_81%/0.08)] hover:border-x-[hsl(43_59%_81%/0.6)] hover:shadow-[0_-2px_22px_-10px_hsl(43_59%_60%/0.45),inset_0_1px_0_hsl(43_59%_81%/0.12)]",
+                              "border-border hover:border-t-primary hover:border-x-primary/60 shadow-[inset_0_1px_0_hsl(43_59%_81%/0.08)] hover:shadow-[0_-2px_22px_-10px_hsl(43_59%_60%/0.45),inset_0_1px_0_hsl(43_59%_81%/0.12)]",
                           ),
                 )}
             >
@@ -122,7 +122,7 @@ export default function Socle({
                         className={cn(
                             "text-xxxs absolute left-1/2 top-1 -translate-x-1/2 rounded-full border bg-[hsl(20_3%_9%/0.55)] px-2 py-px font-mono font-medium uppercase tracking-wider",
                             selected
-                                ? "text-primary-foreground border-[hsl(43_59%_21%/0.5)]"
+                                ? "text-primary-foreground border-primary-foreground/50"
                                 : "border-primary/40 text-primary",
                         )}
                     >
@@ -137,7 +137,7 @@ export default function Socle({
             <p
                 className={cn(
                     "font-quote mt-3 text-center text-sm",
-                    selected ? "text-primary" : "text-[hsl(20_12%_72%)]",
+                    selected ? "text-primary" : "text-muted-foreground",
                 )}
             >
                 {PLACE_LABEL[rank]}

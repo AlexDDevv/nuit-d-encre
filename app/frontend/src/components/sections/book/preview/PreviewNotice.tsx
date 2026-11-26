@@ -15,11 +15,11 @@ function NoticeRow({
     return (
         <div
             className="flex items-baseline justify-between gap-4 border-b border-dashed py-2.5"
-            style={{ borderColor: "hsl(0 0% 100% / 0.07)" }}
+            style={{ borderColor: "var(--color-hairline)" }}
         >
             <span
                 className="text-xxs inline-flex shrink-0 items-center gap-2 font-mono uppercase tracking-[0.14em]"
-                style={{ color: "hsl(20 12% 56%)" }}
+                style={{ color: "var(--color-subtle-foreground)" }}
             >
                 {icon && (
                     <Glyph
@@ -46,7 +46,7 @@ export function PreviewNotice({ book }: { book: BookSearchResult }) {
             <div className="mb-3 flex items-center gap-2.5">
                 <span
                     className="font-mono text-xs uppercase tracking-[0.2em]"
-                    style={{ color: "hsl(43 30% 62%)" }}
+                    style={{ color: "var(--color-gold-muted)" }}
                 >
                     La notice - telle qu'on l'a trouvée
                 </span>

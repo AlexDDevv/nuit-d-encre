@@ -10,7 +10,7 @@ export default function FavoriteBookReminder({
     const author = `${book.author.firstname} ${book.author.lastname}`;
 
     return (
-        <div className="border-border mt-6 flex w-full items-center gap-3.5 rounded-xl border bg-[hsl(20_3%_14%/0.6)] px-3.5 py-3">
+        <div className="border-border bg-sunken/60 mt-6 flex w-full items-center gap-3.5 rounded-xl border px-3.5 py-3">
             <BookCover
                 coverUrl={book.coverUrl}
                 title={book.title}
@@ -24,11 +24,11 @@ export default function FavoriteBookReminder({
                 <h3 className="text-foreground font-quote mt-1 text-xl leading-tight">
                     {book.title}
                 </h3>
-                <p className="font-body mt-0.5 text-xs text-[hsl(20_12%_72%)]">
+                <p className="font-body text-muted-foreground mt-0.5 text-xs">
                     {author}
                 </p>
                 {(book.category?.name || book.publishedYear) && (
-                    <p className="font-quote mt-0.5 text-xs italic text-[hsl(43_30%_62%)]">
+                    <p className="font-quote text-gold-muted mt-0.5 text-xs italic">
                         {[book.category?.name, book.publishedYear]
                             .filter(Boolean)
                             .join(" · ")}

@@ -18,7 +18,7 @@ export default function EmptyStateCard({
     return (
         <div
             className={cn(
-                "border-border flex flex-col gap-3 rounded-xl border-2 border-dashed bg-[hsl(20_3%_14%/0.4)] px-6",
+                "border-border bg-sunken/40 flex flex-col gap-3 rounded-xl border-2 border-dashed px-6",
                 centered
                     ? "items-center py-16 text-center"
                     : "items-start py-12",
@@ -26,7 +26,7 @@ export default function EmptyStateCard({
         >
             <span
                 className={cn(
-                    "ring-primary/25 grid place-items-center rounded-full bg-[hsl(43_30%_25%/0.3)] ring-1",
+                    "ring-primary/25 bg-secondary/30 grid place-items-center rounded-full ring-1",
                     iconSize === "md" ? "h-12 w-12" : "h-11 w-11",
                 )}
             >

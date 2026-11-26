@@ -29,7 +29,7 @@ export default function BookShelf({
                 {book.title}
             </h3>
             <p className="text-muted-foreground font-body text-xs">{author}</p>
-            <p className="font-quote text-xs italic text-[hsl(43_30%_64%)]">
+            <p className="font-quote text-gold-muted text-xs italic">
                 {book.category?.name} · {book.publishedYear}
             </p>
             {status === "READ" && finishedAt && (

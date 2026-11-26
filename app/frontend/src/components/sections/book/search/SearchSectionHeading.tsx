@@ -25,7 +25,7 @@ export default function SearchSectionHeading({
                 <div>
                     <div className="mb-2 flex items-center gap-2.5">
                         <span className="bg-primary/50 h-px w-8" />
-                        <span className="font-quote whitespace-nowrap text-sm italic tracking-wide text-[hsl(43_30%_62%)]">
+                        <span className="font-quote text-gold-muted whitespace-nowrap text-sm italic tracking-wide">
                             {kicker}
                         </span>
                     </div>

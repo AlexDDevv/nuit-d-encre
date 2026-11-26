@@ -1,17 +1,45 @@
+/**
+ * Design tokens « Nuit d'Encre » (thème sombre unique).
+ *
+ * static : toutes les variables sont émises, y compris celles qu'aucune classe
+ * n'utilise, car plusieurs composants les lisent en var() depuis du TS
+ * (Banner, éditeur de bannières).
+ *
+ * Ordre : typographie, mise en page, ombres, animations, couleurs (surfaces,
+ * actions, états, statuts). Les illustrations (loaders, sceaux, couvertures
+ * factices) gardent leurs teintes propres : seules les couleurs d'interface
+ * passent par ces tokens.
+ */
 @theme static {
+    /* ── Typographie ─────────────────────────────────────────────────── */
     --font-title: "Roboto", sans-serif;
     --font-body: "Lato", sans-serif;
     --font-quote: "EB Garamond", serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-    /* breakpoints (sous sm : xs: / max-xs:) */
-    --breakpoint-xs: 30rem;
-
-    /* font sizes (sous-standard ; 12px+ via l'échelle Tailwind) */
+    /* Sous l'échelle standard (12px et plus via text-xs, text-sm…) */
     --text-xxxs: 8px;
     --text-xxs: 10px;
 
-    /* animations */
+    /* Capitales espacées des étiquettes mono et des ornements */
+    --tracking-label: 0.14em;
+    --tracking-caps: 0.2em;
+    --tracking-spaced: 0.26em;
+    --tracking-ornament: 0.32em;
+
+    /* ── Mise en page ────────────────────────────────────────────────── */
+    /* Sous sm : xs: / max-xs: (miroir dans hooks/responsive/useMediaQuery.ts) */
+    --breakpoint-xs: 30rem;
+
+    /* ── Ombres ──────────────────────────────────────────────────────── */
+    --shadow-focus-halo: 0 0 0 3px hsl(43 59% 81% / 0.16);
+    --shadow-card-hover: 0 22px 44px -26px hsl(20 3% 2% / 0.95);
+    --shadow-modal:
+        0 40px 90px -28px hsl(20 3% 2% / 0.95), 0 0 0 1px hsl(20 3% 8%);
+    --shadow-cover:
+        0 30px 60px -22px hsl(20 3% 3% / 0.95), 0 0 0 6px hsl(43 59% 81% / 0.06);
+
+    /* ── Animations ──────────────────────────────────────────────────── */
     --animate-fadeIn: fadeIn 0.15s ease-out;
     --animate-accordion-down: accordion-down 0.3s ease-out;
     --animate-accordion-up: accordion-up 0.3s ease-out;
@@ -44,19 +72,32 @@
     }
 
     /* ── Couleurs : surfaces et texte ───────────────────────────────────
-       Thème sombre unique. index.html reprend --color-background en dur
-       (theme-color) : les garder alignés. */
+       index.html reprend --color-background en dur (theme-color) : les
+       garder alignés. */
     --color-background: hsl(20 3% 19%);
     --color-foreground: hsl(43 59% 81%);
     --color-muted: hsl(20 12% 23%);
     --color-muted-foreground: hsl(20 12% 73%);
+    /* Texte de troisième rang : légendes mono, mentions de catalogue */
+    --color-subtle-foreground: hsl(20 12% 56%);
     --color-popover: hsl(20 3% 16%);
     --color-popover-foreground: hsl(43 59% 91%);
     --color-card: hsl(20 3% 17%);
     --color-card-foreground: hsl(43 59% 86%);
+    /* Creux posé sur une carte (pastilles, encarts) : s'emploie avec opacité */
+    --color-sunken: hsl(20 3% 14%);
+    /* Voile des modales et dégradés de lisibilité sur image */
+    --color-scrim: hsl(20 3% 7%);
     --color-border: hsl(0 0% 24%);
+    /* Séparateur clair à peine visible (pointillés internes, barres de pied) */
+    --color-hairline: hsl(0 0% 100% / 0.07);
     --color-input: hsl(0 0% 27%);
     --color-ring: hsl(43 59% 81%);
+
+    /* Or : primary est l'or de la DA ; gold-muted l'or patiné des citations et
+       légendes, gold-bright l'or vif du survol des liens. */
+    --color-gold-muted: hsl(43 30% 63%);
+    --color-gold-bright: hsl(43 70% 88%);
 
     /* ── Couleurs : actions ──────────────────────────────────────────── */
     --color-primary: hsl(43 59% 81%);

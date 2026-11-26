@@ -56,7 +56,7 @@ export default function ProgressGauge({
                         QUARTERS.map((q) => (
                             <span
                                 key={q}
-                                className="inset-y-0.75 absolute w-px bg-[hsl(20_3%_34%)]"
+                                className="inset-y-0.75 bg-accent absolute w-px"
                                 style={{ left: `${q}%` }}
                             />
                         ))}

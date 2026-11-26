@@ -43,7 +43,7 @@ export function PreviewDetails({
         <div className="min-w-0">
             <p
                 className="font-quote mb-3 text-sm italic"
-                style={{ color: "hsl(43 30% 64%)" }}
+                style={{ color: "var(--color-gold-muted)" }}
             >
                 {knownAuthor
                     ? "D'un auteur que vous connaissez déjà"
@@ -82,7 +82,7 @@ export function PreviewDetails({
                         className="font-body inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs"
                         style={{
                             background: "hsl(20 12% 23% / 0.6)",
-                            color: "hsl(20 12% 70%)",
+                            color: "var(--color-muted-foreground)",
                             border: "1px dashed hsl(0 0% 40% / 0.5)",
                         }}
                     >
@@ -109,7 +109,7 @@ export function PreviewDetails({
             {meta.length > 0 && (
                 <div
                     className="font-body mt-6 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm"
-                    style={{ color: "hsl(20 12% 70%)" }}
+                    style={{ color: "var(--color-muted-foreground)" }}
                 >
                     {meta.flatMap((node, i) =>
                         i === 0
@@ -152,7 +152,7 @@ export function PreviewDetails({
                         </Button>
                         <p
                             className="font-body text-xs"
-                            style={{ color: "hsl(43 30% 64%)" }}
+                            style={{ color: "var(--color-gold-muted)" }}
                         >
                             Il faut un compte pour faire entrer un ouvrage dans
                             Nuit d'Encre.

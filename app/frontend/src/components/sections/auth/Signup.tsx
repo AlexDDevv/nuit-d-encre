@@ -247,7 +247,7 @@ export default function Signup() {
                     Déjà une carte d'accès ?{" "}
                     <Link
                         to={loginHref}
-                        className="text-primary decoration-primary/40 focus-visible:ring-primary/70 rounded-sm font-medium not-italic underline underline-offset-[3px] transition-colors hover:text-[hsl(43_70%_88%)] hover:decoration-[hsl(43_59%_81%)] focus:outline-none focus-visible:ring-2"
+                        className="text-primary decoration-primary/40 focus-visible:ring-primary/70 hover:text-gold-bright hover:decoration-primary rounded-sm font-medium not-italic underline underline-offset-[3px] transition-colors focus:outline-none focus-visible:ring-2"
                     >
                         Se connecter
                     </Link>

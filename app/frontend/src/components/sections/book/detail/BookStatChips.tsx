@@ -6,7 +6,7 @@ import { Book } from "@/types/types";
 function StatChip({ children, title }: { children: ReactNode; title: string }) {
     return (
         <span
-            className="border-border font-body inline-flex items-center gap-2 rounded-full border-2 bg-[hsl(20_3%_14%/0.6)] px-3.5 py-2 text-xs"
+            className="border-border font-body bg-sunken/60 inline-flex items-center gap-2 rounded-full border-2 px-3.5 py-2 text-xs"
             title={title}
         >
             {children}

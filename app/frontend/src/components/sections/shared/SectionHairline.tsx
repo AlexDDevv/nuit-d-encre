@@ -10,10 +10,7 @@ export default function SectionHairline({
     return (
         <div className="flex items-center gap-2.5">
             <span
-                className={cn(
-                    "font-quote italic text-[hsl(43_30%_62%)]",
-                    textClass,
-                )}
+                className={cn("font-quote text-gold-muted italic", textClass)}
             >
                 {label}
             </span>

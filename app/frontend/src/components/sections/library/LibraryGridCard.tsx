@@ -152,7 +152,7 @@ export default function LibraryGridCard({
 
                 {/* actions */}
                 {!readOnly && (
-                    <div className="mt-2.5 flex items-center gap-2 border-t border-dashed border-[hsl(0_0%_100%/0.07)] pt-2.5">
+                    <div className="border-hairline mt-2.5 flex items-center gap-2 border-t border-dashed pt-2.5">
                         <SelectBookStatus
                             value={status}
                             onChange={(newStatus) =>

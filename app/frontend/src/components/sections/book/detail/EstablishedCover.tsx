@@ -69,7 +69,7 @@ function AuthorMedallion({ author }: { author: AuthorIdentity }) {
                     {author.lastname}
                 </p>
             </div>
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-[hsl(20_3%_14%/0.7)] shadow-[inset_0_0_0_1px_hsl(43_59%_81%/0.28)]">
+            <span className="bg-sunken/70 grid h-9 w-9 place-items-center rounded-full shadow-[inset_0_0_0_1px_hsl(43_59%_81%/0.28)]">
                 <FaFeatherPointed
                     size={16}
                     className="text-primary/80"
@@ -105,14 +105,12 @@ export default function EstablishedCover(props: EstablishedCoverProps) {
                     <AuthorMedallion author={author} />
                     <Stamp label="Auteur de la maison" code={code} />
                 </div>
-                <p className="text-xxs mt-4 text-center font-mono tracking-wide text-[hsl(20_12%_56%)]">
+                <p className="text-xxs text-subtle-foreground mt-4 text-center font-mono tracking-wide">
                     à la maison
                     {since && (
                         <>
                             {" depuis · "}
-                            <span className="text-[hsl(43_30%_64%)]">
-                                {since}
-                            </span>
+                            <span className="text-gold-muted">{since}</span>
                         </>
                     )}
                 </p>
@@ -148,12 +146,12 @@ export default function EstablishedCover(props: EstablishedCoverProps) {
             </div>
 
             {/* indication : dans la collection */}
-            <p className="text-xxs mt-4 text-center font-mono tracking-wide text-[hsl(20_12%_56%)]">
+            <p className="text-xxs text-subtle-foreground mt-4 text-center font-mono tracking-wide">
                 dans la collection
                 {addedOn && (
                     <>
                         {" · "}
-                        <span className="text-[hsl(43_30%_64%)]">
+                        <span className="text-gold-muted">
                             depuis {addedOn}
                         </span>
                     </>

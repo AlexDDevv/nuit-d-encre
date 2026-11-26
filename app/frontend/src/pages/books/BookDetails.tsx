@@ -183,7 +183,7 @@ export default function BookDetails() {
 
                 <div className="flex min-w-0 flex-col gap-6">
                     <div className="flex flex-col gap-3">
-                        <p className="font-quote text-sm italic text-[hsl(43_30%_64%)]">
+                        <p className="font-quote text-gold-muted text-sm italic">
                             Un ouvrage de notre bibliothèque
                         </p>
                         <h1 className="text-foreground font-quote text-balance text-4xl leading-[1.04]">
@@ -225,7 +225,7 @@ export default function BookDetails() {
 
                     {/* méta en ligne */}
                     <div className="text-muted-foreground font-body flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
-                        <span className="font-quote italic text-[hsl(43_30%_64%)]">
+                        <span className="font-quote text-gold-muted italic">
                             {book.category.name}
                         </span>
                         <Diamond />
