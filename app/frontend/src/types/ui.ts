@@ -159,3 +159,17 @@ export interface ReviewCommentFormProps {
     reviewId: string;
     onSuccess?: () => void;
 }
+
+export type ProgressGaugeProps = {
+    /** Avancement de 0 à 1 (borné). */
+    ratio: number;
+    label: string;
+    valueNow: number;
+    valueMax: number;
+    /** Valeur lue par les lecteurs d'écran. */
+    valueText?: string;
+    /** Affiche sous la jauge « 0 · x % · valueMax ». */
+    showScale?: boolean;
+    /** Version mince, sans graduations, losange ni brillance (aperçu). */
+    compact?: boolean;
+};

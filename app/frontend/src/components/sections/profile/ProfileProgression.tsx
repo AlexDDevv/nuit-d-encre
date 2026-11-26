@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaAward, FaChevronRight } from "react-icons/fa6";
 import { TITLES, MAX_LEVEL, xpForLevel, titleAt } from "@/constants/titles";
 import { User } from "@/types/types";
+import ProgressGauge from "@/components/UI/ProgressGauge";
 import { Card, SectionHeading } from "./ProfileUI";
 
 function LevelMedallion({ level, pct }: { level: number; pct: number }) {
@@ -59,26 +60,6 @@ function LevelMedallion({ level, pct }: { level: number; pct: number }) {
                     {level}
                 </span>
             </div>
-        </div>
-    );
-}
-
-function XpBar({ pct }: { pct: number }) {
-    const [w, setW] = useState(0);
-    useEffect(() => {
-        const t = setTimeout(() => setW(pct), 150);
-        return () => clearTimeout(t);
-    }, [pct]);
-
-    return (
-        <div className="xp-shimmer border-border bg-muted/70 relative h-3.5 w-full overflow-hidden rounded-full border">
-            <div
-                className="bg-linear-to-r h-full rounded-full from-[hsl(38_45%_55%)] via-[hsl(43_60%_78%)] to-[hsl(43_64%_84%)] shadow-[0_0_14px_-1px_hsl(43_59%_70%/0.7)]"
-                style={{
-                    width: `${w * 100}%`,
-                    transition: "width 1.4s cubic-bezier(.2,.8,.2,1)",
-                }}
-            />
         </div>
     );
 }
@@ -188,7 +169,13 @@ export default function ProfileProgression({ user }: { user: User }) {
                         </div>
                     </div>
 
-                    <XpBar pct={pct} />
+                    <ProgressGauge
+                        ratio={pct}
+                        valueNow={user.xp}
+                        valueMax={need}
+                        label={`Expérience du niveau ${user.level}`}
+                        valueText={`${user.xp} XP sur ${need}`}
+                    />
 
                     <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
                         <span className="text-foreground/90 font-body whitespace-nowrap font-bold">
