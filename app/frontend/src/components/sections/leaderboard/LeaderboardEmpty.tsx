@@ -64,13 +64,13 @@ export default function LeaderboardEmpty({
                 <div className="absolute left-1/2 top-1 z-10 -translate-x-1/2">
                     <Candle />
                 </div>
-                <div className="font-quote text-muted-foreground/70 h-17.5 max-w-35 flex flex-1 basis-0 justify-center rounded-t-lg border-2 border-b-0 border-dashed border-[hsl(20_12%_35%)] pt-2.5 text-[26px]">
+                <div className="font-quote text-muted-foreground/70 h-17.5 max-w-35 flex flex-1 basis-0 justify-center rounded-t-lg border-2 border-b-0 border-dashed border-[hsl(20_12%_35%)] pt-2.5 text-2xl">
                     II
                 </div>
-                <div className="font-quote text-primary/80 border-primary/55 h-26 relative z-10 flex max-w-40 flex-1 basis-0 justify-center rounded-t-lg border-2 border-b-0 border-dashed pt-3 text-[32px]">
+                <div className="font-quote text-primary/80 border-primary/55 h-26 relative z-10 flex max-w-40 flex-1 basis-0 justify-center rounded-t-lg border-2 border-b-0 border-dashed pt-3 text-3xl">
                     I
                 </div>
-                <div className="font-quote text-muted-foreground/70 h-12.5 max-w-35 flex flex-1 basis-0 justify-center rounded-t-lg border-2 border-b-0 border-dashed border-[hsl(20_12%_35%)] pt-2 text-[22px]">
+                <div className="font-quote text-muted-foreground/70 h-12.5 max-w-35 flex flex-1 basis-0 justify-center rounded-t-lg border-2 border-b-0 border-dashed border-[hsl(20_12%_35%)] pt-2 text-xl">
                     III
                 </div>
             </div>
@@ -80,11 +80,11 @@ export default function LeaderboardEmpty({
             />
             <h2
                 id="leaderboard-empty-title"
-                className="text-primary font-quote max-w-130 mt-8 text-[28px] font-medium leading-tight"
+                className="text-primary font-quote max-w-130 mt-8 text-3xl font-medium leading-tight"
             >
                 {title}
             </h2>
-            <p className="text-muted-foreground font-quote max-w-115 mt-2.5 text-[19px] italic leading-snug">
+            <p className="text-muted-foreground font-quote max-w-115 mt-2.5 text-lg italic leading-snug">
                 {text}
             </p>
             {noFollows && (

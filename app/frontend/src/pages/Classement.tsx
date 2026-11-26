@@ -81,10 +81,10 @@ export default function Classement() {
         <section className="max-w-204 mx-auto w-full px-3.5 pb-14 pt-5 sm:px-6 sm:pb-20 sm:pt-12">
             <header className="flex flex-col items-center gap-2.5 text-center">
                 <Ornament width="w-12" />
-                <h1 className="text-primary font-quote text-[46px] font-medium leading-[1.05] tracking-tight sm:text-[64px]">
+                <h1 className="text-primary font-quote text-5xl font-medium leading-[1.05] tracking-tight sm:text-6xl">
                     Classement
                 </h1>
-                <p className="text-muted-foreground font-quote max-w-130 text-[17px] italic leading-snug sm:text-xl">
+                <p className="text-muted-foreground font-quote max-w-130 text-lg italic leading-snug sm:text-xl">
                     {subtitle}
                 </p>
             </header>
@@ -109,7 +109,7 @@ export default function Classement() {
             </div>
 
             {scope === "FOLLOWING" && !!followingCount && (
-                <p className="text-muted-foreground mt-3.5 text-center text-[13px]">
+                <p className="text-muted-foreground mt-3.5 text-center text-xs">
                     Vous et les {followingCount} lecteur
                     {followingCount > 1 ? "s" : ""} que vous suivez.
                 </p>

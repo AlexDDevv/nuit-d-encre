@@ -25,7 +25,7 @@ export default function LeaderboardRow({
                     : "border-border bg-card",
             )}
         >
-            <span className="text-muted-foreground font-quote sm:w-11.5 w-8 shrink-0 text-right text-lg font-medium leading-none sm:text-[22px]">
+            <span className="text-muted-foreground font-quote sm:w-11.5 w-8 shrink-0 text-right text-lg font-medium leading-none sm:text-xl">
                 <span className="sr-only">Rang </span>
                 {num}
                 <sup className="text-[0.55em]">{suffix}</sup>
@@ -38,7 +38,7 @@ export default function LeaderboardRow({
             <LeaderboardAvatar
                 userName={user.userName}
                 avatar={user.avatar}
-                className="h-8.5 w-8.5 sm:h-10.5 sm:w-10.5 text-[13px] sm:text-[15px]"
+                className="h-8.5 w-8.5 sm:h-10.5 sm:w-10.5 text-xs sm:text-sm"
                 style={
                     isViewer
                         ? { boxShadow: "0 0 0 2px hsl(43 59% 81%)" }
@@ -66,7 +66,7 @@ export default function LeaderboardRow({
                     </span>
                 )}
             </div>
-            <span className="text-primary font-quote shrink-0 text-right text-[17px] font-medium tabular-nums sm:text-[22px]">
+            <span className="text-primary font-quote shrink-0 text-right text-base font-medium tabular-nums sm:text-xl">
                 {formatXp(xp)}
                 <span className="text-muted-foreground font-body hidden text-xs font-bold tracking-wider sm:inline">
                     {" "}
