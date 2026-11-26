@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import LevelBadge from "@/components/sections/shared/LevelBadge";
 import { cn } from "@/lib/utils";
+import { interactiveCardShell } from "@/components/UI/cardShell";
 import { formatRank, formatXp } from "@/lib/leaderboard";
 import { LeaderboardPodiumProps, PodiumStepProps } from "@/types/types";
 import LeaderboardAvatar from "./LeaderboardAvatar";
@@ -64,10 +65,9 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
                 to={`/profil/${user.id}`}
                 aria-label={`Voir le profil de ${user.userName}${isViewer ? " (vous)" : ""}, ${formatRank(rank)}, ${formatXp(xp)} XP`}
                 className={cn(
-                    "text-primary hover:border-primary focus-visible:ring-ring sm:pt-4.5 relative z-10 flex w-full flex-col items-center gap-1.5 rounded-xl border-2 px-1.5 pb-3 pt-3 text-center transition-all duration-200 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 motion-reduce:hover:scale-100 sm:px-3 sm:pb-4",
-                    isViewer
-                        ? "border-primary/70 bg-secondary/55"
-                        : "border-border bg-card",
+                    interactiveCardShell,
+                    "text-primary sm:pt-4.5 z-10 flex w-full flex-col items-center gap-1.5 px-1.5 pb-3 pt-3 text-center motion-reduce:hover:scale-100 sm:px-3 sm:pb-4",
+                    isViewer && "border-primary/70 bg-secondary/55",
                 )}
             >
                 <LeaderboardAvatar
@@ -86,18 +86,24 @@ function PodiumStep({ entry, isViewer, place }: PodiumStepProps) {
                 <span className="font-body max-w-full truncate text-sm font-bold sm:text-base">
                     {user.userName}
                 </span>
-                <span className="flex flex-wrap justify-center gap-1.5">
-                    <LevelBadge
-                        level={user.level}
-                        className={LEVEL_PILL_CLASS}
-                    />
-                    {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
-                </span>
-                {user.title && (
-                    <span className="text-muted-foreground font-quote hidden text-base italic leading-tight sm:block">
-                        {user.title.label}
-                    </span>
-                )}
+                {isViewer && <span className={YOU_PILL_CLASS}>Vous</span>}
+
+                {/* niveau + titre révélés au survol / focus (toujours visibles sur mobile) */}
+                <div className="grid w-full grid-rows-[0fr] opacity-0 transition-all duration-300 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100 group-hover:grid-rows-[1fr] group-hover:opacity-100 max-sm:grid-rows-[1fr] max-sm:opacity-100">
+                    <div className="overflow-hidden">
+                        <div className="flex flex-col items-center gap-1.5 pt-0.5">
+                            <LevelBadge
+                                level={user.level}
+                                className={LEVEL_PILL_CLASS}
+                            />
+                            {user.title && (
+                                <span className="text-muted-foreground font-quote hidden text-base italic leading-tight sm:block">
+                                    {user.title.label}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                </div>
                 <span
                     className="font-quote mt-1 text-xl font-medium tabular-nums leading-none sm:text-[26px]"
                     style={{ color: tint }}
