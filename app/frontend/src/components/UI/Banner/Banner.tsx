@@ -42,7 +42,7 @@ function BannerActionButton({
         Object.assign(el.style, style);
 
     const className =
-        "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 font-body text-sm font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+        "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 font-body text-sm font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
     const content = (
         <>
@@ -250,7 +250,7 @@ const Banner = ({
                     type="button"
                     onClick={handleDismiss}
                     aria-label="Fermer la bannière"
-                    className="text-muted-foreground hover:text-foreground focus-visible:ring-primary absolute right-3 top-3 z-20 grid h-7 w-7 place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2"
+                    className="text-muted-foreground hover:text-foreground focus-visible:ring-primary absolute right-3 top-3 z-20 grid h-7 w-7 cursor-pointer place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2"
                     style={{ background: "hsl(20 3% 10% / 0.35)" }}
                 >
                     <Icon name="x" size={15} />
