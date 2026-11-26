@@ -147,6 +147,15 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Effet : le défi suit la visibilité de la bibliothèque (visible des autres seulement si elle est partagée). Au passage, `startedAt` / `finishedAt` sont exposés en chaînes `YYYY-MM-DD` : en `Date`, la moindre requête les demandant aurait échoué.
 - Référence : `app/backend/src/services/gamification/reading-goal-service.ts`, migration `1789000000000-AddReadingGoal`.
 
+### Un design system fondé sur des tokens d'état
+
+- Décision : les styles sont découpés par rôle (`tokens`, `base`, `utilities`, `motion`, `ornaments`, `toast`) et le thème gagne des tokens d'état (`info`, `success`, `warning`, `error`, `reward`), chacun décliné en couleur lisible, texte sur aplat, bordure, voile et fond léger. Bannières, toasts, badges et messages d'erreur lisent ces tokens ; les statuts de lecture ont leur propre jeu, plus doux.
+- Intention : des fichiers CSS jugés désordonnés, et aucun token pour ce qui informe l'utilisateur, alors que le Banner avait déjà trouvé le bon langage visuel (voile teinté translucide sur surface sombre).
+- Constat de départ : les tokens `destructive` et `success` étaient réglés pour un aplat et tombaient à 3:1 et 2,6:1 en texte sur le fond sombre. Chaque composant recréait donc sa propre teinte lisible (cinq oranges différents), soit plus de 400 couleurs écrites en dur.
+- Alternative écartée : reprendre tel quel le découpage d'un autre projet (échelles 50/100 pensées pour un fond clair, échelle d'espacement personnalisée qui oblige à redéfinir les largeurs maximales).
+- Effet : les textes d'erreur sont plus clairs (AA atteint), les toasts quittent les couleurs par défaut de Sonner pour l'effet verre du Banner. Les illustrations gardent leurs teintes propres : la fidélité au rendu prime sur la tokenisation.
+- Référence : `app/frontend/src/styles/tokens.css`, `app/frontend/src/styles/toast.css`.
+
 ### Activité publique, bibliothèque privée par défaut
 
 - Décision : l'activité des lecteurs est publique (fil des abonnements, fil global pour découvrir d'autres lecteurs, activité du profil), mais la bibliothèque n'est montrée que si son propriétaire active « Partager ma bibliothèque ». Sans partage, les ajouts et lectures terminées disparaissent des fils et du profil ; critiques, recommandations et favoris restent visibles.
