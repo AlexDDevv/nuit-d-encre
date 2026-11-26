@@ -31,7 +31,7 @@ export function MonoEyebrow({
     return (
         <span
             className={cn(
-                "text-primary/70 inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.34em]",
+                "text-primary/70 tracking-ornament inline-flex items-center gap-2 font-mono text-xs font-medium uppercase",
                 className,
             )}
         >

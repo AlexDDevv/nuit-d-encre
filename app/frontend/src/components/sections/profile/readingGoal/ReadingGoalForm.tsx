@@ -75,7 +75,7 @@ export default function ReadingGoalForm({
         >
             {goal ? (
                 <div className="bg-muted/55 border-border flex min-w-0 flex-[1_1_300px] flex-col justify-center gap-3.5 rounded-xl border p-5">
-                    <span className="font-title text-muted-foreground text-xs uppercase tracking-[0.16em]">
+                    <span className="font-title text-muted-foreground tracking-label text-xs uppercase">
                         Votre avancement, conservé
                     </span>
                     <div className="flex items-baseline gap-2.5">
@@ -126,7 +126,7 @@ export default function ReadingGoalForm({
 
             <div className="flex min-w-0 flex-[999_1_420px] flex-col gap-4">
                 <fieldset className="flex min-w-0 flex-col gap-2.5">
-                    <legend className="font-title text-primary mb-2.5 text-sm font-medium uppercase tracking-[0.14em]">
+                    <legend className="font-title text-primary tracking-label mb-2.5 text-sm font-medium uppercase">
                         Votre objectif pour {year}
                     </legend>
                     <div className="grid grid-cols-3 gap-2">

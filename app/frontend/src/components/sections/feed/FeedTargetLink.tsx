@@ -33,7 +33,7 @@ export default function FeedTargetLink({ entry }: FeedTargetLinkProps) {
                 </span>
             )}
             <span className="min-w-0 leading-tight">
-                <span className="text-muted-foreground/80 font-title text-xxs block font-bold uppercase tracking-[0.18em]">
+                <span className="text-muted-foreground/80 font-title text-xxs tracking-caps block font-bold uppercase">
                     {target.kind === "book" ? "Livre" : "Auteur"}
                 </span>
                 <span className="text-foreground/90 font-quote group-hover/target:text-primary block truncate text-sm italic">

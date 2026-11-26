@@ -109,7 +109,7 @@ export function BooksTab() {
             header: "Catégorie",
             cell: (b) =>
                 b.category ? (
-                    <span className="border-border bg-muted/70 text-muted-foreground inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-[0.12em]">
+                    <span className="border-border bg-muted/70 text-muted-foreground tracking-label inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase">
                         {b.category.name}
                     </span>
                 ) : (

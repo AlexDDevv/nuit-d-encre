@@ -18,7 +18,7 @@ function AbsentCover({ title, source }: { title: string; source: string }) {
                 }}
             />
             <span
-                className="text-xxs font-mono uppercase tracking-[0.26em]"
+                className="text-xxs tracking-spaced font-mono uppercase"
                 style={{ color: "hsl(43 59% 81% / 0.4)" }}
             >
                 couverture&nbsp;absente
@@ -58,13 +58,13 @@ function AccessionStamp({ short, code }: { short: string; code: string }) {
                 }}
             >
                 <span
-                    className="text-xxxs font-mono uppercase tracking-[0.2em]"
+                    className="text-xxxs tracking-caps font-mono uppercase"
                     style={{ color: "hsl(43 59% 81% / 0.62)" }}
                 >
                     Fonds&nbsp;numérique
                 </span>
                 <span
-                    className="font-mono text-xs font-medium uppercase tracking-[0.12em]"
+                    className="tracking-label font-mono text-xs font-medium uppercase"
                     style={{ color: "hsl(43 59% 81% / 0.92)" }}
                 >
                     {short}

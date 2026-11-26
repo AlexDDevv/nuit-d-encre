@@ -55,7 +55,7 @@ export default function ProfileStats({
                                     {stats[key].toLocaleString("fr-FR")}
                                 </div>
                             )}
-                            <div className="text-muted-foreground font-body text-xxs mt-1 overflow-hidden text-ellipsis font-bold uppercase leading-tight tracking-widest sm:text-xs sm:tracking-[0.14em]">
+                            <div className="text-muted-foreground font-body text-xxs sm:tracking-label mt-1 overflow-hidden text-ellipsis font-bold uppercase leading-tight tracking-widest sm:text-xs">
                                 {label}
                             </div>
                         </div>

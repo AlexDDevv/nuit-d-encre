@@ -79,7 +79,7 @@ export default function MonogramCover({ first, last }: MonogramCoverProps) {
             </div>
 
             {/* libellé de marque */}
-            <div className="font-quote text-primary/40 text-xxxs absolute inset-x-0 top-[6%] text-center uppercase tracking-[0.3em]">
+            <div className="font-quote text-primary/40 text-xxxs tracking-ornament absolute inset-x-0 top-[6%] text-center uppercase">
                 Nuit d'Encre
             </div>
         </div>

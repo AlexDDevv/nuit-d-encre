@@ -30,7 +30,7 @@ export default function ReadingGoalView({
                             </strong>{" "}
                             {booksWord(target)}
                         </span>
-                        <span className="font-title text-muted-foreground text-xs uppercase tracking-[0.16em]">
+                        <span className="font-title text-muted-foreground tracking-label text-xs uppercase">
                             lus en {year}
                         </span>
                     </div>
@@ -80,9 +80,7 @@ export default function ReadingGoalView({
                         <span className="text-2xl font-bold leading-none">
                             {rewardXp}
                         </span>
-                        <span className="mt-1 text-xs tracking-[0.2em]">
-                            XP
-                        </span>
+                        <span className="tracking-caps mt-1 text-xs">XP</span>
                     </div>
                 </div>
                 <div className="flex flex-col gap-1">

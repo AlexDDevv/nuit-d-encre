@@ -50,7 +50,7 @@ export default function FeedRow({ entry, discovery }: FeedRowProps) {
                         </p>
                         <FeedTargetLink entry={entry} />
                         <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                            <span className="text-primary/65 font-title text-xxs font-bold uppercase tracking-[0.16em]">
+                            <span className="text-primary/65 font-title text-xxs tracking-label font-bold uppercase">
                                 {CATEGORY_LABEL[kind]}
                             </span>
                             <span

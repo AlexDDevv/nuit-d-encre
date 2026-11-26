@@ -44,7 +44,7 @@ export default function PasswordStrengthMeter({
                 </div>
                 <span
                     className={cn(
-                        "text-xxs min-w-[68px] text-right font-mono font-semibold uppercase tracking-[0.12em]",
+                        "text-xxs tracking-label min-w-[68px] text-right font-mono font-semibold uppercase",
                         empty ? "text-muted-foreground/45" : tier.tone,
                     )}
                 >

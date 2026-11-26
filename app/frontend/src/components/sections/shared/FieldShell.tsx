@@ -58,7 +58,7 @@ export default function FieldShell({
             <div className="flex items-end justify-between gap-3">
                 <label
                     htmlFor={htmlFor}
-                    className="text-primary/65 text-xxs font-mono font-medium uppercase tracking-[0.18em]"
+                    className="text-primary/65 text-xxs tracking-caps font-mono font-medium uppercase"
                 >
                     {label}
                     {required && <span className="text-primary/40"> *</span>}

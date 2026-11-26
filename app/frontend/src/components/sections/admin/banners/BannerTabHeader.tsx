@@ -20,12 +20,12 @@ export default function BannerTabHeader({ active }: { active: boolean }) {
             </div>
             <div className="flex items-center gap-2 sm:pb-1">
                 {active ? (
-                    <span className="border-primary/45 bg-primary/10 font-body text-primary inline-flex items-center gap-2 rounded-full border-2 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em]">
+                    <span className="border-primary/45 bg-primary/10 font-body text-primary tracking-label inline-flex items-center gap-2 rounded-full border-2 px-3 py-1.5 text-xs font-bold uppercase">
                         <span className="bg-primary h-2 w-2 animate-pulse rounded-full" />{" "}
                         Une bannière est active
                     </span>
                 ) : (
-                    <span className="border-border bg-muted/50 font-body text-muted-foreground inline-flex items-center gap-2 rounded-full border-2 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em]">
+                    <span className="border-border bg-muted/50 font-body text-muted-foreground tracking-label inline-flex items-center gap-2 rounded-full border-2 px-3 py-1.5 text-xs font-bold uppercase">
                         <span className="bg-muted-foreground/50 h-2 w-2 rounded-full" />{" "}
                         Aucune bannière active
                     </span>

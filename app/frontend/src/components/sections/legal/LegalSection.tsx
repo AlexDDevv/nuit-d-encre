@@ -27,7 +27,7 @@ export default function LegalSection({
                     <Icon size={22} strokeWidth={1.9} />
                 </span>
                 <div className="min-w-0">
-                    <span className="text-primary/70 font-mono text-xs font-semibold tracking-[0.2em]">
+                    <span className="text-primary/70 tracking-caps font-mono text-xs font-semibold">
                         {section.num}
                     </span>
                     <h2 className="text-foreground font-title text-2xl font-bold leading-tight md:text-3xl">
@@ -59,7 +59,7 @@ export default function LegalSection({
                             <span className="text-primary/60 text-xxxs rotate-45 leading-none">
                                 ◆
                             </span>
-                            <span className="text-primary/75 font-quote text-sm uppercase tracking-[0.2em]">
+                            <span className="text-primary/75 font-quote tracking-caps text-sm uppercase">
                                 Contact
                             </span>
                         </div>
@@ -68,7 +68,7 @@ export default function LegalSection({
                                 {section.contact}
                             </GoldLink>
                         </p>
-                        <p className="text-muted-foreground/70 font-mono text-xs uppercase tracking-[0.2em]">
+                        <p className="text-muted-foreground/70 tracking-caps font-mono text-xs uppercase">
                             Dernière mise à jour :{" "}
                             <span className="text-primary/75">
                                 {lastUpdate}

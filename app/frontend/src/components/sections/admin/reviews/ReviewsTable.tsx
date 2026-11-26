@@ -35,7 +35,7 @@ export default function ReviewsTable({
                 ].map((h, i) => (
                     <span
                         key={h}
-                        className={`font-body text-muted-foreground text-xs font-bold uppercase tracking-[0.13em] ${
+                        className={`font-body text-muted-foreground tracking-label text-xs font-bold uppercase ${
                             i === 6 ? "text-right" : ""
                         }`}
                     >

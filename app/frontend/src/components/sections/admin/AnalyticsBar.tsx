@@ -48,7 +48,7 @@ export function AnalyticsBar({
                                     value.toLocaleString("fr-FR")
                                 )}
                             </div>
-                            <div className="font-body text-xxs text-muted-foreground mt-1 truncate font-bold uppercase tracking-widest sm:text-xs sm:tracking-[0.14em]">
+                            <div className="font-body text-xxs text-muted-foreground sm:tracking-label mt-1 truncate font-bold uppercase tracking-widest sm:text-xs">
                                 {stat.label}
                             </div>
                         </div>

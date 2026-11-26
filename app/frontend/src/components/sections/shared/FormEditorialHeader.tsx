@@ -20,7 +20,7 @@ export default function FormEditorialHeader({
     return (
         <header className="fade-up mb-6 flex flex-col items-center text-center">
             <MoonMedallion size={58} ring />
-            <span className="text-primary/70 mt-4 flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.3em]">
+            <span className="text-primary/70 tracking-ornament mt-4 flex items-center gap-2 font-mono text-xs font-medium uppercase">
                 <Icon size={13} /> {eyebrow}
             </span>
             <h1 className="text-foreground font-title xs:text-3xl mt-3 text-2xl font-black leading-tight tracking-tight sm:text-4xl">

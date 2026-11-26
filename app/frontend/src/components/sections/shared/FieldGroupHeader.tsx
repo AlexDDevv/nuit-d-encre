@@ -20,7 +20,7 @@ export default function FieldGroupHeader({
                 >
                     ◆
                 </span>
-                <h3 className="text-primary/80 font-mono text-xs font-semibold uppercase tracking-[0.26em]">
+                <h3 className="text-primary/80 tracking-spaced font-mono text-xs font-semibold uppercase">
                     {children}
                 </h3>
                 <span

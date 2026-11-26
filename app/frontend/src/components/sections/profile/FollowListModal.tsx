@@ -60,7 +60,7 @@ export default function FollowListModal({
                 aria-modal="true"
                 aria-labelledby="follow-title"
                 className={cn(
-                    "border-primary/40 bg-popover relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border-2 shadow-[0_40px_90px_-28px_hsl(20_3%_2%/0.95),0_0_0_1px_hsl(20_3%_8%)]",
+                    "border-primary/40 bg-popover shadow-modal relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border-2",
                     closing ? "modal-out" : "modal-in",
                 )}
             >

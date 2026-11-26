@@ -107,7 +107,7 @@ export default function BannerEditorPanel({
                     <div className="flex items-center justify-between gap-3">
                         <Label
                             htmlFor="b-hasaction"
-                            className="font-body text-muted-foreground flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em]"
+                            className="font-body text-muted-foreground tracking-label flex items-center gap-2 text-xs font-bold uppercase"
                         >
                             <LuMousePointer2 className="text-primary/70" />{" "}
                             Ajouter un bouton
@@ -173,7 +173,7 @@ export default function BannerEditorPanel({
                         <div>
                             <Label
                                 htmlFor="b-audience"
-                                className="font-body text-muted-foreground text-xs font-bold uppercase tracking-[0.14em]"
+                                className="font-body text-muted-foreground tracking-label text-xs font-bold uppercase"
                             >
                                 Réserver aux membres connectés
                             </Label>
@@ -204,7 +204,7 @@ export default function BannerEditorPanel({
                         <div>
                             <Label
                                 htmlFor="b-dismiss"
-                                className="font-body text-muted-foreground text-xs font-bold uppercase tracking-[0.14em]"
+                                className="font-body text-muted-foreground tracking-label text-xs font-bold uppercase"
                             >
                                 L'utilisateur peut fermer la bannière
                             </Label>

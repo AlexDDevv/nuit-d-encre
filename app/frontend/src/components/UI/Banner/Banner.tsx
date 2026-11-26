@@ -221,7 +221,7 @@ const Banner = ({
                 </span>
                 <div className="min-w-0">
                     {v.gold && (
-                        <span className="text-xxs text-gold-muted mb-1 inline-flex items-center gap-1.5 font-mono uppercase tracking-[0.18em]">
+                        <span className="text-xxs text-gold-muted tracking-caps mb-1 inline-flex items-center gap-1.5 font-mono uppercase">
                             <Icon name="sparkles" size={10} /> Récompense
                         </span>
                     )}

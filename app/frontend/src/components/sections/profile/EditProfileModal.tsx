@@ -212,7 +212,7 @@ export default function EditProfileModal({
                         className="absolute right-3.5 top-3.5"
                     />
                     <div className="flex flex-col items-start gap-1 pr-10">
-                        <span className="text-muted-foreground font-body text-xs uppercase tracking-[0.28em]">
+                        <span className="text-muted-foreground font-body tracking-spaced text-xs uppercase">
                             Votre profil
                         </span>
                         <h2

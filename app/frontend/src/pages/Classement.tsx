@@ -154,7 +154,7 @@ export default function Classement() {
                             <div className="mb-3.5 flex items-center gap-3">
                                 <h2
                                     id="leaderboard-rows-title"
-                                    className="text-muted-foreground font-title text-xs font-bold uppercase tracking-[0.16em]"
+                                    className="text-muted-foreground font-title tracking-label text-xs font-bold uppercase"
                                 >
                                     Les places suivantes
                                 </h2>

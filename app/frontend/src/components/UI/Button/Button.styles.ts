@@ -65,13 +65,13 @@ export const variantClasses: Record<ButtonVariant, string> = {
     social: "justify-center bg-popover text-muted-foreground border-border hover:bg-muted/50 hover:text-primary hover:border-primary/50 hover:-translate-y-px active:scale-[0.95]",
 
     // Conteneurs cliquables « reliures » (bordure dorée + élévation)
-    card: "justify-center bg-card text-card-foreground border-border rounded-xl hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-[0_22px_44px_-26px_hsl(20_3%_2%/0.95)] active:scale-[0.99]",
+    card: "justify-center bg-card text-card-foreground border-border rounded-xl hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.99]",
     bookCard:
-        "relative overflow-hidden flex-col items-center justify-center gap-5 bg-card border-border rounded-xl hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-[0_22px_44px_-26px_hsl(20_3%_2%/0.95)] active:scale-[0.99]",
+        "relative overflow-hidden flex-col items-center justify-center gap-5 bg-card border-border rounded-xl hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.99]",
     authorCard:
-        "group relative overflow-hidden items-center justify-center gap-4 bg-card border-border rounded-xl hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-[0_22px_44px_-26px_hsl(20_3%_2%/0.95)] active:scale-[0.99]",
+        "group relative overflow-hidden items-center justify-center gap-4 bg-card border-border rounded-xl hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.99]",
     searchResultCard:
-        "items-end justify-between bg-card border-border rounded-xl w-full hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-[0_22px_44px_-26px_hsl(20_3%_2%/0.95)] active:scale-[0.99]",
+        "items-end justify-between bg-card border-border rounded-xl w-full hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.99]",
 };
 
 /**

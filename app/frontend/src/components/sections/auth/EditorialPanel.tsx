@@ -55,7 +55,7 @@ export default function EditorialPanel({ mode }: EditorialPanelProps) {
                     <br />
                     {c.quote[1]}
                 </blockquote>
-                <p className="font-body text-primary/55 mt-4 text-xs uppercase tracking-[0.22em]">
+                <p className="font-body text-primary/55 tracking-caps mt-4 text-xs uppercase">
                     {c.quoteBy}
                 </p>
             </div>

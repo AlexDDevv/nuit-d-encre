@@ -61,16 +61,14 @@ export default function UserProfile() {
     }
     if (!profileUser) {
         return (
-            <div className="text-error p-8 text-center">
-                Profil introuvable
-            </div>
+            <div className="text-error p-8 text-center">Profil introuvable</div>
         );
     }
 
     return (
         <section className="mx-auto w-full max-w-5xl">
             {!isOwner && (
-                <div className="text-muted-foreground mb-4 flex items-center justify-center gap-3 text-xs uppercase tracking-[0.22em]">
+                <div className="text-muted-foreground tracking-caps mb-4 flex items-center justify-center gap-3 text-xs uppercase">
                     <Ornament width="w-8" />
                     Lecture seule · vous visitez ce profil
                     <Ornament width="w-8" />

@@ -26,19 +26,19 @@ export default function CategoriesTable({
             <table className="hidden w-full border-collapse text-left sm:table">
                 <thead>
                     <tr className="border-border bg-muted/30 border-b-2">
-                        <th className="font-body text-muted-foreground px-4 py-3 text-xs font-bold uppercase tracking-[0.13em]">
+                        <th className="font-body text-muted-foreground tracking-label px-4 py-3 text-xs font-bold uppercase">
                             Nom
                         </th>
-                        <th className="font-body text-muted-foreground px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.13em]">
+                        <th className="font-body text-muted-foreground tracking-label px-4 py-3 text-center text-xs font-bold uppercase">
                             Livres associés
                         </th>
-                        <th className="font-body text-muted-foreground px-4 py-3 text-xs font-bold uppercase tracking-[0.13em]">
+                        <th className="font-body text-muted-foreground tracking-label px-4 py-3 text-xs font-bold uppercase">
                             Créée par
                         </th>
-                        <th className="font-body text-muted-foreground px-4 py-3 text-xs font-bold uppercase tracking-[0.13em]">
+                        <th className="font-body text-muted-foreground tracking-label px-4 py-3 text-xs font-bold uppercase">
                             Créée le
                         </th>
-                        <th className="font-body text-muted-foreground px-4 py-3 text-right text-xs font-bold uppercase tracking-[0.13em]">
+                        <th className="font-body text-muted-foreground tracking-label px-4 py-3 text-right text-xs font-bold uppercase">
                             Actions
                         </th>
                     </tr>

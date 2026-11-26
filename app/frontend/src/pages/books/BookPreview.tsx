@@ -88,7 +88,7 @@ export default function BookPreview() {
 
                 <div className="mb-7 mt-8 flex flex-wrap items-center gap-x-3 gap-y-2.5">
                     <span
-                        className="text-xxs max-xs:whitespace-normal inline-flex items-center gap-2 whitespace-nowrap font-mono uppercase tracking-[0.24em] max-sm:basis-full"
+                        className="text-xxs max-xs:whitespace-normal tracking-spaced inline-flex items-center gap-2 whitespace-nowrap font-mono uppercase max-sm:basis-full"
                         style={{ color: "hsl(43 30% 60%)" }}
                     >
                         <Glyph name="external" size={12} /> Venu d'ailleurs -

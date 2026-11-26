@@ -34,7 +34,7 @@ export default function UploadVeil({
                         strokeLinecap="round"
                     />
                 </svg>
-                <span className="font-body text-xs font-bold uppercase tracking-[0.2em]">
+                <span className="font-body tracking-caps text-xs font-bold uppercase">
                     Envoi…
                 </span>
             </span>

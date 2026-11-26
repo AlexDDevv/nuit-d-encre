@@ -21,10 +21,10 @@ function Stamp({ label, code }: { label: string; code: string }) {
     return (
         <div className="pointer-events-none absolute -right-3 top-5 z-20 rotate-[8deg] select-none">
             <div className="border-primary/55 flex flex-col items-center gap-1 rounded-sm border-2 border-double bg-[hsl(20_3%_10%/0.55)] px-3 py-2 shadow-[0_2px_10px_-4px_hsl(20_3%_4%/0.8)]">
-                <span className="text-primary/60 text-xxxs font-mono uppercase tracking-[0.2em]">
+                <span className="text-primary/60 text-xxxs tracking-caps font-mono uppercase">
                     {label}
                 </span>
-                <span className="text-primary/90 font-mono text-xs font-medium uppercase tracking-[0.12em]">
+                <span className="text-primary/90 tracking-label font-mono text-xs font-medium uppercase">
                     Nuit&nbsp;d'Encre
                 </span>
                 <span className="bg-primary/35 h-px w-full" />
@@ -52,7 +52,7 @@ function AuthorMedallion({ author }: { author: AuthorIdentity }) {
     return (
         <div className="absolute inset-0 flex flex-col items-center justify-between bg-[radial-gradient(125%_82%_at_50%_6%,hsl(43_30%_20%)_0%,hsl(20_3%_13%)_52%,hsl(20_3%_9%)_100%)] px-6 py-7 text-center">
             <div className="border-primary/24 inset-2.75 pointer-events-none absolute rounded-sm border" />
-            <span className="text-primary/55 font-quote text-xxs uppercase tracking-[0.32em]">
+            <span className="text-primary/55 font-quote text-xxs tracking-ornament uppercase">
                 Nuit d'Encre
             </span>
             <div className="flex flex-col items-center gap-4">
@@ -100,7 +100,7 @@ export default function EstablishedCover(props: EstablishedCoverProps) {
 
         return (
             <div className="max-w-75 relative mx-auto w-full">
-                <div className="border-primary/85 aspect-2/3 relative overflow-hidden rounded-md border-2 shadow-[0_30px_60px_-22px_hsl(20_3%_3%/0.95),0_0_0_6px_hsl(43_59%_81%/0.06)]">
+                <div className="border-primary/85 aspect-2/3 shadow-cover relative overflow-hidden rounded-md border-2">
                     <span className="w-1.25 pointer-events-none absolute left-0 top-0 z-10 h-full bg-[hsl(20_3%_6%/0.4)]" />
                     <AuthorMedallion author={author} />
                     <Stamp label="Auteur de la maison" code={code} />
@@ -127,7 +127,7 @@ export default function EstablishedCover(props: EstablishedCoverProps) {
     return (
         <div className="max-w-75 relative mx-auto w-full">
             {/* l'ouvrage - bordure pleine dorée */}
-            <div className="border-primary/85 aspect-2/3 relative overflow-hidden rounded-md border-2 shadow-[0_30px_60px_-22px_hsl(20_3%_3%/0.95),0_0_0_6px_hsl(43_59%_81%/0.06)]">
+            <div className="border-primary/85 aspect-2/3 shadow-cover relative overflow-hidden rounded-md border-2">
                 <div className="bg-background absolute inset-0 overflow-hidden rounded-md">
                     {book.coverUrl ? (
                         <img

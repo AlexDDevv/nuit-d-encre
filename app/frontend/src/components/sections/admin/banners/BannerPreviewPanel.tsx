@@ -38,7 +38,7 @@ export default function BannerPreviewPanel({
             <div>
                 <div className="mb-3 flex items-center gap-2.5">
                     <Ornament width="w-5" />
-                    <span className="font-body text-muted-foreground text-xs font-bold uppercase tracking-[0.24em]">
+                    <span className="font-body text-muted-foreground tracking-spaced text-xs font-bold uppercase">
                         Aperçu en direct
                     </span>
                 </div>
@@ -88,7 +88,7 @@ export default function BannerPreviewPanel({
             <div className="border-border bg-card rounded-xl border-2">
                 <div className="border-border/70 flex items-center gap-2.5 border-b-2 px-4 py-3">
                     <LuHistory size={15} className="text-primary/75" />
-                    <h3 className="font-body text-foreground/85 text-xs font-bold uppercase tracking-[0.16em]">
+                    <h3 className="font-body text-foreground/85 tracking-label text-xs font-bold uppercase">
                         Bannières enregistrées
                     </h3>
                     <span className="bg-muted/60 font-body text-muted-foreground ml-auto rounded-full px-2 py-0.5 text-xs font-bold">

@@ -18,7 +18,7 @@ function NoticeRow({
             style={{ borderColor: "var(--color-hairline)" }}
         >
             <span
-                className="text-xxs inline-flex shrink-0 items-center gap-2 font-mono uppercase tracking-[0.14em]"
+                className="text-xxs tracking-label inline-flex shrink-0 items-center gap-2 font-mono uppercase"
                 style={{ color: "var(--color-subtle-foreground)" }}
             >
                 {icon && (
@@ -45,7 +45,7 @@ export function PreviewNotice({ book }: { book: BookSearchResult }) {
         <section className="border-border bg-card/60 mt-16 rounded-xl border-2 p-6">
             <div className="mb-3 flex items-center gap-2.5">
                 <span
-                    className="font-mono text-xs uppercase tracking-[0.2em]"
+                    className="tracking-caps font-mono text-xs uppercase"
                     style={{ color: "var(--color-gold-muted)" }}
                 >
                     La notice - telle qu'on l'a trouvée

@@ -230,7 +230,7 @@ export default function SealedAccessCard({
                 <SealEmblem />
 
                 <p
-                    className="text-xxs mt-5 font-mono uppercase tracking-[0.26em]"
+                    className="text-xxs tracking-spaced mt-5 font-mono uppercase"
                     style={{ color: "hsl(43 30% 60%)" }}
                 >
                     {eyebrow}

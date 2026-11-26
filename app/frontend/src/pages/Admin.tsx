@@ -83,7 +83,7 @@ export default function Admin() {
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-3">
                             <Ornament width="w-8" />
-                            <span className="font-body text-muted-foreground text-xs uppercase tracking-[0.3em]">
+                            <span className="font-body text-muted-foreground tracking-ornament text-xs uppercase">
                                 Salle des archives
                             </span>
                         </div>
@@ -92,7 +92,7 @@ export default function Admin() {
                         </h1>
                     </div>
                     <div className="flex items-center gap-3">
-                        <span className="border-primary/40 bg-primary/10 font-body text-primary hidden items-center gap-2 rounded-full border-2 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] sm:inline-flex">
+                        <span className="border-primary/40 bg-primary/10 font-body text-primary tracking-label hidden items-center gap-2 rounded-full border-2 px-3 py-1.5 text-xs font-bold uppercase sm:inline-flex">
                             <LuShield size={13} /> Administration
                         </span>
                     </div>

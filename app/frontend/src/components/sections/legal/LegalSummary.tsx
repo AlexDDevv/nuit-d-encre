@@ -69,7 +69,7 @@ export function TocDesktop({ sections, active, onJump }: TocProps) {
             <div className="grain border-border bg-card/70 relative overflow-hidden rounded-xl border-2 p-2">
                 <div className="flex items-center gap-2 px-3 pb-2 pt-2">
                     <LuListTree size={15} className="text-primary/70" />
-                    <span className="text-foreground/80 font-quote text-xs font-medium uppercase tracking-[0.26em]">
+                    <span className="text-foreground/80 font-quote tracking-spaced text-xs font-medium uppercase">
                         Sommaire
                     </span>
                 </div>
@@ -122,7 +122,7 @@ export function TocMobile({ sections, active, onJump }: TocProps) {
                         className="text-primary/70 shrink-0"
                     />
                     <span className="flex flex-col leading-tight">
-                        <span className="text-foreground/80 font-quote text-xs font-medium uppercase tracking-[0.24em]">
+                        <span className="text-foreground/80 font-quote tracking-spaced text-xs font-medium uppercase">
                             Sommaire
                         </span>
                         {activeSec && (

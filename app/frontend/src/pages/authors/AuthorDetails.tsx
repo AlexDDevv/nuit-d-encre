@@ -294,7 +294,7 @@ export default function AuthorDetails() {
                     {/* liens externes */}
                     {hasExternal && (
                         <div className="flex flex-col gap-2">
-                            <p className="text-xxs font-mono uppercase tracking-[0.18em] text-[hsl(43_30%_60%)]">
+                            <p className="text-xxs tracking-caps font-mono uppercase text-[hsl(43_30%_60%)]">
                                 Pour aller plus loin
                             </p>
                             <div className="flex flex-wrap items-center gap-2.5">

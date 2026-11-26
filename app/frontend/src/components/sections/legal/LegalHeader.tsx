@@ -28,7 +28,7 @@ export default function LegalHeader({ lastUpdate }: { lastUpdate: string }) {
                     lecteurs.
                 </p>
 
-                <p className="text-muted-foreground/70 mt-6 font-mono text-xs uppercase tracking-[0.22em]">
+                <p className="text-muted-foreground/70 tracking-caps mt-6 font-mono text-xs uppercase">
                     Dernière mise à jour :{" "}
                     <span className="text-primary/75">{lastUpdate}</span>
                 </p>

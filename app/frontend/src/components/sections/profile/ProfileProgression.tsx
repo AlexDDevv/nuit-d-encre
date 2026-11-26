@@ -53,7 +53,7 @@ function LevelMedallion({ level, pct }: { level: number; pct: number }) {
                 </defs>
             </svg>
             <div className="flex flex-col items-center">
-                <span className="text-primary/70 font-quote text-xs uppercase tracking-[0.3em]">
+                <span className="text-primary/70 font-quote tracking-ornament text-xs uppercase">
                     Niveau
                 </span>
                 <span className="text-foreground font-title text-5xl font-black leading-none">
@@ -151,7 +151,7 @@ export default function ProfileProgression({ user }: { user: User }) {
                 <div className="w-full flex-1">
                     <div className="mb-3 flex flex-col gap-1 text-center md:flex-row md:items-end md:justify-between md:text-left">
                         <div>
-                            <div className="text-muted-foreground font-quote text-xs uppercase tracking-[0.25em]">
+                            <div className="text-muted-foreground font-quote tracking-spaced text-xs uppercase">
                                 Titre actuel
                             </div>
                             <div className="text-gradient-gold font-quote whitespace-nowrap text-2xl font-semibold">
@@ -218,7 +218,7 @@ export default function ProfileProgression({ user }: { user: User }) {
             </div>
 
             <div className="border-border/70 mt-7 border-t-2 pt-5">
-                <div className="text-muted-foreground font-quote mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.22em]">
+                <div className="text-muted-foreground font-quote tracking-caps mb-3 flex items-center gap-2 text-xs uppercase">
                     L'échelle des dix titres
                 </div>
                 <TitleFrieze level={user.level} />

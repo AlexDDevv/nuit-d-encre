@@ -9,7 +9,7 @@ export default function DiscoveryBanner() {
                     <LuCompass size={20} />
                 </span>
                 <div className="min-w-0">
-                    <h2 className="text-foreground font-title text-sm font-bold uppercase tracking-[0.14em]">
+                    <h2 className="text-foreground font-title tracking-label text-sm font-bold uppercase">
                         Activité de la communauté
                     </h2>
                     <p className="text-secondary-foreground/90 font-quote mt-1.5 max-w-prose text-base italic leading-relaxed">

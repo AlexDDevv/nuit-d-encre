@@ -20,7 +20,7 @@ export function NoticeRow({
                 !last && "border-hairline border-b border-dashed",
             )}
         >
-            <span className="text-xxs text-subtle-foreground inline-flex shrink-0 items-center gap-2 font-mono uppercase tracking-[0.14em]">
+            <span className="text-xxs text-subtle-foreground tracking-label inline-flex shrink-0 items-center gap-2 font-mono uppercase">
                 {icon}
                 {label}
             </span>
@@ -52,7 +52,7 @@ export default function NoticePanel({
     return (
         <section className="border-border bg-card/60 self-start rounded-xl border-2 p-6">
             <div className="mb-3 flex items-center gap-2.5">
-                <span className="text-gold-muted font-mono text-xs uppercase tracking-[0.2em]">
+                <span className="text-gold-muted tracking-caps font-mono text-xs uppercase">
                     {title}
                 </span>
                 <span className="bg-primary/20 h-px flex-1" />

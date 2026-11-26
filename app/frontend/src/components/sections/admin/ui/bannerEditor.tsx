@@ -46,7 +46,7 @@ export function Field({
         <div className="flex flex-col gap-2">
             <Label
                 htmlFor={htmlFor}
-                className="font-body text-muted-foreground flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em]"
+                className="font-body text-muted-foreground tracking-label flex items-center gap-2 text-xs font-bold uppercase"
             >
                 {I && <I className="text-primary/70" />}
                 {label}

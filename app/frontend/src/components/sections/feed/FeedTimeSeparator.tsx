@@ -24,7 +24,7 @@ export default function FeedTimeSeparator({
                 </span>
             </span>
             <span className="flex items-center gap-3">
-                <span className="text-muted-foreground font-title text-xs font-bold uppercase tracking-[0.24em]">
+                <span className="text-muted-foreground font-title tracking-spaced text-xs font-bold uppercase">
                     {label}
                 </span>
                 <span className="from-border bg-linear-to-r h-px w-12 to-transparent" />

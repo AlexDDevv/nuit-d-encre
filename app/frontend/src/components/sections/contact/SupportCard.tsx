@@ -57,7 +57,7 @@ export default function SupportCard({
             <div className="border-primary/20 bg-primary/6 flex items-center justify-between gap-3 border-b px-5 py-3">
                 <span className="flex items-center gap-2.5">
                     <LuMail size={15} className="text-primary/80" />
-                    <span className="text-primary/80 text-xxs font-mono font-semibold uppercase tracking-[0.26em]">
+                    <span className="text-primary/80 text-xxs tracking-spaced font-mono font-semibold uppercase">
                         Par courriel · Nous écrire
                     </span>
                 </span>
@@ -72,7 +72,7 @@ export default function SupportCard({
                         key={r.k}
                         className="border-border/40 flex flex-col gap-1.5 border-b py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                     >
-                        <dt className="text-primary/55 text-xxs shrink-0 font-mono font-medium uppercase tracking-[0.16em]">
+                        <dt className="text-primary/55 text-xxs tracking-label shrink-0 font-mono font-medium uppercase">
                             {r.k}
                         </dt>
                         <dd className="text-foreground/90 font-mono text-xs leading-relaxed">

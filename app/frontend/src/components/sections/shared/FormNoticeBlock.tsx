@@ -24,13 +24,13 @@ export default function FormNoticeBlock({
                 }}
             />
             <div className="border-border xs:flex-row xs:items-center xs:justify-between xs:gap-3 relative mb-4 flex flex-col items-start gap-1 border-b border-dashed pb-3">
-                <span className="text-primary/75 text-xxs flex items-center gap-2 font-mono font-semibold uppercase tracking-[0.28em]">
+                <span className="text-primary/75 text-xxs tracking-spaced flex items-center gap-2 font-mono font-semibold uppercase">
                     <span className="text-primary/55 text-xxxs rotate-45 leading-none">
                         ◆
                     </span>{" "}
                     Notice technique
                 </span>
-                <span className="text-muted-foreground/55 text-xxs font-mono tracking-[0.16em]">
+                <span className="text-muted-foreground/55 text-xxs tracking-label font-mono">
                     {refLabel} {refValue}
                 </span>
             </div>

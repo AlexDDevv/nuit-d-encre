@@ -17,12 +17,12 @@ function BlockHead({
                 <span className="border-border bg-popover text-primary/80 grid h-8 w-8 place-items-center rounded-lg border-2">
                     <Icon size={16} />
                 </span>
-                <h3 className="font-quote text-foreground/90 text-base font-medium uppercase tracking-[0.16em]">
+                <h3 className="font-quote text-foreground/90 tracking-label text-base font-medium uppercase">
                     {title}
                 </h3>
             </div>
             {meta && (
-                <span className="font-body text-muted-foreground/70 text-xs uppercase tracking-[0.14em]">
+                <span className="font-body text-muted-foreground/70 tracking-label text-xs uppercase">
                     {meta}
                 </span>
             )}

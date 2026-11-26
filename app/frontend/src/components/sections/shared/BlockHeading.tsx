@@ -20,7 +20,7 @@ export default function BlockHeading({
             </span>
             <div className="min-w-0">
                 {eyebrow && (
-                    <span className="text-primary/70 font-mono text-xs font-semibold tracking-[0.2em]">
+                    <span className="text-primary/70 tracking-caps font-mono text-xs font-semibold">
                         {eyebrow}
                     </span>
                 )}

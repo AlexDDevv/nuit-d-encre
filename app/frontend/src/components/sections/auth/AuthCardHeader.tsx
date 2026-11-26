@@ -17,7 +17,7 @@ export default function AuthCardHeader({
             </p>
             <div className="mt-5 inline-flex items-center gap-2.5">
                 <span className="to-primary/45 bg-linear-to-r h-px w-7 from-transparent" />
-                <span className="text-primary/80 font-mono text-xs font-semibold uppercase tracking-[0.28em]">
+                <span className="text-primary/80 tracking-spaced font-mono text-xs font-semibold uppercase">
                     {eyebrow}
                 </span>
                 <span className="to-primary/45 bg-linear-to-l h-px w-7 from-transparent" />
