@@ -2,8 +2,14 @@ import { ApolloError } from "@apollo/client";
 import { GRAPHQL_ERROR_CODES } from "@/lib/graphqlErrors";
 import { ErrorContext, ErrorResult, ErrorRule } from "@/types/types";
 
-const { notFound, forbidden, unauthenticated, conflict, tooManyRequests } =
-    GRAPHQL_ERROR_CODES;
+const {
+    notFound,
+    forbidden,
+    unauthenticated,
+    conflict,
+    tooManyRequests,
+    badUserInput,
+} = GRAPHQL_ERROR_CODES;
 
 /** Session absente ou expirée, quelle que soit l'opération. */
 const signInRequired = (action: string): ErrorRule => ({
@@ -224,6 +230,13 @@ const ERROR_MAP: Record<
     updateUserBook: {
         rules: [
             {
+                code: badUserInput,
+                matches: "futur",
+                title: "Date invalide",
+                description:
+                    "La date de fin de lecture ne peut pas être dans le futur.",
+            },
+            {
                 code: notFound,
                 title: "Entrée introuvable",
                 description: "Ce livre n'est plus dans votre bibliothèque.",
@@ -234,6 +247,29 @@ const ERROR_MAP: Record<
             title: "Échec de la mise à jour",
             description:
                 "Impossible de mettre à jour le statut. Veuillez réessayer.",
+        },
+    },
+    setReadingGoal: {
+        rules: [
+            {
+                code: badUserInput,
+                title: "Objectif invalide",
+                description: "Choisissez entre 1 et 500 livres.",
+            },
+            signInRequired("vous lancer un défi de lecture"),
+        ],
+        fallback: {
+            title: "Échec de l'enregistrement",
+            description:
+                "Impossible d'enregistrer votre défi. Veuillez réessayer.",
+        },
+    },
+    clearReadingGoal: {
+        rules: [signInRequired("modifier votre défi de lecture")],
+        fallback: {
+            title: "Échec de l'abandon",
+            description:
+                "Impossible d'abandonner votre défi. Veuillez réessayer.",
         },
     },
     deleteUserBook: {

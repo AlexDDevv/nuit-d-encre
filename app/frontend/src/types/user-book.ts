@@ -11,8 +11,9 @@ export interface UserBook {
     book: Book;
     user: User;
     status: UserBookStatus;
-    startedAt?: string;
-    finishedAt?: string;
+    startedAt?: string | null;
+    /** Date de fin de lecture `YYYY-MM-DD` ; compte pour le défi de son année. */
+    finishedAt?: string | null;
     isFavorite: boolean;
     favoriteRank: number | null;
     createdAt: string;
@@ -29,9 +30,18 @@ export interface CreateUserBookInput {
 export interface UpdateUserBookInput {
     id?: string;
     status?: UserBookStatus;
-    startedAt?: string;
-    finishedAt?: string;
+    startedAt?: string | null;
+    finishedAt?: string | null;
 }
+
+export type FinishedAtFieldProps = {
+    userBookId: string;
+    finishedAt?: string | null;
+    onChange?: (userBookId: string, finishedAt: string | null) => void;
+    disabled?: boolean;
+    readOnly?: boolean;
+    className?: string;
+};
 
 export type UserBookStatusConfig = {
     icon: IconType;

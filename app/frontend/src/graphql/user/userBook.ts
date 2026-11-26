@@ -29,6 +29,7 @@ export const GET_USER_BOOKS = gql`
                     reviewCount
                 }
                 status
+                finishedAt
             }
             totalCount
             page
@@ -100,6 +101,7 @@ export const UPDATE_USER_BOOK = gql`
                 title
             }
             status
+            finishedAt
         }
     }
 `;

@@ -1,3 +1,4 @@
+import { parseGraphQLError } from "@/utils/graphql-error";
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
@@ -155,6 +156,21 @@ export default function UserLibrary() {
         }
     };
 
+    const handleFinishedAtChange = async (
+        userBookId: string,
+        finishedAt: string | null,
+    ) => {
+        try {
+            await updateUserBook({ id: userBookId, finishedAt });
+        } catch (error) {
+            const { title, description } = parseGraphQLError(
+                error,
+                "updateUserBook",
+            );
+            showToast({ type: "error", title, description });
+        }
+    };
+
     const handleDeleteUserBook = async (userBookId: string) => {
         setDeletingUserBookId(userBookId);
         try {
@@ -283,6 +299,8 @@ export default function UserLibrary() {
                             layout={layout}
                             onStatusChange={handleStatusBookChange}
                             isUpdatingUserBook={isUpdatingUserBook}
+                            finishedAt={userBook.finishedAt}
+                            onFinishedAtChange={handleFinishedAtChange}
                             handleDeleteUserBook={handleDeleteUserBook}
                             isDeletingUserBook={
                                 deletingUserBookId === userBook.id
@@ -304,6 +322,8 @@ export default function UserLibrary() {
                             layout={layout}
                             onStatusChange={handleStatusBookChange}
                             isUpdatingUserBook={isUpdatingUserBook}
+                            finishedAt={userBook.finishedAt}
+                            onFinishedAtChange={handleFinishedAtChange}
                             handleDeleteUserBook={handleDeleteUserBook}
                             isDeletingUserBook={
                                 deletingUserBookId === userBook.id

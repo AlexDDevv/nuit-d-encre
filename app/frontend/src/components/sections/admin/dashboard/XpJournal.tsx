@@ -6,6 +6,7 @@ import {
     LuFeather,
     LuSquarePen,
     LuStar,
+    LuTrophy,
     LuThumbsUp,
 } from "react-icons/lu";
 import type { AdminRecentActivity, UserActionType } from "@/types/types";
@@ -27,6 +28,7 @@ const XP_ICON: Record<UserActionType, IconType> = {
     BOOK_IMPORTED: LuBookOpen,
     BOOK_COMPLETED: LuStar,
     AUTHOR_COMPLETED: LuStar,
+    READING_GOAL_REACHED: LuTrophy,
 };
 
 const XP_VERB: Record<UserActionType, string> = {
@@ -41,6 +43,7 @@ const XP_VERB: Record<UserActionType, string> = {
     BOOK_IMPORTED: "a importé",
     BOOK_COMPLETED: "a complété",
     AUTHOR_COMPLETED: "a complété l'auteur",
+    READING_GOAL_REACHED: "a atteint son défi de lecture",
 };
 
 export default function XpJournal({

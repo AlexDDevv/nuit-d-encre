@@ -64,7 +64,9 @@ export type ErrorContext =
     | "updateUserBook"
     | "deleteUserBook"
     | "createBookReviewComment"
-    | "deleteBookReviewComment";
+    | "deleteBookReviewComment"
+    | "setReadingGoal"
+    | "clearReadingGoal";
 
 /**
  * Règle de traduction d'une erreur : reconnue à son code, et si besoin à un

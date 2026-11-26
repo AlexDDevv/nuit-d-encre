@@ -43,7 +43,8 @@ export type UserActionType =
     | "REVIEW_VOTED_HELPFUL"
     | "BOOK_IMPORTED"
     | "BOOK_COMPLETED"
-    | "AUTHOR_COMPLETED";
+    | "AUTHOR_COMPLETED"
+    | "READING_GOAL_REACHED";
 
 export interface UserAction {
     type: UserActionType;

@@ -15,6 +15,8 @@ export type ProfileStats = {
 
 type ActionMeta = {
     title?: string;
+    year?: number;
+    target?: number;
     firstname?: string;
     lastname?: string;
 };
@@ -84,6 +86,16 @@ export function describeAction(action: UserAction): {
                 label: `A complété la fiche de ${authorName(m)}`,
                 kind: "complete",
             };
+        case "READING_GOAL_REACHED": {
+            const year = m.year ? ` ${m.year}` : "";
+            const target = m.target
+                ? ` : ${m.target} livre${m.target > 1 ? "s" : ""}`
+                : "";
+            return {
+                label: `A atteint son défi de lecture${year}${target}`,
+                kind: "finished",
+            };
+        }
         default:
             return { label: "A gagné de l'expérience", kind: "added" };
     }

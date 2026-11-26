@@ -8,6 +8,7 @@ import SelectBookStatus from "@/components/sections/book/SelectBookStatus";
 import FavoriteBookModal from "@/components/sections/library/FavoriteBookModal";
 import ConfirmRemoveOverlay from "@/components/sections/library/UI/ConfirmRemoveOverlay";
 import StatusPill from "@/components/sections/library/UI/StatusPill";
+import FinishedAtField from "@/components/sections/library/UI/FinishedAtField";
 import { cn, slugify } from "@/lib/utils";
 import { formatShortLabelMap } from "@/lib/filterMaps";
 import { BookCardLibraryProps } from "@/types/types";
@@ -26,6 +27,8 @@ export default function LibraryGridCard({
     favoriteRank = null,
     onStatusChange,
     isUpdatingUserBook,
+    finishedAt,
+    onFinishedAtChange,
     handleDeleteUserBook,
     isDeletingUserBook,
     readOnly = false,
@@ -136,6 +139,16 @@ export default function LibraryGridCard({
                         reviewCount={book.reviewCount}
                     />
                 </div>
+                {status === "READ" && (
+                    <FinishedAtField
+                        userBookId={id}
+                        finishedAt={finishedAt}
+                        onChange={onFinishedAtChange}
+                        disabled={isUpdatingUserBook}
+                        readOnly={readOnly}
+                        className="mt-1"
+                    />
+                )}
 
                 {/* actions */}
                 {!readOnly && (

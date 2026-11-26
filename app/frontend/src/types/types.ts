@@ -15,3 +15,4 @@ export * from "./error";
 export * from "./loader";
 export * from "./spoiler";
 export * from "./leaderboard";
+export * from "./readingGoal";

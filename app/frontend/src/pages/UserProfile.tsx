@@ -8,6 +8,7 @@ import { User, UserAction } from "@/types/types";
 import ProfileHero from "@/components/sections/profile/ProfileHero";
 import ProfileProgression from "@/components/sections/profile/ProfileProgression";
 import ProfileStats from "@/components/sections/profile/ProfileStats";
+import ReadingGoalCard from "@/components/sections/profile/ReadingGoalCard";
 import FavoriteBooks from "@/components/sections/profile/FavoriteBooks";
 import ProfileActivity from "@/components/sections/profile/ProfileActivity";
 import EditProfileModal from "@/components/sections/profile/EditProfileModal";
@@ -84,6 +85,8 @@ export default function UserProfile() {
                 />
 
                 <ProfileProgression user={profileUser} />
+
+                <ReadingGoalCard userId={profileUser.id} isOwner={isOwner} />
 
                 <ProfileStats
                     stats={stats}

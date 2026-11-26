@@ -7,6 +7,7 @@ import SelectBookStatus from "@/components/sections/book/SelectBookStatus";
 import FavoriteBookModal from "@/components/sections/library/FavoriteBookModal";
 import ConfirmRemoveOverlay from "@/components/sections/library/UI/ConfirmRemoveOverlay";
 import StatusPill from "@/components/sections/library/UI/StatusPill";
+import FinishedAtField from "@/components/sections/library/UI/FinishedAtField";
 import { cn, slugify } from "@/lib/utils";
 import { BookCardLibraryProps } from "@/types/types";
 import Button from "@/components/UI/Button";
@@ -24,6 +25,8 @@ export default function LibraryListRow({
     favoriteRank = null,
     onStatusChange,
     isUpdatingUserBook,
+    finishedAt,
+    onFinishedAtChange,
     handleDeleteUserBook,
     isDeletingUserBook,
     readOnly = false,
@@ -89,6 +92,16 @@ export default function LibraryListRow({
                     </span>{" "}
                     · {book.publishedYear}
                 </p>
+                {status === "READ" && (
+                    <FinishedAtField
+                        userBookId={id}
+                        finishedAt={finishedAt}
+                        onChange={onFinishedAtChange}
+                        disabled={isUpdatingUserBook}
+                        readOnly={readOnly}
+                        className="mt-1"
+                    />
+                )}
             </div>
             <div className="flex items-center gap-20">
                 {/* catégorie (md+) */}

@@ -114,6 +114,8 @@ export function useUserBookMutations() {
         { updateUserBook: UserBook },
         { data: UpdateUserBookInput }
     >(UPDATE_USER_BOOK, {
+        // Passer en « lu » ou dater une lecture fait avancer le défi.
+        refetchQueries: ["ReadingGoal"],
         update(cache, { data }) {
             const updated = data?.updateUserBook;
             if (!updated) return;
@@ -123,6 +125,9 @@ export function useUserBookMutations() {
                 fields: {
                     status() {
                         return updated.status;
+                    },
+                    finishedAt() {
+                        return updated.finishedAt ?? null;
                     },
                     updatedAt() {
                         return updated.updatedAt;

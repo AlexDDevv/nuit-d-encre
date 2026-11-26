@@ -115,6 +115,24 @@ describe("describeAction", () => {
         );
     });
 
+    it("décrit le défi de lecture atteint, avec ou sans métadonnées", () => {
+        expect(
+            describeAction(
+                action("READING_GOAL_REACHED", '{"year":2026,"target":24}'),
+            ),
+        ).toEqual({
+            label: "A atteint son défi de lecture 2026 : 24 livres",
+            kind: "finished",
+        });
+        expect(
+            describeAction(action("READING_GOAL_REACHED", '{"target":1}'))
+                .label,
+        ).toBe("A atteint son défi de lecture : 1 livre");
+        expect(describeAction(action("READING_GOAL_REACHED")).label).toBe(
+            "A atteint son défi de lecture",
+        );
+    });
+
     it("remplace un auteur incomplet par une tournure générique", () => {
         expect(describeAction(action("AUTHOR_ADDED", "{}")).label).toBe(
             "A ajouté l'auteur un auteur",

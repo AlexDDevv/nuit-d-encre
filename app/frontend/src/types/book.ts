@@ -128,6 +128,12 @@ export type BookCardLibraryProps = {
         status: UserBookStatus;
     }) => void;
     isUpdatingUserBook?: boolean;
+    /** Date de fin de lecture (`YYYY-MM-DD`), affichée quand le statut est « lu ». */
+    finishedAt?: string | null;
+    onFinishedAtChange?: (
+        userBookId: string,
+        finishedAt: string | null,
+    ) => void;
     handleDeleteUserBook?: (userBookId: string) => void;
     isDeletingUserBook?: boolean;
     /** Bibliothèque d'un autre lecteur : aucune action d'édition. */
