@@ -45,7 +45,7 @@ Le MVP est complet et déployable. Le projet avait été considéré comme termi
 |---------|-------|-------|
 | Core (livres/auteurs) | 9/10 | Solide |
 | Recherche & import hybride | 9/10 | BDD d'abord, puis Google Books + Open Library |
-| Critiques, votes, commentaires | 9/10 | Pas de balise spoiler |
+| Critiques, votes, commentaires | 9/10 | Balises spoiler `||…||` |
 | Bibliothèque perso | 6/10 | 5 statuts (dont « abandonné »), une seule lecture par livre, pas de progression, pas de listes |
 | Gamification | 7/10 | XP/niveaux/titres + barre XP ; pas de leaderboard, défis ni succès |
 | Social | 6/10 | Follow, fil, commentaires ; pas de notifications ni de modération |
@@ -67,7 +67,7 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 | **Défi de lecture annuel** | Goodreads, StoryGraph | absent |
 | **Bilan annuel / statistiques** (pages, genres, rythme) | StoryGraph, Hardcover | stats de profil, pas de bilan |
 | **Listes / étagères perso** publiques | Babelio, Hardcover | absent |
-| **Balises spoiler** dans les critiques | tous | absent |
+| **Balises spoiler** dans les critiques | tous | fait |
 | **Humeur et rythme** d'un livre | StoryGraph | absent |
 | **Import CSV** Goodreads / Babelio | StoryGraph, Hardcover | absent |
 | **Scan du code-barres ISBN** | Gleeph, Hardcover | recherche ISBN présente, pas de caméra |
@@ -91,8 +91,8 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 - [x] **Statut DNF (« abandonné »)** (✅ 2026-11-26, sans action dans le fil, visible seulement dans la bibliothèque) : nouvelle valeur `ABANDONED` dans `ReadingStatus`,
       exclue des stats de livres lus et sans XP de lecture terminée. Visibilité dans le fil :
       action de bibliothèque, donc masquée par `onlyVisibleActions` si `isLibraryPublic` est faux.
-- [ ] **Balises spoiler** dans les critiques et commentaires (syntaxe `||texte||`, rendu
-      flouté au clic).
+- [x] **Balises spoiler** dans les critiques et commentaires (syntaxe `||texte||`, rendu
+      flouté au clic, bouton « Spoiler » sous le champ) (✅ 2026-11-26).
 - [ ] **Leaderboard** : classement par XP (global, et parmi les abonnements), calculé
       depuis `User.xp` ou `UserActions` sur une période. L'activité étant publique par
       principe, le classement l'est aussi.

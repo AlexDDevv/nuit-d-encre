@@ -123,6 +123,13 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Effet : les « livres terminés » du profil, comptés depuis le journal d'actions, l'excluent sans autre changement ; passer un livre lu en abandonné ne retire pas l'XP déjà gagnée.
 - Référence : `app/backend/src/database/migrations/1788000000000-AddAbandonedReadingStatus.ts`.
 
+### Balises spoiler dans les critiques et commentaires
+
+- Décision : un passage entouré de `||…||` est flouté à l'affichage et se dévoile au clic. Un bouton « Spoiler » sous le champ entoure la sélection, pour que la fonctionnalité soit trouvée sans connaître la syntaxe.
+- Alternative écartée : la syntaxe seule, rappelée par une ligne d'aide, jugée trop peu découvrable.
+- Effet : rien ne change côté serveur, le texte est stocké tel quel ; le découpage se fait côté front en éléments React, sans HTML injecté. L'admin voit le texte brut, marqueurs compris.
+- Référence : `app/frontend/src/lib/spoiler.ts`.
+
 ### Activité publique, bibliothèque privée par défaut
 
 - Décision : l'activité des lecteurs est publique (fil des abonnements, fil global pour découvrir d'autres lecteurs, activité du profil), mais la bibliothèque n'est montrée que si son propriétaire active « Partager ma bibliothèque ». Sans partage, les ajouts et lectures terminées disparaissent des fils et du profil ; critiques, recommandations et favoris restent visibles.
@@ -244,4 +251,4 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
-- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). En tête ensuite : balises spoiler, leaderboard, défi de lecture annuel, puis progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
+- Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler ensuite. En tête : leaderboard, défi de lecture annuel, puis progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
