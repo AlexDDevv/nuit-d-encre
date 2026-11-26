@@ -51,6 +51,8 @@ beforeEach(() => {
     });
 });
 
+// Risque : connexion avec un mauvais mot de passe, cookie de session non
+// httpOnly ou non signé, ou énumération des emails par message d'erreur.
 describe("login", () => {
     it("pose un cookie httpOnly signé contenant un JWT de l'utilisateur", async () => {
         repository.findOne.mockResolvedValue(await userWithPassword());
@@ -101,6 +103,7 @@ describe("login", () => {
     });
 });
 
+// Risque : un jeton forgé, expiré ou révoqué ouvre une session.
 describe("whoami", () => {
     it("refuse un jeton dont la version de session est dépassée", async () => {
         const user = makeUser("user-1");
@@ -166,6 +169,8 @@ describe("whoami", () => {
     });
 });
 
+// Risque : le changement de mot de passe ne révoque pas les autres sessions ou
+// contourne la politique de mot de passe.
 describe("changePassword", () => {
     it("révoque les autres sessions et réémet le cookie de la session en cours", async () => {
         const user = await userWithPassword();
@@ -251,6 +256,8 @@ describe("changePassword", () => {
     });
 });
 
+// Risque : une URL d'image non https (javascript:, http) est enregistrée puis
+// rendue.
 describe("setProfileImage", () => {
     it.each([
         ["http", "http://res.cloudinary.com/avatar.png"],
@@ -289,6 +296,8 @@ describe("setProfileImage", () => {
     });
 });
 
+// Risque : la connexion Google crée un doublon, écrase un compte ou crée un
+// compte avec mot de passe.
 describe("resolveOrCreateGoogleUser", () => {
     const profile = {
         sub: "google-sub",

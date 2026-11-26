@@ -4,6 +4,8 @@ import { canViewLibrary } from "./visibility";
 
 const owner = (isLibraryPublic: boolean) => ({ id: "owner", isLibraryPublic });
 
+// Risque : une bibliothèque privée est lisible par un autre lecteur ou un
+// visiteur.
 describe("canViewLibrary", () => {
     it("ouvre une bibliothèque partagée à tous, visiteurs compris", () => {
         expect(canViewLibrary(null, owner(true))).toBe(true);

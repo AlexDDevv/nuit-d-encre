@@ -28,6 +28,8 @@ const helpfulVoteXp = expect.objectContaining({
     xpKey: "review:review-1:voter:voter",
 });
 
+// Risque : un auteur gonfle son XP en votant pour sa propre critique, ou un
+// même votant rapporte l'XP plusieurs fois.
 describe("BookReviewVotesResolver", () => {
     const resolver = new BookReviewVotesResolver();
 

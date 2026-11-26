@@ -31,6 +31,9 @@ function makeReview(): BookReview {
     });
 }
 
+// Risque : un lecteur modifie ou supprime la critique d'un autre, ou l'XP de
+// critique (et son bonus détaillé) est accordée deux fois ou hors de la borne
+// des 200 caractères.
 describe("BookReviewsResolver", () => {
     const resolver = new BookReviewsResolver();
 

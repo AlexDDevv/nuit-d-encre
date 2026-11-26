@@ -18,6 +18,8 @@ const formatted: GraphQLFormattedError = {
     extensions: { code: "INTERNAL_SERVER_ERROR" },
 };
 
+// Risque : un détail technique (SQL, valeur saisie, additionalInfo) fuit vers
+// le client, ou le front reçoit un mauvais code d'erreur.
 describe("formatError", () => {
     beforeEach(() => jest.spyOn(console, "error").mockImplementation(() => {}));
     afterEach(() => jest.restoreAllMocks());
@@ -119,6 +121,8 @@ describe("formatError", () => {
     });
 });
 
+// Risque : le front, qui détecte les erreurs par code, reçoit un code qui ne
+// correspond pas au statut.
 describe("codeForStatus", () => {
     it.each([
         [400, "BAD_USER_INPUT"],

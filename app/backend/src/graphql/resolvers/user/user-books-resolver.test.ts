@@ -25,6 +25,9 @@ function makeBook(id: string): Book {
     return book;
 }
 
+// Risque : l'XP de bibliothèque est accordée deux fois ou liée à une entrée
+// supprimable, une date de lecture fausse le défi, ou une bibliothèque privée
+// est lisible.
 describe("UserBooksResolver", () => {
     const resolver = new UserBooksResolver();
     const user = makeUser("user-1");

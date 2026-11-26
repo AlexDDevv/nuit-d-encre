@@ -1,5 +1,6 @@
 import { clampPagination, MAX_PAGE_SIZE } from "./pagination";
 
+// Risque : une liste publique renvoie une page non bornée.
 describe("clampPagination", () => {
     it("laisse passer des valeurs valides", () => {
         expect(clampPagination(2, 10)).toEqual({ page: 2, limit: 10 });

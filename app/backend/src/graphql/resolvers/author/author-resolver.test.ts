@@ -26,6 +26,8 @@ function makeAuthor(overrides: Partial<Author> = {}): Author {
     });
 }
 
+// Risque : un non-propriétaire modifie ou supprime un auteur, l'admin perd son
+// droit de modification, ou l'XP de complétion n'est pas liée à l'auteur.
 describe("AuthorsResolver", () => {
     const resolver = new AuthorsResolver();
 

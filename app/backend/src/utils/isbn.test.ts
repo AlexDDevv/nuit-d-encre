@@ -1,5 +1,7 @@
 import { normalizeIsbn13 } from "./isbn";
 
+// Risque : un ISBN non normalisé est injecté dans l'URL d'une API externe ou
+// enregistré en double.
 describe("normalizeIsbn13", () => {
     it("retire tirets et espaces", () => {
         expect(normalizeIsbn13("978-2-07 036822-8")).toBe("9782070368228");

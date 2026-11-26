@@ -1,6 +1,7 @@
 import { BannerAudience } from "../types/types";
 import { isBannerVisibleTo } from "./banner-visibility";
 
+// Risque : une bannière réservée aux connectés s'affiche aux visiteurs.
 describe("isBannerVisibleTo", () => {
     it("montre une bannière publique à tout le monde", () => {
         expect(isBannerVisibleTo(BannerAudience.ALL, false)).toBe(true);

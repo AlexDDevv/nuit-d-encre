@@ -10,6 +10,7 @@ function check(context: Context, roles: string[]) {
     );
 }
 
+// Risque : un visiteur ou un rôle insuffisant passe @Authorized.
 describe("customAuthChecker", () => {
     it("refuse un visiteur sans session valide comme non authentifié, rôles exigés ou non", async () => {
         await expect(check(makeContext(null), [])).rejects.toBeInstanceOf(

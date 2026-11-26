@@ -1,5 +1,7 @@
 import { parisToday, parisYear } from "./paris-date";
 
+// Risque : une lecture du 31 décembre au soir compte pour la mauvaise année du
+// défi.
 describe("dates à l'heure de Paris", () => {
     it("formate la date du jour en AAAA-MM-JJ", () => {
         expect(parisToday(new Date("2026-03-12T10:00:00Z"))).toBe("2026-03-12");

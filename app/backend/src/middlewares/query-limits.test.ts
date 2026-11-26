@@ -13,6 +13,8 @@ const errors = (query: string, maxDepth = 4, maxFields = 20) =>
         queryLimitsRule({ maxDepth, maxFields }),
     ]).map((e) => e.message);
 
+// Risque : une requête trop profonde ou trop large (alias, fragments) passe et
+// surcharge le serveur.
 describe("queryLimitsRule", () => {
     it("accepte une requête dans les limites", () => {
         expect(errors("{ books { title author { name } } }")).toEqual([]);

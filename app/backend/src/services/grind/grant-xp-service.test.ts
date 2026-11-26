@@ -29,6 +29,8 @@ function mockManager({ exists = false } = {}) {
     return { manager, saved };
 }
 
+// Risque : la même cible rapporte de l'XP deux fois (y compris en concurrence),
+// ou une erreur laisse l'utilisateur avec une XP non persistée.
 describe("grantXpService", () => {
     it("persists the updated user and the action log in a single transaction", async () => {
         const { saved } = mockManager();

@@ -13,6 +13,8 @@ jest.mock("../services/auth-service");
 const whoamiMock = whoami as jest.Mock;
 const cookies = {} as Cookies;
 
+// Risque : la session est relue à chaque champ (coût) ou une session invalide
+// fait échouer une query publique.
 describe("createUserResolver", () => {
     beforeEach(() => whoamiMock.mockReset());
 
@@ -33,6 +35,7 @@ describe("createUserResolver", () => {
     });
 });
 
+// Risque : un visiteur passe un resolver qui exige une session.
 describe("requireUser / getCurrentUser", () => {
     it("renvoie l'utilisateur de la session", async () => {
         const user = makeUser("user-1");

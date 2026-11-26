@@ -19,6 +19,8 @@ function makeUserBook(
     });
 }
 
+// Risque : un lecteur place en favori le livre d'un autre, hors des rangs 1 à
+// 3, ou deux favoris partagent un rang.
 describe("ProfileResolver.setFavoriteBook", () => {
     const resolver = new ProfileResolver();
 

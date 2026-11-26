@@ -1,6 +1,8 @@
 import { totalXp } from "./total-xp";
 import { addUserXP } from "./user-xp-service";
 
+// Risque : le classement « depuis toujours » perd ou invente de l'XP lors des
+// passages de niveau.
 describe("totalXp", () => {
     it("vaut l'XP du niveau au niveau 1", () => {
         expect(totalXp(1, 40)).toBe(40);

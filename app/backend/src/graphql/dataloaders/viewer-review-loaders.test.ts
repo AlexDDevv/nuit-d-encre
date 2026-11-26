@@ -2,6 +2,8 @@ import { BookReviewVote } from "../../database/entities/book/bookReviewVote";
 import { makeUser } from "../../test/factories";
 import { makeMyVoteBatch } from "./viewer-review-loaders";
 
+// Risque : le vote affiché est celui d'une autre critique (ordre du batch), ou
+// chaque critique déclenche sa requête.
 describe("makeMyVoteBatch", () => {
     afterEach(() => jest.restoreAllMocks());
 

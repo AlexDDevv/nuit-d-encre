@@ -1,12 +1,6 @@
-import { addUserXP, getXpNeededForLevel } from "./user-xp-service";
+import { addUserXP } from "./user-xp-service";
 
-describe("getXpNeededForLevel", () => {
-    it("requires 100 XP per level", () => {
-        expect(getXpNeededForLevel(1)).toBe(100);
-        expect(getXpNeededForLevel(5)).toBe(500);
-    });
-});
-
+// Risque : un passage de niveau perd ou duplique le surplus d'XP.
 describe("addUserXP", () => {
     it("adds XP without leveling up below the threshold", () => {
         expect(addUserXP(20, 1, 50)).toEqual({

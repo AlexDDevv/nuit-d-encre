@@ -6,6 +6,8 @@ import {
     tryRateLimit,
 } from "./rate-limiter";
 
+// Risque : le limiteur laisse passer au-delà du quota (brute force, coût des
+// API externes) ou bloque définitivement une clé.
 describe("RateLimiter", () => {
     const rule = { limit: 3, windowMs: 1000 };
 
@@ -72,6 +74,8 @@ describe("RateLimiter", () => {
     });
 });
 
+// Risque : la variante dégradée lève au lieu de renvoyer false, ou partage son
+// budget entre IP.
 describe("tryRateLimit", () => {
     beforeEach(() => rateLimiter.reset());
 

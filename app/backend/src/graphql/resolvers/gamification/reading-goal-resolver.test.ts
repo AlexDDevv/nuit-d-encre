@@ -27,6 +27,8 @@ function storedGoal(): ReadingGoal {
     return goal;
 }
 
+// Risque : le défi d'une bibliothèque privée fuit, ou un lecteur écrit le défi
+// d'un autre.
 describe("ReadingGoalResolver", () => {
     const resolver = new ReadingGoalResolver();
 

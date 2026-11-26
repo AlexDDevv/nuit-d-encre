@@ -6,6 +6,8 @@ import { LeaderboardResolver } from "./leaderboard-resolver";
 
 const me = makeUser("me");
 
+// Risque : un visiteur lit le classement, l'admin y figure, ou « Mes
+// abonnements » montre des comptes non suivis.
 describe("LeaderboardResolver.leaderboard", () => {
     const resolver = new LeaderboardResolver();
     let query: jest.SpyInstance;

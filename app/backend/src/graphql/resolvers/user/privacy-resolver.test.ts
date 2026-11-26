@@ -14,6 +14,8 @@ const deleteImage = CloudinaryService.prototype.deleteImage as jest.Mock;
 
 const PASSWORD = "Motdepasse1!";
 
+// Risque : un compte est effacé sans le bon mot de passe, ou un échec
+// Cloudinary empêche l'effacement demandé.
 describe("PrivacyResolver.deleteMyAccount", () => {
     const resolver = new PrivacyResolver();
 

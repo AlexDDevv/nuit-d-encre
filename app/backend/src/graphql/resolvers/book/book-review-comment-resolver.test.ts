@@ -12,6 +12,8 @@ const author = makeUser("author");
 const stranger = makeUser("stranger");
 const admin = makeUser("admin", Roles.Admin);
 
+// Risque : un lecteur supprime le commentaire d'un autre, ou un commentaire
+// vide passe la validation.
 describe("BookReviewCommentsResolver", () => {
     const resolver = new BookReviewCommentsResolver();
 

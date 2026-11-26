@@ -15,6 +15,8 @@ class Sample {
 const check = (url?: string) =>
     validate(Object.assign(new Sample(), { url })).then((e) => e.length);
 
+// Risque : une URL javascript: ou data: est enregistrée puis rendue en href
+// (XSS).
 describe("SkipIfEmpty + EXTERNAL_URL_OPTIONS", () => {
     it("ignore un champ vide ou absent", async () => {
         expect(await check(undefined)).toBe(0);
@@ -37,6 +39,8 @@ describe("SkipIfEmpty + EXTERNAL_URL_OPTIONS", () => {
     });
 });
 
+// Risque : un lien de bannière « interne » redirige vers un domaine externe
+// (open redirect).
 describe("isInternalPath", () => {
     it.each([
         ["/books", true],

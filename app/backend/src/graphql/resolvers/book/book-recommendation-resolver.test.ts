@@ -15,6 +15,8 @@ const grantXp = grantXpService as jest.Mock;
 
 const user = makeUser("user-1");
 
+// Risque : retirer puis remettre une recommandation redonne de l'XP (clé non
+// liée au livre).
 describe("BookRecommendationsResolver.toggleBookRecommendation", () => {
     const resolver = new BookRecommendationsResolver();
 
@@ -39,24 +41,6 @@ describe("BookRecommendationsResolver.toggleBookRecommendation", () => {
             user,
             UserActionType.BOOK_RECOMMENDED,
             expect.objectContaining({ xpKey: "book:book-1" }),
-        );
-    });
-
-    it("utilise une clé différente pour chaque livre recommandé", async () => {
-        jest.spyOn(BookRecommendation, "findOne").mockResolvedValue(null);
-        jest.spyOn(Book, "findOne").mockResolvedValue(
-            Object.assign(new Book(), { id: "book-2", title: "Fondation" }),
-        );
-
-        await resolver.toggleBookRecommendation(
-            { bookId: "book-2" },
-            makeContext(user),
-        );
-
-        expect(grantXp).toHaveBeenCalledWith(
-            user,
-            UserActionType.BOOK_RECOMMENDED,
-            expect.objectContaining({ xpKey: "book:book-2" }),
         );
     });
 

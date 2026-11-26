@@ -2,6 +2,8 @@ import { makeUser } from "../test/factories";
 import { Roles } from "../types/types";
 import { isOwnerOrAdmin } from "./authorizations";
 
+// Risque : un non-propriétaire, un modérateur ou un visiteur obtient un droit
+// réservé au propriétaire ou à l'admin.
 describe("isOwnerOrAdmin", () => {
     it("autorise le propriétaire", () => {
         expect(isOwnerOrAdmin("user-1", makeUser("user-1"))).toBe(true);

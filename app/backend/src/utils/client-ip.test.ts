@@ -7,6 +7,7 @@ const makeReq = (
 ): IncomingMessage =>
     ({ headers, socket: { remoteAddress } }) as unknown as IncomingMessage;
 
+// Risque : le rate limiting se contourne en falsifiant X-Forwarded-For.
 describe("getClientIp", () => {
     it("utilise X-Real-IP posé par le proxy", () => {
         expect(getClientIp(makeReq({ "x-real-ip": "203.0.113.7" }))).toBe(

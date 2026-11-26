@@ -5,6 +5,8 @@ import { FollowResolver } from "./follow-resolver";
 
 const me = makeUser("me");
 
+// Risque : un lecteur se suit lui-même ou suit un compte inexistant, ou une
+// vraie erreur d'insertion est avalée.
 describe("FollowResolver.followUser", () => {
     const resolver = new FollowResolver();
 

@@ -35,6 +35,8 @@ function makeBook(overrides: Partial<Book> = {}): Book {
     });
 }
 
+// Risque : un non-propriétaire modifie ou supprime un livre, l'admin perd son
+// droit de modification, ou l'XP de complétion est mal accordée.
 describe("BooksResolver", () => {
     const resolver = new BooksResolver();
 

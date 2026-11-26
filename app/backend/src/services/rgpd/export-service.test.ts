@@ -3,6 +3,7 @@ import { exportUserData } from "./export-service";
 
 jest.mock("../../database/entities/user/user");
 
+// Risque : l'export RGPD omet des données ou contient le hash du mot de passe.
 describe("exportUserData", () => {
     it("agrège le profil et les contributions en un JSON structuré", async () => {
         const fakeUser = {

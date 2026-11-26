@@ -16,6 +16,8 @@ jest.mock("../../database/config/datasource", () => ({
 
 const transactionMock = dataSource.transaction as jest.Mock;
 
+// Risque : l'effacement du compte laisse des données personnelles, ou casse le
+// catalogue partagé au lieu de l'anonymiser.
 describe("eraseUserAccount", () => {
     it("supprime le personnel, anonymise les contributions et détache le catalogue en une transaction", async () => {
         const deletes: unknown[] = [];

@@ -19,6 +19,7 @@ function goal(target: number): ReadingGoal {
     return g;
 }
 
+// Risque : le défi rapporte plus que le plafond de 500 XP.
 describe("readingGoalXp", () => {
     it("donne 10 XP par livre visé, plafonnés à 500", () => {
         expect(readingGoalXp(1)).toBe(10);
@@ -27,6 +28,8 @@ describe("readingGoalXp", () => {
     });
 });
 
+// Risque : le défi est récompensé avant d'être atteint ou plus d'une fois par
+// année.
 describe("checkReadingGoal", () => {
     beforeEach(() => {
         jest.restoreAllMocks();

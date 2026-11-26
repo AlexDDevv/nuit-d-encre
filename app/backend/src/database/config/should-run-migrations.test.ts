@@ -1,5 +1,7 @@
 import { shouldRunMigrations } from "./should-run-migrations";
 
+// Risque : les migrations ne tournent pas au boot en prod, ou ne peuvent plus
+// être désactivées.
 describe("shouldRunMigrations", () => {
     it("active par défaut quand la variable est absente", () => {
         expect(shouldRunMigrations(undefined)).toBe(true);
