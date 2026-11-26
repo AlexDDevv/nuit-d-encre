@@ -33,7 +33,7 @@ export default function Field({
             {error && (
                 <p
                     role="alert"
-                    className="text-destructive font-body flex items-center gap-1.5 text-xs font-bold"
+                    className="text-error font-body flex items-center gap-1.5 text-xs font-bold"
                 >
                     <FaCircleExclamation size={13} /> {error}
                 </p>

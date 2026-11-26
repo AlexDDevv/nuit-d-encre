@@ -235,7 +235,7 @@ export default function BannerEditorPanel({
                             <button
                                 type="button"
                                 onClick={onDeactivate}
-                                className="border-destructive/55 font-body text-destructive hover:bg-destructive focus-visible:ring-destructive/40 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-transparent px-4 py-2.5 text-sm font-bold tracking-wide transition-colors hover:text-white focus:outline-none focus-visible:ring-2"
+                                className="border-destructive/55 font-body text-error hover:bg-destructive focus-visible:ring-destructive/40 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-transparent px-4 py-2.5 text-sm font-bold tracking-wide transition-colors hover:text-white focus:outline-none focus-visible:ring-2"
                             >
                                 <LuPower size={15} /> Désactiver la bannière en
                                 cours

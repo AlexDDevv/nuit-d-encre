@@ -14,7 +14,7 @@ export function CharCounter({ value, max }: { value: number; max: number }) {
             className={cn(
                 "text-xxs font-mono tabular-nums tracking-wide transition-colors duration-200",
                 over
-                    ? "text-destructive"
+                    ? "text-error"
                     : near
                       ? "text-warning"
                       : "text-muted-foreground/55",
@@ -80,7 +80,7 @@ export default function FieldShell({
             {error ? (
                 <span
                     role="alert"
-                    className="text-destructive inline-flex items-center gap-1.5 text-xs"
+                    className="text-error inline-flex items-center gap-1.5 text-xs"
                 >
                     <LuCircleAlert size={13} /> {error}
                 </span>

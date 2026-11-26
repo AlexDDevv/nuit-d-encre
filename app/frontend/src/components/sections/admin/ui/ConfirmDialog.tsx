@@ -37,12 +37,12 @@ export function ConfirmDialog({
                 {children}
             </div>
             {warning && (
-                <div className="border-warning/45 bg-warning/10 mt-4 flex items-start gap-2.5 rounded-lg border px-3 py-2.5">
+                <div className="border-warning-border bg-warning-surface mt-4 flex items-start gap-2.5 rounded-lg border px-3 py-2.5">
                     <LuTriangleAlert
                         size={16}
                         className="text-warning mt-0.5 shrink-0"
                     />
-                    <p className="font-body text-sm leading-snug text-[hsl(25_70%_72%)]">
+                    <p className="font-body text-sm leading-snug text-warning">
                         {warning}
                     </p>
                 </div>

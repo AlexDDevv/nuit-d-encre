@@ -17,24 +17,24 @@ export const STATUS_COLORS: Record<
     { chip: string; dot: string }
 > = {
     TO_READ: {
-        chip: "border-[hsl(0_0%_42%/0.55)] bg-[hsl(20_12%_23%/0.7)] text-[hsl(20_12%_78%)]",
-        dot: "bg-[hsl(20_12%_62%)]",
+        chip: "border-status-to-read-border bg-status-to-read-surface text-status-to-read",
+        dot: "bg-status-to-read-dot",
     },
     READING: {
-        chip: "border-primary/45 bg-[hsl(43_30%_25%/0.5)] text-primary",
-        dot: "bg-primary",
+        chip: "border-status-reading-border bg-status-reading-surface text-status-reading",
+        dot: "bg-status-reading-dot",
     },
     READ: {
-        chip: "border-[hsl(140_33%_46%/0.5)] bg-[hsl(140_33%_36%/0.22)] text-[hsl(140_48%_72%)]",
-        dot: "bg-[hsl(140_45%_60%)]",
+        chip: "border-status-read-border bg-status-read-surface text-status-read",
+        dot: "bg-status-read-dot",
     },
     PAUSED: {
-        chip: "border-[hsl(25_78%_51%/0.5)] bg-[hsl(25_78%_51%/0.16)] text-[hsl(25_82%_70%)]",
-        dot: "bg-[hsl(25_80%_62%)]",
+        chip: "border-status-paused-border bg-status-paused-surface text-status-paused",
+        dot: "bg-status-paused-dot",
     },
     ABANDONED: {
-        chip: "border-[hsl(0_30%_45%/0.45)] bg-[hsl(0_20%_24%/0.45)] text-[hsl(0_22%_70%)]",
-        dot: "bg-[hsl(0_28%_55%)]",
+        chip: "border-status-abandoned-border bg-status-abandoned-surface text-status-abandoned",
+        dot: "bg-status-abandoned-dot",
     },
 };
 

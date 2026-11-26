@@ -5,7 +5,7 @@ import { PasswordStrengthMeterProps } from "@/types/types";
 
 const TIERS = [
     { at: 0, label: "Trop faible", tone: "text-muted-foreground/60" },
-    { at: 2, label: "Faible", tone: "text-destructive" },
+    { at: 2, label: "Faible", tone: "text-error" },
     { at: 3, label: "Correct", tone: "text-warning" },
     { at: 4, label: "Solide", tone: "text-primary" },
     { at: 5, label: "Scellé ✓", tone: "text-success" },

@@ -99,7 +99,7 @@ export default function SupportCard({
                     className={cn(
                         "text-sm sm:flex-1",
                         copied &&
-                            "border-success/60 bg-success/10 hover:bg-success/10 text-[hsl(140_45%_72%)] hover:text-[hsl(140_45%_72%)]",
+                            "border-success-border bg-success-subtle hover:bg-success-subtle text-success hover:text-success",
                     )}
                 >
                     {copied ? "Copiée ✓" : "Copier l'adresse"}

@@ -148,7 +148,7 @@ export default function ReviewForm({
                     </div>
                 </div>
                 {errors.rating && (
-                    <p className="text-destructive text-xs font-medium">
+                    <p className="text-error text-xs font-medium">
                         {errors.rating.message}
                     </p>
                 )}

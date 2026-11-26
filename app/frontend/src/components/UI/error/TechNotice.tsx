@@ -46,7 +46,7 @@ function TechLine({ label, tone, children }: TechLineProps) {
                 className={cn(
                     "wrap-break-word min-w-0",
                     tone === "destructive" &&
-                        "font-semibold text-[hsl(3_84%_64%)]",
+                        "font-semibold text-error",
                     tone === "accent" && "text-primary/85",
                     !tone && "text-foreground/90",
                 )}
@@ -177,7 +177,7 @@ export default function TechNotice({ tech }: TechNoticeProps) {
                         className="text-primary/35 shrink-0"
                     />
                     <span className="truncate">~/nuit-d-encre — erreur</span>
-                    <span className="border-warning/40 bg-warning/10 text-warning text-xxxs rounded border px-1.5 py-px font-semibold uppercase tracking-[0.18em]">
+                    <span className="border-warning-border bg-warning-subtle text-warning text-xxxs rounded border px-1.5 py-px font-semibold uppercase tracking-[0.18em]">
                         dev
                     </span>
                 </span>

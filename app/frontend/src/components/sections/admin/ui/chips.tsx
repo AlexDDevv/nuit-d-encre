@@ -52,7 +52,7 @@ export function StatusChip({ signaled = false }: { signaled?: boolean }) {
             className={cn(
                 CHIP_TEXT,
                 signaled &&
-                    "border-warning/55 bg-warning/15 text-[hsl(25_85%_66%)]",
+                    "border-warning-border bg-warning-subtle text-warning",
             )}
         >
             <span

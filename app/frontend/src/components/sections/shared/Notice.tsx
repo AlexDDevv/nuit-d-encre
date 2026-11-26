@@ -34,7 +34,7 @@ export function NoticeRow({
 /** Valeur absente, affichée « manquant » en ambre. */
 export function Missing() {
     return (
-        <span className="font-mono text-xs italic text-[hsl(25_80%_60%)]">
+        <span className="font-mono text-xs italic text-warning">
             manquant
         </span>
     );

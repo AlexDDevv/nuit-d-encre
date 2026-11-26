@@ -4,7 +4,7 @@ type ErrorInputProps = {
 
 export default function ErrorInput({ message }: ErrorInputProps) {
     return (
-        <p className="text-destructive text-xs font-medium" role="alert">
+        <p className="text-error text-xs font-medium" role="alert">
             {message}
         </p>
     );

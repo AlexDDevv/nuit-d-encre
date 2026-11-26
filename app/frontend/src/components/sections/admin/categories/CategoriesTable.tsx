@@ -76,7 +76,7 @@ export default function CategoriesTable({
                                         <button
                                             onClick={onSaveRename}
                                             aria-label="Valider"
-                                            className="border-success bg-success/80 hover:text-success grid h-7 w-7 place-items-center rounded-md border-2 text-white transition-colors hover:bg-transparent"
+                                            className="border-success bg-success text-success-foreground hover:text-success grid h-7 w-7 place-items-center rounded-md border-2 transition-colors hover:bg-transparent"
                                         >
                                             <LuCheck />
                                         </button>
@@ -159,7 +159,7 @@ export default function CategoriesTable({
                                     <button
                                         onClick={onSaveRename}
                                         aria-label="Valider"
-                                        className="border-success bg-success/80 grid h-7 w-7 place-items-center rounded-md border-2 text-white"
+                                        className="border-success bg-success text-success-foreground grid h-7 w-7 place-items-center rounded-md border-2"
                                     >
                                         <LuCheck />
                                     </button>

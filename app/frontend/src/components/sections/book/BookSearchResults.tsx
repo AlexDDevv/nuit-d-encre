@@ -60,7 +60,7 @@ export default function BookSearchResults({
     if (hasError) {
         return (
             <div className="flex w-full items-center justify-center py-10">
-                <p className="text-destructive text-xl font-medium">
+                <p className="text-error text-xl font-medium">
                     La recherche a échoué. Réessayez dans un instant.
                 </p>
             </div>

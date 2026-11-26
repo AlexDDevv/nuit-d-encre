@@ -137,7 +137,7 @@ export default function ReviewVoteButtons({
                 className={getVoteButtonClasses(
                     currentVote === false,
                     "bg-destructive border-destructive text-destructive-foreground",
-                    "hover:bg-destructive/10 hover:border-destructive/10 hover:text-destructive",
+                    "hover:bg-destructive/10 hover:border-destructive/10 hover:text-error",
                 )}
                 leftIcon={<LuThumbsDown />}
             >

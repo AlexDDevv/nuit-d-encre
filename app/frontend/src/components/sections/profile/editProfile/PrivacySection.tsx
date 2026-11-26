@@ -77,7 +77,7 @@ export default function PrivacySection() {
             </div>
 
             <div className="border-destructive/40 flex flex-col gap-3 rounded-lg border-2 p-4">
-                <div className="text-destructive flex items-center gap-2">
+                <div className="text-error flex items-center gap-2">
                     <LuTriangleAlert className="size-4" />
                     <h3 className="font-quote text-base italic">
                         Supprimer mon compte

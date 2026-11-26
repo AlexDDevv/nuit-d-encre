@@ -217,7 +217,7 @@ export default function Signup() {
                     {errors.acceptTerms && (
                         <span
                             role="alert"
-                            className="text-destructive inline-flex items-center gap-1.5 text-xs"
+                            className="text-error inline-flex items-center gap-1.5 text-xs"
                         >
                             <LuCircleAlert size={13} />{" "}
                             {errors.acceptTerms.message}

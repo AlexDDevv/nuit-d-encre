@@ -13,14 +13,9 @@ export default function IncompleteChip({ className }: IncompleteChipProps) {
     return (
         <span
             className={cn(
-                "font-body p-0.75 text-xxs inline-flex items-center gap-1 rounded-full px-2 font-bold tracking-wide backdrop-blur-sm",
+                "font-body p-0.75 text-xxs text-warning border-warning-border inline-flex items-center gap-1 rounded-full border bg-[hsl(20_3%_10%/0.78)] px-2 font-bold tracking-wide backdrop-blur-sm",
                 className,
             )}
-            style={{
-                background: "hsl(20 3% 10% / 0.78)",
-                color: "hsl(25 80% 66%)",
-                border: "1px solid hsl(25 78% 51% / 0.45)",
-            }}
             title="Fiche incomplète - informations manquantes"
         >
             <FaCircleInfo size={11} aria-hidden="true" /> Incomplet

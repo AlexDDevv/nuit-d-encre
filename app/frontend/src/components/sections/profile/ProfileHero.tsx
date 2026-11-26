@@ -138,7 +138,7 @@ export default function ProfileHero({
                             <button
                                 type="button"
                                 onClick={() => removeBanner()}
-                                className="border-destructive/60 bg-background/55 text-destructive hover:bg-destructive inline-flex items-center gap-2 whitespace-nowrap rounded-lg border-2 px-3 py-1.5 text-sm font-bold backdrop-blur-sm transition-colors hover:text-white focus:outline-none"
+                                className="border-destructive/60 bg-background/55 text-error hover:bg-destructive inline-flex items-center gap-2 whitespace-nowrap rounded-lg border-2 px-3 py-1.5 text-sm font-bold backdrop-blur-sm transition-colors hover:text-white focus:outline-none"
                             >
                                 <FaTrash /> Retirer
                             </button>

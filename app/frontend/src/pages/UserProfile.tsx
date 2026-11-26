@@ -61,7 +61,7 @@ export default function UserProfile() {
     }
     if (!profileUser) {
         return (
-            <div className="text-destructive p-8 text-center">
+            <div className="text-error p-8 text-center">
                 Profil introuvable
             </div>
         );

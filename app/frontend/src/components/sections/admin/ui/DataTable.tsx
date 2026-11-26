@@ -46,7 +46,7 @@ export function DeleteBtn({
             onClick={onClick}
             aria-label={label}
             title={label}
-            className="border-border text-muted-foreground hover:border-destructive hover:bg-destructive/12 hover:text-destructive focus-visible:ring-destructive/50 grid h-8 w-8 place-items-center rounded-md border-2 transition-all duration-200 focus:outline-none focus-visible:ring-2"
+            className="border-border text-muted-foreground hover:border-destructive hover:bg-destructive/12 hover:text-error focus-visible:ring-destructive/50 grid h-8 w-8 place-items-center rounded-md border-2 transition-all duration-200 focus:outline-none focus-visible:ring-2"
         >
             <LuTrash2 size={15} />
         </button>
