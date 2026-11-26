@@ -4,7 +4,7 @@ import { useAdminMutations } from "@/hooks/admin/useAdminMutations";
 import { usePagination } from "@/hooks/admin/usePagination";
 import { useToast } from "@/hooks/toast/useToast";
 import { cn, slugify } from "@/lib/utils";
-import { atelierSelectTriggerClass } from "@/components/sections/shared/atelierField";
+import { selectTriggerClass } from "@/components/UI/form/field.styles";
 import type { AdminBookRow } from "@/types/types";
 import { FormatChip } from "@/components/sections/admin/ui/chips";
 import { SearchInput } from "@/components/sections/admin/ui/SearchInput";
@@ -162,7 +162,7 @@ export function BooksTab() {
                 >
                     <SelectTrigger
                         aria-label="Filtrer par catégorie"
-                        className={cn(atelierSelectTriggerClass, "sm:w-56")}
+                        className={cn(selectTriggerClass, "sm:w-56")}
                     >
                         <SelectValue placeholder="Toutes les catégories" />
                     </SelectTrigger>

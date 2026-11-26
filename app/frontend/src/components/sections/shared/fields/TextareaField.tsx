@@ -1,8 +1,7 @@
 import { FieldError, FieldValues } from "react-hook-form";
 import { Textarea } from "@/components/UI/form/Textarea";
 import FieldShell from "@/components/sections/shared/FieldShell";
-import { atelierTextareaClass } from "@/components/sections/shared/atelierField";
-import { cn } from "@/lib/utils";
+import { useRecovered } from "@/hooks/form/useRecovered";
 import { TextareaFieldProps } from "@/types/types";
 
 /** Zone de texte serif de l'atelier : `FieldShell` + `Textarea` conservé. */
@@ -22,6 +21,7 @@ export default function TextareaField<T extends FieldValues>({
     const error = (errors as Record<string, FieldError | undefined>)[name]
         ?.message;
     const { ref, ...field } = register(name, rules);
+    const recovered = useRecovered(error, length > 0);
 
     return (
         <FieldShell
@@ -34,7 +34,8 @@ export default function TextareaField<T extends FieldValues>({
             <Textarea
                 id={name}
                 rows={rows}
-                className={cn(atelierTextareaClass, "font-quote text-base")}
+                state={error ? "error" : recovered ? "success" : "default"}
+                className="font-quote text-base"
                 placeholder={placeholder}
                 aria-required={required}
                 {...field}

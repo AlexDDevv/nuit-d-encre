@@ -1,7 +1,6 @@
 import { ComponentProps, forwardRef } from "react";
 import { LuSearch, LuX } from "react-icons/lu";
 import { Input } from "@/components/UI/form/Input";
-import { atelierControlClass } from "@/components/sections/shared/atelierField";
 import { cn } from "@/lib/utils";
 
 type SearchFieldProps = ComponentProps<"input"> & {
@@ -16,7 +15,7 @@ type SearchFieldProps = ComponentProps<"input"> & {
 };
 
 /**
- * Champ de recherche de l'atelier : contrôle stylé `atelierControlClass`, loupe en
+ * Champ de recherche de l'atelier : habillage par défaut d'Input, loupe en
  * préfixe (décorative ou bouton submit) et bouton d'effacement optionnel. Mutualise
  * les barres de recherche (livres, auteurs, panel admin).
  */
@@ -51,12 +50,7 @@ const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
                     ref={ref}
                     errorMessage=""
                     hideErrorMessage
-                    className={cn(
-                        atelierControlClass,
-                        "pl-11",
-                        showClear && "pr-10",
-                        className,
-                    )}
+                    className={cn("pl-11", showClear && "pr-10", className)}
                     {...props}
                 />
                 {showClear && (

@@ -5,8 +5,6 @@ import { useForm, Controller } from "react-hook-form";
 import Button from "@/components/UI/Button/Button";
 import { Textarea } from "@/components/UI/form/Textarea";
 import FormWrapper from "@/components/UI/form/FormWrapper";
-import { atelierTextareaClass } from "@/components/sections/shared/atelierField";
-import { cn } from "@/lib/utils";
 import RatingStars from "@/components/sections/library/UI/RatingStars";
 import SpoilerButton from "@/components/sections/shared/spoiler/SpoilerButton";
 import { Book, BookReview } from "@/types/types";
@@ -160,7 +158,7 @@ export default function ReviewForm({
                 placeholder="Qu'avez-vous ressenti à la lecture de cet ouvrage ?"
                 maxLength={5000}
                 counter
-                className={cn(atelierTextareaClass, "font-quote")}
+                className="font-quote"
                 errorMessage={errors.reviewText?.message}
                 {...reviewTextField}
                 ref={(element) => {

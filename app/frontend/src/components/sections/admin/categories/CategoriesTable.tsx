@@ -1,6 +1,6 @@
 import { LuBookOpen, LuCheck, LuHash, LuPencil, LuX } from "react-icons/lu";
 import type { AdminCategoryRow } from "@/types/types";
-import { atelierInlineClass } from "@/components/sections/shared/atelierField";
+import { fieldVariants } from "@/components/UI/form/field.styles";
 import { cn } from "@/lib/utils";
 import { DeleteBtn } from "@/components/sections/admin/ui/DataTable";
 
@@ -69,7 +69,9 @@ export default function CategoriesTable({
                                                     setEditing(null);
                                             }}
                                             className={cn(
-                                                atelierInlineClass,
+                                                fieldVariants({
+                                                    kind: "inline",
+                                                }),
                                                 "font-quote w-48 text-base",
                                             )}
                                         />
@@ -152,7 +154,7 @@ export default function CategoriesTable({
                                             })
                                         }
                                         className={cn(
-                                            atelierInlineClass,
+                                            fieldVariants({ kind: "inline" }),
                                             "font-quote w-32 px-2 text-base",
                                         )}
                                     />

@@ -1,26 +1,16 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Input } from "@/components/UI/form/Input";
-import { atelierControlClass } from "@/components/sections/shared/atelierField";
-import { cn } from "@/lib/utils";
+import type { ProfileInputProps } from "@/types/types";
 
-const errorClass = "border-destructive focus-visible:border-destructive";
-
-export function TextInput({
-    id,
-    error,
-    ...rest
-}: {
-    id: string;
-    error?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+export function TextInput({ id, error, success, ...rest }: ProfileInputProps) {
     return (
         <Input
             id={id}
             aria-invalid={!!error}
             errorMessage=""
             hideErrorMessage
-            className={cn(atelierControlClass, error && errorClass)}
+            state={error ? "error" : success ? "success" : "default"}
             {...rest}
         />
     );
@@ -29,11 +19,9 @@ export function TextInput({
 export function PasswordInput({
     id,
     error,
+    success,
     ...rest
-}: {
-    id: string;
-    error?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+}: ProfileInputProps) {
     const [show, setShow] = useState(false);
     return (
         <div className="relative">
@@ -43,11 +31,8 @@ export function PasswordInput({
                 aria-invalid={!!error}
                 errorMessage=""
                 hideErrorMessage
-                className={cn(
-                    atelierControlClass,
-                    "pr-11",
-                    error && errorClass,
-                )}
+                state={error ? "error" : success ? "success" : "default"}
+                className="pr-11"
                 {...rest}
             />
             <button

@@ -15,10 +15,6 @@ import { Switch } from "@/components/UI/Switch/Switch";
 import { Label } from "@/components/UI/form/Label";
 import { Input } from "@/components/UI/form/Input";
 import { Textarea } from "@/components/UI/form/Textarea";
-import {
-    atelierControlClass,
-    atelierTextareaClass,
-} from "@/components/sections/shared/atelierField";
 import { cn } from "@/lib/utils";
 import {
     Field,
@@ -76,7 +72,6 @@ export default function BannerEditorPanel({
                         placeholder="Ex. Vous avez gagné 50 points d'expérience !"
                         errorMessage=""
                         hideErrorMessage
-                        className={atelierControlClass}
                     />
                 </Field>
 
@@ -96,7 +91,6 @@ export default function BannerEditorPanel({
                         placeholder="Précisez le contexte, la récompense, l'échéance…"
                         errorMessage=""
                         hideErrorMessage
-                        className={atelierTextareaClass}
                     />
                 </Field>
 
@@ -135,7 +129,6 @@ export default function BannerEditorPanel({
                                     placeholder="Ex. Voir ma progression"
                                     errorMessage=""
                                     hideErrorMessage
-                                    className={atelierControlClass}
                                 />
                             </Field>
                             <Field
@@ -154,10 +147,7 @@ export default function BannerEditorPanel({
                                     placeholder="/livres ou https://…"
                                     errorMessage=""
                                     hideErrorMessage
-                                    className={cn(
-                                        atelierControlClass,
-                                        "font-mono",
-                                    )}
+                                    className={cn("font-mono")}
                                 />
                             </Field>
                         </div>

@@ -38,7 +38,7 @@ export default function TypeSelect<T extends FieldValues>({
             render={({ field, fieldState }) => {
                 const error = fieldState.error;
                 const classError = error
-                    ? "border-destructive focus:border-destructive focus:ring-0 data-[state=open]:border-destructive data-[state=open]:shadow-none"
+                    ? "border-error-border hover:border-error focus:border-error focus:shadow-focus-halo-error data-[state=open]:border-error data-[state=open]:shadow-focus-halo-error"
                     : "";
 
                 return (

@@ -1,7 +1,7 @@
 import { FieldError, FieldValues } from "react-hook-form";
 import TypeSelect from "@/components/UI/form/TypeSelect";
 import FieldShell from "@/components/sections/shared/FieldShell";
-import { atelierSelectTriggerClass } from "@/components/sections/shared/atelierField";
+import { selectTriggerClass } from "@/components/UI/form/field.styles";
 import { cn } from "@/lib/utils";
 import { SelectFieldProps } from "@/types/types";
 
@@ -37,7 +37,7 @@ export default function SelectField<T extends FieldValues>({
                 selectSomething={placeholder}
                 options={options}
                 disabled={disabled}
-                className={cn(atelierSelectTriggerClass, icon && "pl-11")}
+                className={cn(selectTriggerClass, icon && "pl-11")}
             />
         </FieldShell>
     );

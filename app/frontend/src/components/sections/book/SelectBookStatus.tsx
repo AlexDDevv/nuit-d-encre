@@ -6,7 +6,7 @@ import {
     SelectValue,
 } from "@/components/UI/Select";
 import { cn } from "@/lib/utils";
-import { atelierSelectTriggerClass } from "@/components/sections/shared/atelierField";
+import { selectTriggerClass } from "@/components/UI/form/field.styles";
 import { SelectBookStatusProps } from "@/types/types";
 import { useUserBookStatusMapping } from "@/hooks/userBook/useUserBookStatusMapping";
 import { BOOK_STATES, STATUS_COLORS } from "@/constants/bookStatus";
@@ -31,7 +31,7 @@ export default function SelectBookStatus({
         >
             <SelectTrigger
                 className={cn(
-                    atelierSelectTriggerClass,
+                    selectTriggerClass,
                     "w-60 min-w-60",
                     // Couleurs par statut si `colored` ; sinon le neutre atelier.
                     colorClasses,

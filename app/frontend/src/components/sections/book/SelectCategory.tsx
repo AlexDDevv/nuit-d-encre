@@ -6,7 +6,7 @@ import {
     SelectValue,
 } from "@/components/UI/Select";
 import { cn, slugify } from "@/lib/utils";
-import { atelierSelectTriggerClass } from "@/components/sections/shared/atelierField";
+import { selectTriggerClass } from "@/components/UI/form/field.styles";
 import { Skeleton } from "@/components/UI/skeleton/Skeleton";
 import { CategoryBook } from "@/types/types";
 import { useLocation, useSearchParams } from "react-router-dom";
@@ -78,7 +78,7 @@ export default function SelectCategory() {
             >
                 <SelectTrigger
                     className={cn(
-                        atelierSelectTriggerClass,
+                        selectTriggerClass,
                         "w-full sm:w-60 sm:shrink-0",
                     )}
                 >

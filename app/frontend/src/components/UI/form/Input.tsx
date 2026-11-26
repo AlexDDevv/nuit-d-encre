@@ -1,29 +1,31 @@
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
-import { ComponentProps, forwardRef } from "react";
 import ErrorInput from "@/components/UI/form/ErrorInput";
-
-type InputProps = ComponentProps<"input"> & {
-    errorMessage: string | undefined;
-    /** Masque le message d'erreur intégré (la bordure rouge reste appliquée). */
-    hideErrorMessage?: boolean;
-};
+import { fieldVariants } from "@/components/UI/form/field.styles";
+import type { InputProps } from "@/types/types";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
     (
-        { className, type, errorMessage, hideErrorMessage = false, ...props },
+        {
+            className,
+            type,
+            state,
+            errorMessage,
+            hideErrorMessage = false,
+            ...props
+        },
         ref,
     ) => {
-        const classError = errorMessage
-            ? "border-destructive focus-visible:ring-destructive focus-visible:border-none"
-            : "";
-
         return (
             <div className="flex w-full flex-col gap-1">
                 <input
                     type={type}
                     className={cn(
-                        "bg-input ring-offset-input text-accent-foreground focus-visible:ring-ring border-border flex h-10 w-full rounded-lg border px-3 py-2 text-sm placeholder:italic placeholder:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                        classError,
+                        fieldVariants({
+                            kind: "input",
+                            state:
+                                state ?? (errorMessage ? "error" : "default"),
+                        }),
                         className,
                     )}
                     ref={ref}

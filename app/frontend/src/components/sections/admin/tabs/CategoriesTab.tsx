@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/toast/useToast";
 import type { AdminCategoryRow } from "@/types/types";
 import Button from "@/components/UI/Button/Button";
 import { Input } from "@/components/UI/form/Input";
-import { atelierControlClass } from "@/components/sections/shared/atelierField";
 import {
     EmptyState,
     SkeletonRows,
@@ -108,7 +107,6 @@ export function CategoriesTab() {
                             maxLength={40}
                             errorMessage=""
                             hideErrorMessage
-                            className={atelierControlClass}
                         />
                     </div>
                     <Button

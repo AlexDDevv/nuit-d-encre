@@ -9,7 +9,7 @@ import { UPDATE_PROFILE, CHANGE_PASSWORD } from "@/graphql/user/profile";
 import { WHOAMI } from "@/graphql/user/auth";
 import { useToast } from "@/hooks/toast/useToast";
 import { User } from "@/types/types";
-import { atelierTextareaClass } from "@/components/sections/shared/atelierField";
+import { fieldVariants } from "@/components/UI/form/field.styles";
 import { cn } from "@/lib/utils";
 import { Ornament } from "./ProfileUI";
 import { Tab } from "./editProfile/types";
@@ -157,6 +157,8 @@ export default function EditProfileModal({
     const errSec = validateSecurity({ current, newpw, confirm });
     const showI = (f: string) => submitted.infos || touched[f];
     const showS = (f: string) => submitted.security || touched[f];
+    const confirmMatches =
+        confirm !== "" && confirm === newpw && !errSec.confirm;
 
     const submitInfos = () => {
         setSubmitted((s) => ({ ...s, infos: true }));
@@ -282,11 +284,14 @@ export default function EditProfileModal({
                                             }))
                                         }
                                         className={cn(
-                                            atelierTextareaClass,
-                                            "font-quote min-h-24 w-full resize-none px-3.5 py-3 text-base italic placeholder:not-italic focus-visible:outline-none",
-                                            showI("bio") &&
-                                                errInfos.bio &&
-                                                "border-destructive focus-visible:border-destructive",
+                                            fieldVariants({
+                                                kind: "textarea",
+                                                state:
+                                                    showI("bio") && errInfos.bio
+                                                        ? "error"
+                                                        : "default",
+                                            }),
+                                            "font-quote min-h-24 resize-none px-3.5 py-3 text-base italic",
                                         )}
                                     />
                                     <span
@@ -386,6 +391,11 @@ export default function EditProfileModal({
                                 id="f-confirm"
                                 label="Confirmer le nouveau mot de passe"
                                 error={showS("confirm") ? errSec.confirm : ""}
+                                success={
+                                    confirmMatches
+                                        ? "Les deux mots de passe correspondent"
+                                        : undefined
+                                }
                             >
                                 <PasswordInput
                                     id="f-confirm"
@@ -393,6 +403,7 @@ export default function EditProfileModal({
                                     error={
                                         showS("confirm") ? errSec.confirm : ""
                                     }
+                                    success={confirmMatches}
                                     autoComplete="new-password"
                                     placeholder="••••••••"
                                     onChange={(e) => setConfirm(e.target.value)}

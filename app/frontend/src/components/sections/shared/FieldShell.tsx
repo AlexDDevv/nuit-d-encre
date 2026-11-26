@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { IconType } from "react-icons";
-import { LuCircleAlert } from "react-icons/lu";
+import { LuCircleAlert, LuCircleCheck } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 
 /** Compteur de caractères - ambre à l'approche de la limite, rouge au-delà. */
@@ -31,6 +31,8 @@ type FieldShellProps = {
     icon?: IconType;
     required?: boolean;
     error?: string;
+    /** Message de succès, affiché seulement sans erreur. */
+    success?: string;
     hint?: string;
     counter?: { value: number; max: number };
     className?: string;
@@ -48,6 +50,7 @@ export default function FieldShell({
     icon: Icon,
     required,
     error,
+    success,
     hint,
     counter,
     className,
@@ -83,6 +86,13 @@ export default function FieldShell({
                     className="text-error inline-flex items-center gap-1.5 text-xs"
                 >
                     <LuCircleAlert size={13} /> {error}
+                </span>
+            ) : success ? (
+                <span
+                    role="status"
+                    className="text-success inline-flex items-center gap-1.5 text-xs"
+                >
+                    <LuCircleCheck size={13} /> {success}
                 </span>
             ) : hint ? (
                 <span className="text-muted-foreground/65 font-quote text-xs italic">
