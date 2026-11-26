@@ -9,7 +9,12 @@ import {
     ReviewVoteCounts,
 } from "./book-aggregate-loaders";
 import { batchTitles } from "./title-loader";
-import { makeMyReviewBatch, makeMyVoteBatch } from "./viewer-review-loaders";
+import {
+    makeMyReviewBatch,
+    makeMyUserBookBatch,
+    makeMyVoteBatch,
+} from "./viewer-review-loaders";
+import { UserBook } from "../../database/entities/user/user-book";
 import { BookReview } from "../../database/entities/book/bookReview";
 import {
     makeUserFlagBatch,
@@ -37,6 +42,7 @@ export type Loaders = {
     myVote: DataLoader<string, boolean | null>;
     reviewVoteCounts: DataLoader<string, ReviewVoteCounts>;
     myReview: DataLoader<string, BookReview | null>;
+    myUserBook: DataLoader<string, UserBook | null>;
 };
 
 /**
@@ -67,5 +73,6 @@ export function createLoaders(getUser: () => Promise<User | null>): Loaders {
         myVote: new DataLoader(makeMyVoteBatch(getUser)),
         reviewVoteCounts: new DataLoader((ids) => batchReviewVoteCounts(ids)),
         myReview: new DataLoader(makeMyReviewBatch(getUser)),
+        myUserBook: new DataLoader(makeMyUserBookBatch(getUser)),
     };
 }

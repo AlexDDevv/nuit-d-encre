@@ -35,6 +35,7 @@ import { grantXpService } from "../../../services/grind/grant-xp-service";
 import { xpKeys } from "../../../utils/xp-keys";
 import { getOrCreateAuthorByFullName } from "../../../utils/author-factory";
 import { BookReview } from "../../../database/entities/book/bookReview";
+import { UserBook } from "../../../database/entities/user/user-book";
 import { requireUser } from "../../../utils/current-user";
 
 const IMPORTED_SUMMARY_PLACEHOLDER = "Importé depuis une source externe.";
@@ -640,5 +641,14 @@ export class BooksResolver {
         @Ctx() context: Context,
     ): Promise<BookReview | null> {
         return context.loaders.myReview.load(book.id);
+    }
+
+    /** Entrée de bibliothèque de l'utilisateur courant pour ce livre (statut, date de lecture). */
+    @FieldResolver(() => UserBook, { nullable: true })
+    myUserBook(
+        @Root() book: Book,
+        @Ctx() context: Context,
+    ): Promise<UserBook | null> {
+        return context.loaders.myUserBook.load(book.id);
     }
 }

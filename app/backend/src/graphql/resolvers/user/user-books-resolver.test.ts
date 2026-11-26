@@ -86,18 +86,43 @@ describe("UserBooksResolver", () => {
             );
         });
 
-        it("ne compte pas pour le défi un livre ajouté comme lu sans date", async () => {
+        it("date du jour un livre ajouté comme lu et vérifie le défi", async () => {
             jest.spyOn(Book, "findOne").mockResolvedValue(makeBook("book-1"));
             jest.spyOn(UserBook, "findOne")
                 .mockResolvedValueOnce(null)
                 .mockResolvedValueOnce(new UserBook());
+            const save = jest.spyOn(UserBook.prototype, "save");
 
             await resolver.createUserBook(
                 { bookId: "book-1", status: ReadingStatus.READ },
                 makeContext(user),
             );
 
-            expect(checkGoal).not.toHaveBeenCalled();
+            expect(save.mock.contexts[0]).toMatchObject({
+                finishedAt: parisToday(),
+            });
+            expect(checkGoal).toHaveBeenCalledWith(user);
+        });
+
+        it("garde la date d'une lecture ancienne fournie à l'ajout", async () => {
+            jest.spyOn(Book, "findOne").mockResolvedValue(makeBook("book-1"));
+            jest.spyOn(UserBook, "findOne")
+                .mockResolvedValueOnce(null)
+                .mockResolvedValueOnce(new UserBook());
+            const save = jest.spyOn(UserBook.prototype, "save");
+
+            await resolver.createUserBook(
+                {
+                    bookId: "book-1",
+                    status: ReadingStatus.READ,
+                    finishedAt: "2019-05-02",
+                },
+                makeContext(user),
+            );
+
+            expect(save.mock.contexts[0]).toMatchObject({
+                finishedAt: "2019-05-02",
+            });
         });
     });
 

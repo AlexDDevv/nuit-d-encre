@@ -2,6 +2,7 @@ import { In } from "typeorm";
 import { BookReview } from "../../database/entities/book/bookReview";
 import { BookReviewVote } from "../../database/entities/book/bookReviewVote";
 import { User } from "../../database/entities/user/user";
+import { UserBook } from "../../database/entities/user/user-book";
 
 type GetUser = () => Promise<User | null>;
 
@@ -40,6 +41,20 @@ export function makeMyReviewBatch(getUser: GetUser) {
             relations: { book: true },
         });
         const byBook = new Map(reviews.map((r) => [r.book.id, r]));
+        return bookIds.map((id) => byBook.get(id) ?? null);
+    };
+}
+
+/** Entrée de bibliothèque de l'utilisateur courant pour chaque livre (null si absent). */
+export function makeMyUserBookBatch(getUser: GetUser) {
+    return async (bookIds: readonly string[]): Promise<(UserBook | null)[]> => {
+        const user = await getUser();
+        if (!user) return bookIds.map(() => null);
+        const entries = await UserBook.find({
+            where: { user: { id: user.id }, book: { id: In([...bookIds]) } },
+            relations: { book: true },
+        });
+        const byBook = new Map(entries.map((e) => [e.book.id, e]));
         return bookIds.map((id) => byBook.get(id) ?? null);
     };
 }

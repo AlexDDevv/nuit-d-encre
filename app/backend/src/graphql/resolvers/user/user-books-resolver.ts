@@ -343,6 +343,13 @@ export class UserBooksResolver {
         const newUserBook = new UserBook();
 
         Object.assign(newUserBook, rest, { user, book });
+        // Lu sans date : terminé aujourd'hui, « Lu le » corrige une lecture ancienne.
+        if (
+            newUserBook.status === ReadingStatus.READ &&
+            !newUserBook.finishedAt
+        ) {
+            newUserBook.finishedAt = parisToday();
+        }
 
         await newUserBook.save();
 
@@ -360,13 +367,7 @@ export class UserBooksResolver {
             });
         }
 
-        // Ajouté directement comme « lu » : sans date, c'est une lecture
-        // ancienne et elle ne compte pas pour le défi tant que « Lu le »
-        // n'est pas renseigné.
-        if (
-            newUserBook.status === ReadingStatus.READ &&
-            newUserBook.finishedAt
-        ) {
+        if (newUserBook.status === ReadingStatus.READ) {
             await checkReadingGoal(user);
         }
 
