@@ -10,6 +10,21 @@ plutôt que les exemples de ce guide.
 
 ---
 
+## Noms à utiliser
+
+| Élément | Nom conseillé | Pourquoi |
+|---|---|---|
+| Domaine authentifié | `nuitdencre.fr` (le domaine racine) | couvre aussi `staging.nuitdencre.fr` : un seul jeu de DNS |
+| Expéditeur (nom) | `Nuit d'Encre` | ce que le destinataire voit dans sa boîte |
+| Expéditeur (email) | `no-reply@nuitdencre.fr` | adresse d'envoi seule, distincte de `contact@` |
+| Clé API prod | `nuit-encre-back-prod` | dit où elle sert : la révoquer ne casse rien d'autre |
+| Clé API staging (si besoin) | `nuit-encre-back-staging` | une clé par environnement, jamais partagée |
+| Clé API en dev | aucune | sans clé, le back affiche les mails dans ses logs |
+| IP autorisée | `vps-ovh-caprover` | retrouver l'IP du VPS dans la liste |
+| Entrée du gestionnaire de mots de passe | `Brevo - nuit-encre-back-prod` | la clé n'est affichée qu'une fois |
+
+---
+
 ## 0. Comment ça marche
 
 - Le back appelle **l'API HTTP** de Brevo (`services/mail/mail-service.ts`) avec
@@ -93,6 +108,18 @@ Pièges :
   ajouterait `.nuitdencre.fr` à la fin de la cible.
 - **Guillemets** : ne colle pas les guillemets autour des valeurs TXT, OVH les
   gère.
+- **Sous-domaine vide refusé** : choisis bien le type **TXT** (pas les
+  assistants « SPF », « DKIM » ou « DMARC » d'OVH). Si le formulaire refuse
+  quand même, passe par **Modifier en mode textuel** et ajoute les lignes à la
+  fin de la zone, sans toucher aux autres (`@` désigne le domaine lui-même ;
+  en mode textuel, les guillemets des TXT sont nécessaires) :
+
+  ```
+  @                    IN TXT    "brevo-code:…"
+  brevo1._domainkey    IN CNAME  b1.….dkim.brevo.com.
+  brevo2._domainkey    IN CNAME  b2.….dkim.brevo.com.
+  _dmarc               IN TXT    "v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com"
+  ```
 - **Un seul DMARC** : si un TXT `_dmarc` existe déjà dans la zone, modifie-le
   au lieu d'en créer un second (deux DMARC = DMARC invalide).
 - **Un seul SPF** : si la zone contient déjà un TXT `v=spf1 …` (OVH en crée un
@@ -140,7 +167,7 @@ qui ne se sont pas encore propagées.
 
 1. Menu du compte → **SMTP et API** (ou **Paramètres** → **Clés API**) →
    onglet **Clés API** → **Générer une nouvelle clé API**.
-2. Nom : `nuit-encre-prod`.
+2. Nom : `nuit-encre-back-prod` (et `nuit-encre-back-staging` pour un staging, avec sa propre clé).
 3. **Copie la clé tout de suite** : Brevo ne l'affiche qu'une fois. Garde-la
    dans ton gestionnaire de mots de passe, jamais dans le repo.
 
@@ -161,7 +188,7 @@ back recevrait alors une erreur 401.
    ```
 
 2. Brevo → **Paramètres** → **Sécurité** → **IP autorisées** →
-   **Autoriser une adresse IP** : ajoute l'IPv4, et l'IPv6 si la seconde
+   **Autoriser une adresse IP** (libellé `vps-ovh-caprover`) : ajoute l'IPv4, et l'IPv6 si la seconde
    commande a répondu.
 
 Si Brevo t'envoie plus tard un mail « adresse IP bloquée » pour l'IP du VPS,
