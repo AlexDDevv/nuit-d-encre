@@ -86,6 +86,40 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
   (`requireUser`, `PaginationInput`, `utils/visibility.ts`, `@Field` uniquement sur le public,
   rate limit des appels externes, test d'autorisation).
 
+### Palier 0 bis — Sécurité de l'inscription (complément de l'audit)
+
+Constat : l'inscription par email et mot de passe ne prouve pas que l'adresse appartient
+à celui qui s'inscrit, et `resolveOrCreateGoogleUser` (`auth-service.ts`) rattache un
+compte Google à tout compte local de même email. Quelqu'un peut donc créer un compte avec
+l'adresse d'une autre personne avant elle : quand la vraie personne se connecte ensuite
+avec Google, le compte est rattaché et l'attaquant garde l'accès par son mot de passe.
+
+- [ ] **Refus des emails jetables** à l'inscription : bibliothèque `mailchecker` (environ
+      55 000 domaines, MIT), validateur class-validator sur l'email de `CreateUserInput`,
+      `BAD_USER_INPUT` et message neutre. Inutile pour Google, qui garantit l'adresse.
+      C'est un premier filtre : la vérification d'email fait le vrai travail.
+- [ ] **Envoi d'emails** : Brevo (société française, hébergement en UE, 300 mails/jour
+      gratuits) de préférence, Resend (meilleure API, 3 000/mois gratuits) en alternative,
+      derrière une interface `services/mail/` pour pouvoir changer de service. Cloudflare
+      Email Service écarté : en bêta, payant (Workers Paid) et DNS chez OVH. Enregistrements
+      SPF / DKIM / DMARC sur le DNS OVH, clé API en variable CapRover, service ajouté aux
+      sous-traitants de la politique de confidentialité.
+- [ ] **Vérification d'email obligatoire** : colonne `emailVerifiedAt` (migration) et
+      table de jetons (hash SHA-256, expiration 24 h, usage unique), mutations
+      `verifyEmail(token)` et `resendVerificationEmail` (rate limit dédié), page front
+      `/verifier-email`. **Connexion refusée** tant que l'email n'est pas vérifié, avec
+      un code d'erreur dédié pour proposer le renvoi du lien. Les comptes Google sont
+      vérifiés dès leur création. Les comptes existants (base de test, pas de vrais
+      utilisateurs) ne sont pas marqués vérifiés et doivent vérifier leur adresse.
+- [ ] **Rattachement Google sécurisé** : sur un compte local non vérifié, la connexion
+      Google prouve qui possède l'adresse. Le mot de passe est effacé, `tokenVersion`
+      incrémenté (fin des sessions ouvertes) et l'email marqué vérifié.
+- [ ] **Mot de passe oublié** : même mécanisme de jeton par email, absent aujourd'hui.
+      Une réinitialisation incrémente `tokenVersion`.
+- Tests : jeton expiré, déjà utilisé ou inconnu ; connexion refusée sans vérification ;
+  rattachement Google sur un compte non vérifié (mot de passe effacé, sessions révoquées) ;
+  domaine jetable refusé ; rate limit du renvoi.
+
 ### Palier 1 — Gains rapides (un week-end chacun)
 
 - [x] **Statut DNF (« abandonné »)** (✅ 2026-11-26, sans action dans le fil, visible seulement dans la bibliothèque) : nouvelle valeur `ABANDONED` dans `ReadingStatus`,
@@ -131,6 +165,8 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 ### Ordre recommandé
 
 0. ~~Terminer l'audit de sécurité~~ : fait le 2026-11-25.
+   Puis le **palier 0 bis** (sécurité de l'inscription) avant le palier 2 : il ferme une
+   prise de compte possible par le rattachement Google.
 1. **Progression de lecture** puis **citations** : ce sont les raisons de revenir sur
    l'application au quotidien, et le fil, les notifications et le bilan s'appuient dessus.
 2. Le **défi annuel** si l'objectif est un effet visible rapide (meilleur rapport
@@ -150,5 +186,8 @@ Repères tirés de Babelio, Goodreads, StoryGraph, Hardcover, Gleeph et Booknode
 - **2026-11-25** : reprise du projet, nouvelle roadmap ci-dessus. Audit de sécurité lancé
   (`docs/audits/2026-11-25-audit-securite.md`), il passe avant la roadmap fonctionnelle.
 - **2026-11-26** : audit terminé (lots 1 à 6) et en prod, la roadmap fonctionnelle démarre.
+- **2026-11-27** : ajout du palier 0 bis (emails jetables, vérification d'email avec
+  connexion bloquée, rattachement Google sécurisé, mot de passe oublié), à faire avant le
+  palier 2. Envoi par Brevo de préférence (français, UE), Resend en alternative.
 
 Specs et plans détaillés : `docs/superpowers/specs/` et `docs/superpowers/plans/`.
