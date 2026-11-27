@@ -67,6 +67,9 @@ Procédure détaillée d'installation du serveur : voir
 | `MAIL_FROM_EMAIL` / `MAIL_FROM_NAME` | inutiles sans clé | expéditeur validé dans Brevo (domaine authentifié SPF/DKIM chez OVH) ; nom par défaut « Nuit d'Encre » |
 | `APP_URL` | absente (`http://localhost:5173`) | origine publique du front, sans slash final (liens des emails) |
 
+Configuration de Brevo (domaine, DNS OVH, expéditeur, clé API, IP autorisées) :
+[`brevo-setup.md`](./brevo-setup.md).
+
 App `front` (CapRover) — les deux se saisissent au même endroit (App Configs →
 *Environmental Variables*), mais sont consommées à des moments différents :
 
