@@ -13,7 +13,7 @@ export default function AuthShell({
     children,
 }: AuthShellProps) {
     return (
-        <div className="animate-fadeIn max-w-230 mx-auto flex w-full flex-1 flex-col justify-center">
+        <div className="animate-fadeIn max-w-250 mx-auto flex w-full flex-1 flex-col justify-center">
             {/* Seuil : panneau éditorial + carte d'accès */}
             <div className="grid lg:grid-cols-[1fr_minmax(420px,468px)]">
                 <EditorialPanel mode={mode} />
