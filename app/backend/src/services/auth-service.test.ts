@@ -52,7 +52,8 @@ beforeEach(() => {
 });
 
 // Risque : connexion avec un mauvais mot de passe, cookie de session non
-// httpOnly ou non signé, ou énumération des emails par message d'erreur.
+// httpOnly ou non signé, énumération des emails par message d'erreur, ou
+// session conservée 30 jours sans « Se souvenir de moi » (poste partagé).
 describe("login", () => {
     it("pose un cookie httpOnly signé contenant un JWT de l'utilisateur", async () => {
         repository.findOne.mockResolvedValue(await userWithPassword());
@@ -69,6 +70,30 @@ describe("login", () => {
             signed: true,
         });
         expect(jwt.verify(token, JWT_SECRET)).toMatchObject({ id: "user-1" });
+    });
+
+    it("sans « Se souvenir de moi », pose un cookie de session et un jeton d'un jour", async () => {
+        repository.findOne.mockResolvedValue(await userWithPassword());
+        const cookies = makeCookies();
+
+        await login("reader@example.com", PASSWORD, cookies, false);
+
+        const [, token, options] = cookies.set.mock.calls[0];
+        expect(options.maxAge).toBeUndefined();
+        const { iat, exp } = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+        expect(exp! - iat!).toBe(24 * 60 * 60);
+    });
+
+    it("avec « Se souvenir de moi », garde le cookie et le jeton 30 jours", async () => {
+        repository.findOne.mockResolvedValue(await userWithPassword());
+        const cookies = makeCookies();
+
+        await login("reader@example.com", PASSWORD, cookies, true);
+
+        const [, token, options] = cookies.set.mock.calls[0];
+        expect(options.maxAge).toBe(30 * 24 * 60 * 60 * 1000);
+        const { iat, exp } = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+        expect(exp! - iat!).toBe(30 * 24 * 60 * 60);
     });
 
     it("refuse un mauvais mot de passe avec une 401 sans poser de cookie", async () => {
@@ -169,7 +194,8 @@ describe("whoami", () => {
     });
 });
 
-// Risque : le changement de mot de passe ne révoque pas les autres sessions ou
+// Risque : le changement de mot de passe ne révoque pas les autres sessions,
+// raccourcit une session mémorisée (déconnexion surprise) ou
 // contourne la politique de mot de passe.
 describe("changePassword", () => {
     it("révoque les autres sessions et réémet le cookie de la session en cours", async () => {
@@ -186,6 +212,20 @@ describe("changePassword", () => {
             id: "user-1",
             v: 4,
         });
+    });
+
+    it("réémet une session mémorisée avec la même durée", async () => {
+        const user = await userWithPassword();
+        repository.findOne.mockResolvedValue(user);
+        const cookies = makeCookies(
+            jwt.sign({ id: "user-1", v: 0, r: true }, JWT_SECRET),
+        );
+
+        await changePassword("user-1", PASSWORD, "Nouveau2?", cookies);
+
+        const [, token, options] = cookies.set.mock.calls[0];
+        expect(options.maxAge).toBe(30 * 24 * 60 * 60 * 1000);
+        expect(jwt.verify(token, JWT_SECRET)).toMatchObject({ r: true });
     });
 
     it("remplace le hash quand le mot de passe actuel est correct", async () => {

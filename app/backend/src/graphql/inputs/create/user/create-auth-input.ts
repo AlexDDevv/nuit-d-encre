@@ -1,5 +1,7 @@
 import {
+    IsBoolean,
     IsEmail,
+    IsOptional,
     IsNotEmpty,
     IsStrongPassword,
     Length,
@@ -76,4 +78,11 @@ export class LogUserInput {
     // Borne haute : même plafond que la politique de mot de passe.
     @MaxLength(255)
     password!: string;
+
+    // « Se souvenir de moi » : session de 30 jours au lieu d'un cookie de
+    // session effacé à la fermeture du navigateur.
+    @Field({ nullable: true })
+    @IsOptional()
+    @IsBoolean()
+    rememberMe?: boolean;
 }

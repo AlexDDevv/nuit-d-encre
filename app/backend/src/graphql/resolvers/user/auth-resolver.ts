@@ -77,7 +77,7 @@ export class AuthResolver {
         enforceRateLimit("login", context.ip);
 
         try {
-            const { email, password } = data;
+            const { email, password, rememberMe } = data;
 
             // Get the cookies from the context
             const { cookies } = context;
@@ -91,7 +91,12 @@ export class AuthResolver {
                 );
             }
 
-            const loginResponse = await login(email, password, cookies);
+            const loginResponse = await login(
+                email,
+                password,
+                cookies,
+                rememberMe ?? false,
+            );
 
             return {
                 message: loginResponse.message,

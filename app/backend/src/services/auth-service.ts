@@ -56,9 +56,19 @@ export const register = async (
     }
 };
 
-// Signe un JWT identifiant l'utilisateur et sa version de session, et le pose
-// en cookie httpOnly signé.
-const setAuthCookie = (user: User, cookies: Cookies): void => {
+// Durée d'une session « Se souvenir de moi » (connexion Google comprise).
+// Sans elle : cookie de session, effacé à la fermeture du navigateur, et jeton
+// d'un jour. Un jeton long reste révocable via `tokenVersion`.
+export const REMEMBERED_SESSION_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Signe un JWT identifiant l'utilisateur, sa version de session et sa durée
+// (`r` : session mémorisée), et le pose en cookie httpOnly signé.
+const setAuthCookie = (
+    user: User,
+    cookies: Cookies,
+    remember: boolean,
+): void => {
     if (!process.env.JWT_SECRET) {
         throw new AppError(
             "JWT_SECRET is not defined in environment variables.",
@@ -68,11 +78,9 @@ const setAuthCookie = (user: User, cookies: Cookies): void => {
     }
 
     const token = jwt.sign(
-        { id: user.id, v: user.tokenVersion ?? 0 },
+        { id: user.id, v: user.tokenVersion ?? 0, r: remember },
         process.env.JWT_SECRET,
-        {
-            expiresIn: "1d",
-        },
+        { expiresIn: remember ? `${REMEMBERED_SESSION_DAYS}d` : "1d" },
     );
 
     cookies.set("token", token, {
@@ -80,7 +88,24 @@ const setAuthCookie = (user: User, cookies: Cookies): void => {
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         signed: true,
+        // Sans maxAge, cookie de session : le navigateur l'efface à sa fermeture.
+        ...(remember && { maxAge: REMEMBERED_SESSION_DAYS * DAY_MS }),
     });
+};
+
+// La session en cours est-elle mémorisée ? Sert à réémettre un cookie de même
+// durée (changement de mot de passe).
+const isRememberedSession = (cookies: Cookies): boolean => {
+    const token = cookies.get("token", { signed: true });
+    if (!token || !process.env.JWT_SECRET) return false;
+    try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET) as {
+            r?: boolean;
+        };
+        return payload.r === true;
+    } catch {
+        return false;
+    }
 };
 
 // Génère un userName unique à partir d'une base, en ajoutant un suffixe
@@ -215,7 +240,7 @@ export const googleAuth = async (
         picture: payload.picture,
     });
 
-    setAuthCookie(user, cookies);
+    setAuthCookie(user, cookies, true);
 
     return {
         message: "Sign in successful!",
@@ -228,6 +253,7 @@ export const login = async (
     email: string,
     password: string,
     cookies: Cookies,
+    remember = false,
 ): Promise<LogInResponse> => {
     const userRepository = dataSource.getRepository(User);
 
@@ -256,7 +282,7 @@ export const login = async (
             throw new AppError("Invalid identifiers", 401, "UnauthorizedError");
         }
 
-        setAuthCookie(user, cookies);
+        setAuthCookie(user, cookies, remember);
 
         // Return a success message
         return {
@@ -385,9 +411,10 @@ export const changePassword = async (
     }
 
     user.hashedPassword = await argon2.hash(newPassword);
+    const remember = isRememberedSession(cookies);
     user.tokenVersion = (user.tokenVersion ?? 0) + 1;
     await user.save();
-    setAuthCookie(user, cookies);
+    setAuthCookie(user, cookies, remember);
     return true;
 };
 

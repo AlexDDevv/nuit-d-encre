@@ -116,6 +116,7 @@ export default function Signup() {
             <div className="mt-6 flex flex-col gap-4">
                 <TextField<UserSignUpForm>
                     name="userName"
+                    autoComplete="nickname"
                     label="Nom d'utilisateur"
                     icon={LuUser}
                     required
@@ -141,6 +142,7 @@ export default function Signup() {
                     label="Email"
                     type="email"
                     inputMode="email"
+                    autoComplete="email"
                     icon={LuMail}
                     required
                     placeholder="vous@exemple.fr"
@@ -163,6 +165,7 @@ export default function Signup() {
                 <div className="flex flex-col gap-2.5">
                     <TextField<UserSignUpForm>
                         name="password"
+                        autoComplete="new-password"
                         label="Mot de passe"
                         type="password"
                         icon={LuLock}
@@ -186,6 +189,7 @@ export default function Signup() {
 
                 <TextField<UserSignUpForm>
                     name="confirmPassword"
+                    autoComplete="new-password"
                     label="Confirmer le mot de passe"
                     type="password"
                     icon={LuLock}

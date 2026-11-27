@@ -1,6 +1,7 @@
 import { useToast } from "@/hooks/toast/useToast";
 import { UserSignIn } from "@/types/types";
 import { ApolloError, useMutation } from "@apollo/client";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LuArrowRight, LuLock, LuMail } from "react-icons/lu";
@@ -28,6 +29,10 @@ export default function Signin() {
         },
     });
 
+    // « Se souvenir de moi » : session de 30 jours, sinon effacée à la
+    // fermeture du navigateur.
+    const [rememberMe, setRememberMe] = useState(true);
+
     const [Login] = useMutation(LOGIN, {
         refetchQueries: [WHOAMI],
     });
@@ -46,6 +51,7 @@ export default function Signin() {
                     data: {
                         email: formData.email,
                         password: formData.password,
+                        rememberMe,
                     },
                 },
             });
@@ -103,6 +109,7 @@ export default function Signin() {
                     label="Email"
                     type="email"
                     inputMode="email"
+                    autoComplete="username"
                     icon={LuMail}
                     required
                     placeholder="vous@exemple.fr"
@@ -125,6 +132,7 @@ export default function Signin() {
                     name="password"
                     label="Mot de passe"
                     type="password"
+                    autoComplete="current-password"
                     icon={LuLock}
                     required
                     placeholder="••••••••"
@@ -146,7 +154,12 @@ export default function Signin() {
                 {/* Se souvenir de moi + mot de passe oublié */}
                 <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5">
                     <div className="flex items-center gap-2.5">
-                        <Checkbox defaultChecked />
+                        <Checkbox
+                            checked={rememberMe}
+                            onCheckedChange={(checked) =>
+                                setRememberMe(checked === true)
+                            }
+                        />
                         <Label
                             htmlFor="rememberMe"
                             className="text-muted-foreground cursor-pointer text-sm font-normal"

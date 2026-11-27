@@ -27,7 +27,7 @@ export type TextFieldProps<T extends FieldValues> = {
     preventDecimal?: boolean;
 } & Pick<
     ComponentProps<"input">,
-    "type" | "placeholder" | "inputMode" | "step"
+    "type" | "placeholder" | "inputMode" | "step" | "autoComplete"
 >;
 
 export type TextareaFieldProps<T extends FieldValues> = {
