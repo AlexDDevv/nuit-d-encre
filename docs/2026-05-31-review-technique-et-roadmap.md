@@ -116,9 +116,16 @@ avec Google, le compte est rattaché et l'attaquant garde l'accès par son mot d
       incrémenté (fin des sessions ouvertes) et l'email marqué vérifié.
 - [x] **Mot de passe oublié** : même mécanisme de jeton par email (lien de 60 minutes).
       Une réinitialisation incrémente `tokenVersion` et vérifie l'adresse.
-- Livré le 2026-11-27 (code), Brevo choisi. Reste à faire côté exploitation : compte
-  Brevo, domaine expéditeur authentifié (SPF / DKIM / DMARC chez OVH) et variables
-  `BREVO_API_KEY`, `MAIL_FROM_EMAIL`, `APP_URL` dans CapRover **avant** le déploiement.
+- [x] **Finitions des écrans de compte** : écrans centrés, bouton pour afficher le mot
+      de passe, case des conditions contrôlée aussi côté serveur (`acceptTerms` dans
+      `CreateUserInput`).
+- Livré et en prod le 2026-11-27 avec Brevo : domaine `nuitdencre.fr` authentifié (code
+  Brevo, DKIM, DMARC `p=none` chez OVH), expéditeur `no-reply@nuitdencre.fr`, clé API
+  restreinte aux IP du VPS. Procédure : `docs/brevo-setup.md`. Inscription, confirmation
+  et mot de passe oublié testés en prod.
+- Suite côté exploitation : désactiver le suivi des ouvertures et des clics de Brevo
+  (pixel de suivi et liens réécrits), puis passer DMARC en `p=quarantine` après quelques
+  semaines de rapports sans échec.
 - Tests : jeton expiré, déjà utilisé ou inconnu ; connexion refusée sans vérification ;
   rattachement Google sur un compte non vérifié (mot de passe effacé, sessions révoquées) ;
   domaine jetable refusé ; rate limit du renvoi.
@@ -168,8 +175,7 @@ avec Google, le compte est rattaché et l'attaquant garde l'accès par son mot d
 ### Ordre recommandé
 
 0. ~~Terminer l'audit de sécurité~~ : fait le 2026-11-25.
-   Puis le **palier 0 bis** (sécurité de l'inscription) avant le palier 2 : il ferme une
-   prise de compte possible par le rattachement Google.
+   ~~Palier 0 bis (sécurité de l'inscription)~~ : fait et en prod le 2026-11-27.
 1. **Progression de lecture** puis **citations** : ce sont les raisons de revenir sur
    l'application au quotidien, et le fil, les notifications et le bilan s'appuient dessus.
 2. Le **défi annuel** si l'objectif est un effet visible rapide (meilleur rapport
@@ -192,5 +198,7 @@ avec Google, le compte est rattaché et l'attaquant garde l'accès par son mot d
 - **2026-11-27** : ajout du palier 0 bis (emails jetables, vérification d'email avec
   connexion bloquée, rattachement Google sécurisé, mot de passe oublié), à faire avant le
   palier 2. Envoi par Brevo de préférence (français, UE), Resend en alternative.
+  Le même jour : palier livré et déployé (Brevo configuré, domaine authentifié), écrans
+  de compte retouchés.
 
 Specs et plans détaillés : `docs/superpowers/specs/` et `docs/superpowers/plans/`.
