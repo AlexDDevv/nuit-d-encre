@@ -31,6 +31,9 @@ import LeaderboardSkeleton from "@/components/UI/skeleton/LeaderboardSkeleton";
  * These components are loaded only when needed, improving initial load time
  */
 const Auth = lazy(() => import("@/pages/Auth"));
+const ForgotPassword = lazy(() => import("@/pages/account/ForgotPassword"));
+const ResetPassword = lazy(() => import("@/pages/account/ResetPassword"));
+const VerifyEmail = lazy(() => import("@/pages/account/VerifyEmail"));
 const BookDetails = lazy(() => import("@/pages/books/BookDetails"));
 const BookPreview = lazy(() => import("@/pages/books/BookPreview"));
 const BookScribe = lazy(() => import("@/pages/books/BookScribe"));
@@ -97,6 +100,56 @@ const router = createBrowserRouter([
                         <PublicRoute>
                             <Auth />
                         </PublicRoute>
+                    </Suspense>
+                ),
+            },
+            {
+                path: "mot-de-passe-oublie",
+                element: (
+                    <Suspense
+                        fallback={
+                            <NocturneLoader
+                                concept="medaillon"
+                                fullscreen
+                                label
+                            />
+                        }
+                    >
+                        <PublicRoute>
+                            <ForgotPassword />
+                        </PublicRoute>
+                    </Suspense>
+                ),
+            },
+            {
+                path: "reinitialiser-mot-de-passe",
+                element: (
+                    <Suspense
+                        fallback={
+                            <NocturneLoader
+                                concept="medaillon"
+                                fullscreen
+                                label
+                            />
+                        }
+                    >
+                        <ResetPassword />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "verifier-email",
+                element: (
+                    <Suspense
+                        fallback={
+                            <NocturneLoader
+                                concept="medaillon"
+                                fullscreen
+                                label
+                            />
+                        }
+                    >
+                        <VerifyEmail />
                     </Suspense>
                 ),
             },

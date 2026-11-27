@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "20/09/2026",
+    "lastUpdate": "27/11/2026",
     "contactEmail": "contact@nuitdencre.fr",
     "sections": [
         {
@@ -144,6 +144,10 @@
                 {
                     "k": "Google",
                     "v": "Authentification OAuth et récupération de métadonnées de livres — transfert hors Union européenne (États-Unis)."
+                },
+                {
+                    "k": "Brevo",
+                    "v": "Envoi des emails du service (confirmation d'adresse, réinitialisation du mot de passe) : adresse email et nom d'utilisateur — société française, données hébergées dans l'Union européenne."
                 },
                 {
                     "k": "Open Library",

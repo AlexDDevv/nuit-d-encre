@@ -13,6 +13,9 @@ export const GRAPHQL_ERROR_CODES = {
     conflict: "CONFLICT",
     tooManyRequests: "TOO_MANY_REQUESTS",
     internal: "INTERNAL_SERVER_ERROR",
+    // Codes propres (AppError.withCode côté back).
+    emailNotVerified: "EMAIL_NOT_VERIFIED",
+    invalidToken: "INVALID_TOKEN",
 } as const;
 
 /** Vrai si l'une des erreurs GraphQL porte le code donné. */

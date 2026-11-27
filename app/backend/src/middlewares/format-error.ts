@@ -92,7 +92,9 @@ export function formatError(
         return {
             ...base,
             message: original.message,
-            extensions: { code: codeForStatus(original.statusCode) },
+            extensions: {
+                code: original.code ?? codeForStatus(original.statusCode),
+            },
         };
     }
 

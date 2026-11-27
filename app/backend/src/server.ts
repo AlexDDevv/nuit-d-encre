@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { buildSchema } from "type-graphql";
 import { dataSource } from "./database/config/datasource";
 import { AuthResolver } from "./graphql/resolvers/user/auth-resolver";
+import { AccountEmailResolver } from "./graphql/resolvers/user/account-email-resolver";
 import { customAuthChecker } from "./middlewares/auth-checker";
 import { formatError } from "./middlewares/format-error";
 import { QUERY_LIMITS, queryLimitsRule } from "./middlewares/query-limits";
@@ -66,6 +67,7 @@ for (const name of ["COOKIE_SECRET", "JWT_SECRET", "APP_PORT"]) {
         const schema = await buildSchema({
             resolvers: [
                 AuthResolver,
+                AccountEmailResolver,
                 CategoryResolver,
                 BooksResolver,
                 AuthorsResolver,

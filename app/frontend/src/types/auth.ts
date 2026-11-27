@@ -47,3 +47,26 @@ export interface GoogleAuthResponse {
         cookieSet: boolean;
     };
 }
+
+/** Encadré d'état des écrans d'authentification (lien envoyé, lien expiré…). */
+export interface AuthNoticeProps {
+    state: "info" | "success" | "warning" | "error";
+    title: string;
+    children?: ReactNode;
+}
+
+/** Bouton de renvoi du lien de vérification pour une adresse donnée. */
+export interface ResendVerificationButtonProps {
+    email: string;
+}
+
+/** Champ email seul (mot de passe oublié, renvoi du lien de vérification). */
+export interface EmailRequestForm {
+    email: string;
+}
+
+/** Nouveau mot de passe choisi depuis le lien reçu par email. */
+export interface ResetPasswordForm {
+    newPassword: string;
+    confirmPassword: string;
+}

@@ -3,6 +3,7 @@ import { LogInResponse, User } from "../../../database/entities/user/user";
 import { CreateUserInput } from "../../inputs/create/user/create-auth-input";
 import { AppError } from "../../../middlewares/error-handler";
 import {
+    EMAIL_NOT_VERIFIED_CODE,
     login,
     register,
     googleAuth,
@@ -17,6 +18,8 @@ import { LogUserInput } from "../../inputs/create/user/create-auth-input";
 import { UpdateProfileInput } from "../../inputs/update/user/update-profile-input";
 import { CloudinaryService } from "../../../services/cloudinary.service";
 import { requireUser } from "../../../utils/current-user";
+import { isDisposableEmail } from "../../../utils/disposable-email";
+import { sendVerificationEmail } from "../../../services/account-email-service";
 
 // Même plafond que le front (lib/image.ts : 8 Mo), exprimé en longueur de
 // data URI : le base64 grossit de 4/3, plus l'en-tête "data:image/...".
@@ -54,7 +57,24 @@ export class AuthResolver {
 
         const { email, password, userName } = data;
 
-        return await register(email, password, userName, Roles.User);
+        if (isDisposableEmail(email)) {
+            throw new AppError(
+                "Disposable email addresses are not allowed",
+                400,
+            );
+        }
+
+        const user = await register(email, password, userName, Roles.User);
+
+        // Un échec d'envoi n'annule pas l'inscription : le lien peut être
+        // redemandé depuis la connexion.
+        try {
+            await sendVerificationEmail(user);
+        } catch (error) {
+            console.error("Verification email failed:", error);
+        }
+
+        return user;
     }
 
     /**
@@ -103,6 +123,14 @@ export class AuthResolver {
                 cookieSet: loginResponse.cookieSet,
             };
         } catch (error) {
+            // Mot de passe correct mais adresse non vérifiée : le front
+            // propose de renvoyer le lien.
+            if (
+                error instanceof AppError &&
+                error.code === EMAIL_NOT_VERIFIED_CODE
+            ) {
+                throw error;
+            }
             // Logger la cause réelle (identifiants invalides, indispo BDD…)
             // sans l'exposer au client : le message reste générique (401).
             console.error("Login failed:", error);

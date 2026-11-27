@@ -9,11 +9,16 @@ import { GoogleProfile, Roles, UserRole } from "../types/types";
 import { isPasswordCompliant } from "../utils/password-policy";
 import { CloudinaryService } from "./cloudinary.service";
 
+export const EMAIL_NOT_VERIFIED_CODE = "EMAIL_NOT_VERIFIED";
+
 export const register = async (
     email: string,
     password: string,
     userName: string,
     role: UserRole,
+    // Adresse déjà prouvée (admin créé au démarrage, seed) : pas de lien à
+    // confirmer. Une inscription publique passe toujours `false`.
+    emailVerified = false,
 ): Promise<User> => {
     const userRepository = dataSource.getRepository(User);
 
@@ -41,6 +46,7 @@ export const register = async (
             role,
             level: 1,
             xp: 0,
+            emailVerifiedAt: emailVerified ? new Date() : null,
         });
 
         await user.save();
@@ -170,6 +176,15 @@ export const resolveOrCreateGoogleUser = async (
         where: { email: profile.email },
     });
     if (byEmail) {
+        // Adresse jamais confirmée : rien ne prouve que le mot de passe a été
+        // choisi par le titulaire de l'adresse (compte créé par un tiers avant
+        // lui). Google prouve la possession : le mot de passe est effacé et
+        // les sessions ouvertes révoquées, le compte revient au titulaire.
+        if (!byEmail.emailVerifiedAt) {
+            byEmail.hashedPassword = null;
+            byEmail.tokenVersion = (byEmail.tokenVersion ?? 0) + 1;
+            byEmail.emailVerifiedAt = new Date();
+        }
         byEmail.googleId = profile.sub;
         if (!byEmail.avatar) {
             await syncGoogleAvatar(byEmail, profile.picture);
@@ -192,6 +207,7 @@ export const resolveOrCreateGoogleUser = async (
         role: Roles.User,
         level: 1,
         xp: 0,
+        emailVerifiedAt: new Date(),
     });
 
     await user.save();
@@ -280,6 +296,14 @@ export const login = async (
 
         if (!isPasswordValid) {
             throw new AppError("Invalid identifiers", 401, "UnauthorizedError");
+        }
+
+        // Vérifié après le mot de passe : sans lui, personne n'apprend qu'un
+        // compte existe et attend sa vérification.
+        if (!user.emailVerifiedAt) {
+            throw new AppError("Email not verified", 403).withCode(
+                EMAIL_NOT_VERIFIED_CODE,
+            );
         }
 
         setAuthCookie(user, cookies, remember);

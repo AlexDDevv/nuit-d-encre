@@ -241,6 +241,7 @@ Nuit-d-Encre/
 - **Guards de route** : wrapping HOC dans la définition de route (`<ProtectedRoute>`, `<AdminRoute>`)
 - **Slugs** : les livres et auteurs utilisent `/books/:slug` et `/authors/:slug` générés via `slugify()`
 - **Route catch-all** : `path: "*"` lance une `Response` 404 vers `<ErrorElement>`
+- **Comptes** : `/mot-de-passe-oublie` (`PublicRoute`), `/reinitialiser-mot-de-passe?token=…` et `/verifier-email?token=…` (sans garde : liens reçus par email, `pages/account/`)
 - **Profil** : `/profil` (connecté, profil propre) et `/profil/:id` (public, lecture seule)
 - **Classement** : `/classement` (connecté), à côté du Fil dans la barre latérale
 - **Livre preview** : `/books/preview/:isbn13` pour les livres importés non encore enregistrés
@@ -275,7 +276,9 @@ Nuit-d-Encre/
 - **Sessions révocables** : le JWT porte `v` = `User.tokenVersion` (non exposé), comparé par `whoami`. Incrémenter `tokenVersion` révoque toutes les sessions ; `changePassword` le fait et réémet le cookie de la session en cours. Un jeton sans `v` vaut 0.
 - **Limites de requête** : `middlewares/query-limits.ts` (`QUERY_LIMITS` : 8 niveaux, 400 champs, alias et fragments compris) branché en `validationRules`. Une nouvelle requête front plus profonde que 8 niveaux sera refusée : ajuster la limite plutôt que la contourner.
 - **Validation des entrées** : helpers dans `graphql/helpers/validation.ts` — `SkipIfEmpty()` pour un champ optionnel où `""` vaut « non renseigné » (ne pas écrire de `ValidateIf` à la main), `EXTERNAL_URL_OPTIONS` pour tout `@IsUrl` rendu en `href` (http(s) obligatoire), `isInternalPath`. ISBN-13 : `utils/isbn.ts` (`normalizeIsbn13`, `ISBN13_PATTERN`) avant tout appel externe ou enregistrement. Toute chaîne d'input ou d'argument a une longueur maximale.
+- **Vérification d'email** : `User.emailVerifiedAt` (non exposé). La connexion par mot de passe est refusée sans lui (403, code `EMAIL_NOT_VERIFIED`, levé après le contrôle du mot de passe et laissé passer par le `catch` de `login`). Liens envoyés par `services/account-email-service.ts` : jetons `EmailToken` à usage unique, stockés en SHA-256, un seul valide par usage (vérification 24 h, mot de passe oublié 60 min), un envoi par minute et par compte, mutations publiques `resendVerificationEmail` / `requestPasswordReset` (toujours `true`, envoi en arrière-plan : rien ne révèle qu'un compte existe), `verifyEmail` / `resetPassword` (code `INVALID_TOKEN`). Une réinitialisation incrémente `tokenVersion` et vérifie l'adresse. Envoi par `services/mail/` (`BrevoMailSender`, `ConsoleMailSender` en dev sans clé). Adresses jetables refusées à l'inscription (`utils/disposable-email.ts`, liste `mailchecker`). Un code propre au front passe par `new AppError(…).withCode("…")`.
 - **Google OAuth** : `@react-oauth/google` intégré (nécessite configuration `VITE_GOOGLE_CLIENT_ID` si activé)
+- **Rattachement Google** : un compte local de même email est rattaché ; s'il n'était pas vérifié, son mot de passe est effacé et `tokenVersion` incrémenté (un tiers a pu le créer avec l'adresse d'un autre). Comptes Google, admin (`createAdmin`) et comptes du seed sont vérifiés d'office (`register(..., emailVerified = true)`).
 - **Logout** : mutation GraphQL `LOGOUT` + `setUser(null)` + `refetch()` du WHOAMI
 
 ### Gamification
@@ -401,6 +404,9 @@ describe("updateReview", () => { ... });
 | `CLOUDINARY_API_SECRET` | Secret API Cloudinary                   |
 | `GOOGLE_CLIENT_ID` | Client ID OAuth Google (échange + audience)  |
 | `GOOGLE_CLIENT_SECRET` | Client secret OAuth Google                   |
+| `BREVO_API_KEY`      | Clé API Brevo (envoi des emails). Absente en dev : mails affichés dans les logs ; obligatoire en prod |
+| `MAIL_FROM_EMAIL` / `MAIL_FROM_NAME` | Expéditeur des emails (validé dans Brevo) |
+| `APP_URL`            | Origine publique du front pour les liens des emails (dev : `http://localhost:5173`) |
 
 ### Frontend (`app/frontend/.env`)
 

@@ -25,6 +25,11 @@ export const RATE_LIMIT_RULES = {
     // l'aperçu publics : protège le quota des API externes. Large, car la
     // recherche est déclenchée à la frappe (avec debounce).
     externalBookLookup: { limit: 60, windowMs: 5 * 60 * 1000 },
+    // Demandes de lien par email (vérification, mot de passe oublié) :
+    // chaque appel peut envoyer un mail.
+    emailRequest: { limit: 5, windowMs: 15 * 60 * 1000 },
+    // Consommation d'un lien reçu par email : freine l'essai de jetons.
+    emailToken: { limit: 20, windowMs: 15 * 60 * 1000 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitAction = keyof typeof RATE_LIMIT_RULES;

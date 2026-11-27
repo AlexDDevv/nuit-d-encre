@@ -34,6 +34,7 @@ function makeCookies(token?: string) {
 async function userWithPassword(password = PASSWORD): Promise<User> {
     const user = makeUser("user-1");
     user.hashedPassword = await argon2.hash(password);
+    user.emailVerifiedAt = new Date("2026-01-01");
     return user;
 }
 
@@ -111,6 +112,34 @@ describe("login", () => {
 
         await expect(
             login("inconnu@example.com", PASSWORD, makeCookies()),
+        ).rejects.toMatchObject({
+            statusCode: 401,
+            message: "Invalid identifiers",
+        });
+    });
+
+    it("refuse un compte non vérifié avec un code dédié, sans poser de cookie", async () => {
+        const user = await userWithPassword();
+        user.emailVerifiedAt = null;
+        repository.findOne.mockResolvedValue(user);
+        const cookies = makeCookies();
+
+        await expect(
+            login("reader@example.com", PASSWORD, cookies),
+        ).rejects.toMatchObject({
+            statusCode: 403,
+            code: "EMAIL_NOT_VERIFIED",
+        });
+        expect(cookies.set).not.toHaveBeenCalled();
+    });
+
+    it("ne révèle pas qu'un compte attend sa vérification sans le bon mot de passe", async () => {
+        const user = await userWithPassword();
+        user.emailVerifiedAt = null;
+        repository.findOne.mockResolvedValue(user);
+
+        await expect(
+            login("reader@example.com", "Mauvais1!", makeCookies()),
         ).rejects.toMatchObject({
             statusCode: 401,
             message: "Invalid identifiers",
@@ -336,8 +365,9 @@ describe("setProfileImage", () => {
     });
 });
 
-// Risque : la connexion Google crée un doublon, écrase un compte ou crée un
-// compte avec mot de passe.
+// Risque : la connexion Google crée un doublon, écrase un compte, crée un
+// compte avec mot de passe, ou laisse un tiers garder l'accès à un compte qu'il
+// a créé avec l'adresse d'un autre avant lui.
 describe("resolveOrCreateGoogleUser", () => {
     const profile = {
         sub: "google-sub",
@@ -367,6 +397,36 @@ describe("resolveOrCreateGoogleUser", () => {
         expect(user.googleId).toBe("google-sub");
         expect(user.avatar).toBe("https://res.cloudinary.com/avatar.png");
         expect(User.prototype.save).toHaveBeenCalled();
+    });
+
+    it("reprend un compte non vérifié : mot de passe effacé, sessions révoquées", async () => {
+        const squatted = await userWithPassword();
+        squatted.emailVerifiedAt = null;
+        squatted.tokenVersion = 2;
+        repository.findOne
+            .mockResolvedValueOnce(null)
+            .mockResolvedValueOnce(squatted);
+        uploadImage.mockResolvedValue(null);
+
+        const user = await resolveOrCreateGoogleUser(profile);
+
+        expect(user.hashedPassword).toBeNull();
+        expect(user.tokenVersion).toBe(3);
+        expect(user.emailVerifiedAt).toBeInstanceOf(Date);
+    });
+
+    it("garde le mot de passe d'un compte déjà vérifié", async () => {
+        const verified = await userWithPassword();
+        verified.tokenVersion = 2;
+        repository.findOne
+            .mockResolvedValueOnce(null)
+            .mockResolvedValueOnce(verified);
+        uploadImage.mockResolvedValue(null);
+
+        const user = await resolveOrCreateGoogleUser(profile);
+
+        expect(user.hashedPassword).not.toBeNull();
+        expect(user.tokenVersion).toBe(2);
     });
 
     it("crée un compte sans mot de passe avec un nom d'utilisateur libre", async () => {

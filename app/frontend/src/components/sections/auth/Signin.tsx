@@ -14,6 +14,10 @@ import { Label } from "@/components/UI/form/Label";
 import ContinueWithGoogle from "@/components/UI/form/ContinueWithGoogle";
 import { LOGIN, WHOAMI } from "@/graphql/user/auth";
 import { PASSWORD_MAX_LENGTH } from "@/lib/password";
+import AuthNotice from "@/components/sections/auth/AuthNotice";
+import ResendVerificationButton from "@/components/sections/auth/ResendVerificationButton";
+import { EMAIL_RULES } from "@/components/sections/auth/emailRules";
+import { GRAPHQL_ERROR_CODES, hasGraphQLErrorCode } from "@/lib/graphqlErrors";
 
 export default function Signin() {
     const {
@@ -32,6 +36,9 @@ export default function Signin() {
     // « Se souvenir de moi » : session de 30 jours, sinon effacée à la
     // fermeture du navigateur.
     const [rememberMe, setRememberMe] = useState(true);
+    // Mot de passe correct mais adresse jamais confirmée : connexion refusée,
+    // on propose de renvoyer le lien.
+    const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
 
     const [Login] = useMutation(LOGIN, {
         refetchQueries: [WHOAMI],
@@ -68,6 +75,14 @@ export default function Signin() {
                 });
             }
         } catch (err) {
+            if (
+                hasGraphQLErrorCode(err, GRAPHQL_ERROR_CODES.emailNotVerified)
+            ) {
+                setUnverifiedEmail(formData.email);
+                return;
+            }
+            setUnverifiedEmail(null);
+
             // Handle ApolloError
             if (err instanceof ApolloError) {
                 const invalidCredentialsError = err.graphQLErrors.find((e) =>
@@ -104,6 +119,18 @@ export default function Signin() {
 
             {/* Champs */}
             <div className="mt-6 flex flex-col gap-4">
+                {unverifiedEmail && (
+                    <AuthNotice state="warning" title="Adresse non confirmée">
+                        <p>
+                            Confirmez votre adresse avec le lien reçu à
+                            l'inscription pour vous connecter. Vous ne le
+                            trouvez plus ?
+                        </p>
+                        <div className="mt-3">
+                            <ResendVerificationButton email={unverifiedEmail} />
+                        </div>
+                    </AuthNotice>
+                )}
                 <TextField<UserSignIn>
                     name="email"
                     label="Email"
@@ -115,18 +142,7 @@ export default function Signin() {
                     placeholder="vous@exemple.fr"
                     register={register}
                     errors={errors}
-                    rules={{
-                        required: "L'email est requis",
-                        pattern: {
-                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                            message: "Format d'email invalide",
-                        },
-                        maxLength: {
-                            value: 254,
-                            message:
-                                "Adresse trop longue (254 caractères maximum).",
-                        },
-                    }}
+                    rules={EMAIL_RULES}
                 />
                 <TextField<UserSignIn>
                     name="password"
@@ -168,7 +184,7 @@ export default function Signin() {
                         </Label>
                     </div>
                     <Button
-                        type="button"
+                        to="/mot-de-passe-oublie"
                         variant="ghost"
                         ariaLabel="Réinitialiser le mot de passe"
                         className="decoration-primary/30 hover:decoration-primary h-auto px-0 text-sm font-medium underline underline-offset-[3px]"

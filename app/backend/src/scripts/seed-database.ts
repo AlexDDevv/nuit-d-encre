@@ -1722,8 +1722,9 @@ async function seed() {
                   role: u.role,
                   level: 1,
                   xp: 0,
+                  emailVerifiedAt: new Date(),
               })
-            : await register(u.email, PASSWORD, u.userName, u.role);
+            : await register(u.email, PASSWORD, u.userName, u.role, true);
         user.avatar = u.avatar ?? null;
         user.banner = u.banner ?? null;
         user.bio = u.bio ?? null;

@@ -12,6 +12,8 @@ export class AppError extends Error implements IAppError {
     errorType?: string;
     additionalInfo?: string;
     isOperational: boolean;
+    /** Code GraphQL explicite, à la place de celui déduit du statut. */
+    code?: string;
 
     constructor(
         message: string,
@@ -28,5 +30,11 @@ export class AppError extends Error implements IAppError {
         this.additionalInfo = additionalInfo;
         this.isOperational = isOperational;
         Error.captureStackTrace(this);
+    }
+
+    /** Fixe un code GraphQL propre (ex. EMAIL_NOT_VERIFIED) pour le front. */
+    withCode(code: string): this {
+        this.code = code;
+        return this;
     }
 }

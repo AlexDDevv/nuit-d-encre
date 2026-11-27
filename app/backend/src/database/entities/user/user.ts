@@ -63,6 +63,11 @@ export class User extends BaseEntity {
     @Column({ type: "int", default: 0 })
     tokenVersion!: number;
 
+    // Date de vérification de l'adresse (lien reçu par email, ou compte
+    // Google). Null : connexion par mot de passe refusée. Non exposée.
+    @Column({ type: "timestamptz", nullable: true })
+    emailVerifiedAt?: Date | null;
+
     // Identifiant Google (`sub`) pour les comptes liés à Google. Non exposé en GraphQL.
     @Column({ type: "varchar", length: 255, nullable: true, unique: true })
     googleId?: string | null;

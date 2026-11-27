@@ -94,28 +94,31 @@ compte Google à tout compte local de même email. Quelqu'un peut donc créer un
 l'adresse d'une autre personne avant elle : quand la vraie personne se connecte ensuite
 avec Google, le compte est rattaché et l'attaquant garde l'accès par son mot de passe.
 
-- [ ] **Refus des emails jetables** à l'inscription : bibliothèque `mailchecker` (environ
+- [x] **Refus des emails jetables** à l'inscription : bibliothèque `mailchecker` (environ
       55 000 domaines, MIT), validateur class-validator sur l'email de `CreateUserInput`,
       `BAD_USER_INPUT` et message neutre. Inutile pour Google, qui garantit l'adresse.
       C'est un premier filtre : la vérification d'email fait le vrai travail.
-- [ ] **Envoi d'emails** : Brevo (société française, hébergement en UE, 300 mails/jour
+- [x] **Envoi d'emails** : Brevo (société française, hébergement en UE, 300 mails/jour
       gratuits) de préférence, Resend (meilleure API, 3 000/mois gratuits) en alternative,
       derrière une interface `services/mail/` pour pouvoir changer de service. Cloudflare
       Email Service écarté : en bêta, payant (Workers Paid) et DNS chez OVH. Enregistrements
       SPF / DKIM / DMARC sur le DNS OVH, clé API en variable CapRover, service ajouté aux
       sous-traitants de la politique de confidentialité.
-- [ ] **Vérification d'email obligatoire** : colonne `emailVerifiedAt` (migration) et
+- [x] **Vérification d'email obligatoire** : colonne `emailVerifiedAt` (migration) et
       table de jetons (hash SHA-256, expiration 24 h, usage unique), mutations
       `verifyEmail(token)` et `resendVerificationEmail` (rate limit dédié), page front
       `/verifier-email`. **Connexion refusée** tant que l'email n'est pas vérifié, avec
       un code d'erreur dédié pour proposer le renvoi du lien. Les comptes Google sont
       vérifiés dès leur création. Les comptes existants (base de test, pas de vrais
       utilisateurs) ne sont pas marqués vérifiés et doivent vérifier leur adresse.
-- [ ] **Rattachement Google sécurisé** : sur un compte local non vérifié, la connexion
+- [x] **Rattachement Google sécurisé** : sur un compte local non vérifié, la connexion
       Google prouve qui possède l'adresse. Le mot de passe est effacé, `tokenVersion`
       incrémenté (fin des sessions ouvertes) et l'email marqué vérifié.
-- [ ] **Mot de passe oublié** : même mécanisme de jeton par email, absent aujourd'hui.
-      Une réinitialisation incrémente `tokenVersion`.
+- [x] **Mot de passe oublié** : même mécanisme de jeton par email (lien de 60 minutes).
+      Une réinitialisation incrémente `tokenVersion` et vérifie l'adresse.
+- Livré le 2026-11-27 (code), Brevo choisi. Reste à faire côté exploitation : compte
+  Brevo, domaine expéditeur authentifié (SPF / DKIM / DMARC chez OVH) et variables
+  `BREVO_API_KEY`, `MAIL_FROM_EMAIL`, `APP_URL` dans CapRover **avant** le déploiement.
 - Tests : jeton expiré, déjà utilisé ou inconnu ; connexion refusée sans vérification ;
   rattachement Google sur un compte non vérifié (mot de passe effacé, sessions révoquées) ;
   domaine jetable refusé ; rate limit du renvoi.

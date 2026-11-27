@@ -63,6 +63,9 @@ Procédure détaillée d'installation du serveur : voir
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` / `ADMIN_USERNAME` / `ADMIN_ROLE` | valeurs locales | valeurs de prod (mot de passe fort) |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | valeurs locales | valeurs Cloudinary |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | valeurs du client OAuth de dev | valeurs du client OAuth de prod |
+| `BREVO_API_KEY` | absente : les mails s'affichent dans les logs du back | clé API Brevo (**obligatoire** : sans elle, aucun compte ne peut être confirmé) |
+| `MAIL_FROM_EMAIL` / `MAIL_FROM_NAME` | inutiles sans clé | expéditeur validé dans Brevo (domaine authentifié SPF/DKIM chez OVH) ; nom par défaut « Nuit d'Encre » |
+| `APP_URL` | absente (`http://localhost:5173`) | origine publique du front, sans slash final (liens des emails) |
 
 App `front` (CapRover) — les deux se saisissent au même endroit (App Configs →
 *Environmental Variables*), mais sont consommées à des moments différents :

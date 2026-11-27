@@ -1,6 +1,7 @@
 import { useToast } from "@/hooks/toast/useToast";
 import { UserSignUpForm } from "@/types/types";
 import { ApolloError, useMutation } from "@apollo/client";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -17,7 +18,10 @@ import AuthCardHeader from "@/components/sections/auth/AuthCardHeader";
 import Button from "@/components/UI/Button/Button";
 import ContinueWithGoogle from "@/components/UI/form/ContinueWithGoogle";
 import { isPasswordStrong, PASSWORD_MAX_LENGTH } from "@/lib/password";
-import { REGISTER, WHOAMI } from "@/graphql/user/auth";
+import { REGISTER } from "@/graphql/user/auth";
+import AuthNotice from "@/components/sections/auth/AuthNotice";
+import ResendVerificationButton from "@/components/sections/auth/ResendVerificationButton";
+import { GRAPHQL_ERROR_CODES, hasGraphQLErrorCode } from "@/lib/graphqlErrors";
 
 export default function Signup() {
     const {
@@ -26,6 +30,7 @@ export default function Signup() {
         reset,
         watch,
         getValues,
+        setError,
         formState: { errors },
     } = useForm<UserSignUpForm>({
         mode: "onBlur",
@@ -38,9 +43,9 @@ export default function Signup() {
         },
     });
 
-    const [Register] = useMutation(REGISTER, {
-        refetchQueries: [WHOAMI],
-    });
+    // Pas de session à l'inscription : le compte s'active par le lien reçu.
+    const [Register] = useMutation(REGISTER);
+    const [sentTo, setSentTo] = useState<string | null>(null);
 
     const [searchParams] = useSearchParams();
     const { showToast } = useToast();
@@ -65,18 +70,24 @@ export default function Signup() {
 
             if (data) {
                 reset();
-                showToast({
-                    type: "success",
-                    title: "Inscription réussie !",
-                    description: "Bienvenue dans Nuit d'Encre",
-                    actionLabel: "Me connecter",
-                    redirectTo: loginHref,
-                });
+                setSentTo(formData.email);
             }
         } catch (err) {
             console.error("Erreur complète :", err);
 
             // Handle GraphQL errors : invalid formats, email already used...
+            if (
+                hasGraphQLErrorCode(err, GRAPHQL_ERROR_CODES.badUserInput) &&
+                err instanceof ApolloError &&
+                err.graphQLErrors.some((e) => e.message.includes("Disposable"))
+            ) {
+                setError("email", {
+                    message:
+                        "Les adresses email temporaires ne sont pas acceptées.",
+                });
+                return;
+            }
+
             if (err instanceof ApolloError) {
                 const emailError = err.graphQLErrors.find((e) =>
                     e.message.includes("Email already exists"),
@@ -104,6 +115,38 @@ export default function Signup() {
 
     const password = watch("password");
     const confirmPassword = watch("confirmPassword");
+
+    if (sentTo) {
+        return (
+            <AuthShell mode="inscription" onSubmit={(e) => e.preventDefault()}>
+                <AuthCardHeader
+                    welcome="Votre carte d'accès attend son sceau."
+                    eyebrow="Inscription"
+                />
+                <div className="mt-6 flex flex-col gap-4">
+                    <AuthNotice state="info" title="Vérifiez votre boîte mail">
+                        <p>
+                            Un lien de confirmation vient de partir vers{" "}
+                            <strong>{sentTo}</strong>. Il est valable 24 heures.
+                            Pensez à regarder dans les indésirables.
+                        </p>
+                        <div className="mt-3">
+                            <ResendVerificationButton email={sentTo} />
+                        </div>
+                    </AuthNotice>
+                    <Button
+                        to={loginHref}
+                        variant="primary"
+                        fullWidth
+                        ariaLabel="Aller à la connexion"
+                        rightIcon={<LuArrowRight size={16} />}
+                    >
+                        J'ai confirmé, me connecter
+                    </Button>
+                </div>
+            </AuthShell>
+        );
+    }
 
     return (
         <AuthShell mode="inscription" onSubmit={handleSubmit(onSubmit)}>

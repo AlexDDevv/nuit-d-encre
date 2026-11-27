@@ -55,3 +55,27 @@ export const LOGOUT = gql`
         logout
     }
 `;
+
+export const RESEND_VERIFICATION_EMAIL = gql`
+    mutation ResendVerificationEmail($data: EmailRequestInput!) {
+        resendVerificationEmail(data: $data)
+    }
+`;
+
+export const VERIFY_EMAIL = gql`
+    mutation VerifyEmail($data: EmailTokenInput!) {
+        verifyEmail(data: $data)
+    }
+`;
+
+export const REQUEST_PASSWORD_RESET = gql`
+    mutation RequestPasswordReset($data: EmailRequestInput!) {
+        requestPasswordReset(data: $data)
+    }
+`;
+
+export const RESET_PASSWORD = gql`
+    mutation ResetPassword($data: ResetPasswordInput!) {
+        resetPassword(data: $data)
+    }
+`;
