@@ -179,6 +179,14 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Coût : un jeton vit plus longtemps ; il reste révocable par la version de session.
 - Référence : `e7a6ce4`.
 
+### Adresse email prouvée avant toute connexion
+
+- Décision : la connexion par mot de passe est refusée tant que l'adresse n'a pas été confirmée par un lien reçu par email (24 h). Le même mécanisme sert au mot de passe oublié (lien de 60 minutes, qui ferme toutes les sessions). Les liens sont des jetons à usage unique dont seul le hash est stocké. Les formulaires publics répondent de la même façon qu'un compte existe ou non, et n'envoient pas plus d'un mail par minute au même compte. Les adresses jetables sont refusées à l'inscription (liste `mailchecker`).
+- Intention : écarter les inscriptions par emails jetables, et fermer une prise de compte : quelqu'un pouvait créer un compte avec l'adresse d'une autre personne, puis garder l'accès par son mot de passe après qu'elle s'y est connectée avec Google. Désormais, une connexion Google sur un compte non vérifié efface son mot de passe et ferme ses sessions.
+- Alternative écartée : laisser un compte non vérifié se connecter en lecture seule ; le blocage complet est plus simple et suffit. Pour l'envoi, Resend (meilleure API) et Cloudflare Email Service (bêta, payant, DNS hors Cloudflare) ont été écartés au profit de Brevo, société française qui héberge les données dans l'UE.
+- Coût : un service tiers de plus, déclaré comme sous-traitant, et une configuration DNS (SPF, DKIM, DMARC) avant la mise en production. Les comptes existants doivent confirmer leur adresse (base de test, sans vrais utilisateurs).
+- Référence : `c4b2155`.
+
 ### Défenses en profondeur sur l'API
 
 - Décision : profondeur et largeur des requêtes GraphQL bornées (8 niveaux, 400 champs), ISBN et URL validés avant usage, toute chaîne d'entrée plafonnée, en-têtes de sécurité nginx. La politique de sécurité du contenu (CSP) est d'abord en observation.
@@ -285,5 +293,5 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
-- Avant le palier 2 de la roadmap, un complément à l'audit sur l'inscription : refus des emails jetables, vérification d'email obligatoire avant toute connexion, mot de passe oublié, et, si un compte Google est rattaché à un compte dont l'email n'est pas vérifié, effacement de son mot de passe et fin de ses sessions. Sans vérification, quelqu'un pouvait créer un compte avec l'adresse d'une autre personne et garder l'accès après qu'elle s'y est connectée avec Google. Envoi des emails par Brevo de préférence (société française, hébergement en UE), Resend en alternative ; Cloudflare écarté (service en bêta, payant, DNS hors Cloudflare). Référence : `6d8dfb5`.
+- Avant le palier 2 de la roadmap, un complément à l'audit sur l'inscription (novembre 2026) : vérification d'email obligatoire, mot de passe oublié, refus des emails jetables et rattachement Google sécurisé, avec Brevo pour l'envoi. Référence : `6d8dfb5`, `c4b2155`.
 - Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler, classement mensuel et défi de lecture annuel ensuite. En tête : progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
