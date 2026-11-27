@@ -10,7 +10,12 @@ jest.mock("../../../database/config/datasource", () => ({
 jest.mock("../../../services/cloudinary.service");
 
 const resolver = new AuthResolver();
-const input = { email: "", password: "Motdepasse1!", userName: "Lecteur" };
+const input = {
+    email: "",
+    password: "Motdepasse1!",
+    userName: "Lecteur",
+    acceptTerms: true,
+};
 
 beforeEach(() => {
     jest.restoreAllMocks();

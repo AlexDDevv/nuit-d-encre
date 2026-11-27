@@ -64,6 +64,7 @@ export default function Signup() {
                         email: formData.email,
                         password: formData.password,
                         userName: formData.userName,
+                        acceptTerms: formData.acceptTerms,
                     },
                 },
             });

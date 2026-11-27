@@ -1,4 +1,5 @@
 import {
+    Equals,
     IsBoolean,
     IsEmail,
     IsOptional,
@@ -52,6 +53,12 @@ export class CreateUserInput {
         message: "The user name must contain between 2 and 100 characters.",
     })
     userName!: string;
+
+    // Case des conditions : contrôlée ici aussi, un appel direct à l'API ne
+    // doit pas créer de compte sans acceptation.
+    @Field()
+    @Equals(true, { message: "The terms must be accepted." })
+    acceptTerms!: boolean;
 }
 
 /**

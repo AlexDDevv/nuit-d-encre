@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 import { FieldError, FieldValues } from "react-hook-form";
 import { Input } from "@/components/UI/form/Input";
 import FieldShell from "@/components/sections/shared/FieldShell";
@@ -27,6 +28,9 @@ export default function TextField<T extends FieldValues>({
         ?.message;
     const { onChange, ...field } = register(name, rules);
     const [filled, setFilled] = useState(false);
+    // Mot de passe : l'œil bascule l'affichage en clair, le temps de relire.
+    const isPassword = type === "password";
+    const [revealed, setRevealed] = useState(false);
     const recovered = useRecovered(error, filled);
     const succeeded = !error && (!!success || recovered);
     // La borne de validation sert aussi de limite de saisie : on ne peut pas
@@ -53,9 +57,13 @@ export default function TextField<T extends FieldValues>({
         >
             <Input
                 id={name}
-                type={type}
+                type={isPassword && revealed ? "text" : type}
                 state={error ? "error" : succeeded ? "success" : "default"}
-                className={cn(icon && "pl-11", mono && "font-mono")}
+                className={cn(
+                    icon && "pl-11",
+                    isPassword && "pr-11",
+                    mono && "font-mono",
+                )}
                 aria-required={required}
                 onKeyDown={
                     preventDecimal
@@ -80,6 +88,22 @@ export default function TextField<T extends FieldValues>({
                 errorMessage={error}
                 hideErrorMessage
             />
+            {isPassword && (
+                <button
+                    type="button"
+                    onClick={() => setRevealed((v) => !v)}
+                    aria-label={
+                        revealed
+                            ? "Masquer le mot de passe"
+                            : "Afficher le mot de passe"
+                    }
+                    aria-pressed={revealed}
+                    aria-controls={name}
+                    className="text-primary/45 hover:text-primary focus-visible:ring-primary/70 absolute right-2 top-[22px] z-10 grid size-8 -translate-y-1/2 place-items-center rounded-md transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2"
+                >
+                    {revealed ? <LuEyeOff size={17} /> : <LuEye size={17} />}
+                </button>
+            )}
         </FieldShell>
     );
 }
