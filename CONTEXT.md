@@ -168,8 +168,16 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 
 - Décision : le JWT contient une version de session (`User.tokenVersion`) comparée à chaque requête ; changer de mot de passe l'incrémente, ce qui déconnecte les autres appareils, et réémet le cookie de l'appareil en cours.
 - Intention : un jeton volé ne doit pas rester valide après un changement de mot de passe.
-- Alternative écartée : une liste noire de jetons, qui demande un stockage partagé pour une durée de vie de 24 h.
+- Alternative écartée : une liste noire de jetons, qui demande un stockage partagé pour des jetons valables jusqu'à 30 jours.
 - Référence : `fe981ce`.
+
+### « Se souvenir de moi » réellement branché
+
+- Décision : la case « Se souvenir de moi » de la connexion, jusque-là décorative, est envoyée à `login`. Cochée (par défaut), le cookie et le jeton durent 30 jours ; décochée, cookie de session effacé à la fermeture du navigateur et jeton d'un jour, comme avant. La connexion Google garde 30 jours. Le jeton retient ce choix pour que le changement de mot de passe réémette un cookie de même durée.
+- Intention : ne plus devoir se reconnecter à chaque fermeture du navigateur.
+- Alternative écartée : mémoriser les identifiants côté application. C'est le rôle du gestionnaire de mots de passe du navigateur, aidé par les attributs `autocomplete` ajoutés aux champs de connexion et d'inscription.
+- Coût : un jeton vit plus longtemps ; il reste révocable par la version de session.
+- Référence : `e7a6ce4`.
 
 ### Défenses en profondeur sur l'API
 
@@ -277,4 +285,5 @@ Une bibliothèque en ligne sociale et gamifiée : chaque lecteur y tient sa bibl
 - Reprise en novembre 2026 : le projet est poursuivi sur du temps libre, à partir du MVP existant.
 - Avant la roadmap, un audit de sécurité et de propreté du code (novembre 2026) pour repartir d'une base saine : rate limiting, pagination, dépendances et builds reproductibles d'abord, puis unification de la résolution de l'utilisateur courant, visibilité des données et convention pour les futurs endpoints.
 - Développé avec l'assistance de Claude (Claude Code pour le code, Claude Design pour les maquettes).
+- Avant le palier 2 de la roadmap, un complément à l'audit sur l'inscription : refus des emails jetables, vérification d'email obligatoire avant toute connexion, mot de passe oublié, et, si un compte Google est rattaché à un compte dont l'email n'est pas vérifié, effacement de son mot de passe et fin de ses sessions. Sans vérification, quelqu'un pouvait créer un compte avec l'adresse d'une autre personne et garder l'accès après qu'elle s'y est connectée avec Google. Envoi des emails par Brevo de préférence (société française, hébergement en UE), Resend en alternative ; Cloudflare écarté (service en bêta, payant, DNS hors Cloudflare). Référence : `6d8dfb5`.
 - Suite prévue : une roadmap inspirée des applications de lecture existantes (Babelio, Goodreads, StoryGraph, Hardcover). Statut « abandonné » livré en premier (novembre 2026). Balises spoiler, classement mensuel et défi de lecture annuel ensuite. En tête : progression et journal de lecture, citations. Puis notifications, bilan annuel, recommandations personnalisées et modération. La purge automatique des données RGPD reste à faire. Détail : `docs/2026-05-31-review-technique-et-roadmap.md`.
